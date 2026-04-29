@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MTEC — Soluciones Técnicas para la Gran Industria</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ═══════════════════════════════════════
+       MTEC · Brand Variables
+    ═══════════════════════════════════════ */
+    :root {
+      --azul:    #0D1B2E;
+      --platino: #B2BEC9;
+      --acero:   #1B6CA8;
+      --plomo:   #536073;
+      --vapor:   #EDF1F5;
+      --carbon:  #0F161E;
+      --n100:    #F4F6F9;
+      --n300:    #D6DDE5;
+      --n500:    #8896A5;
+      --n700:    #3D4856;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--azul);
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* ═══════════════════════════════════════
+       HERO SHELL
+    ═══════════════════════════════════════ */
+    .hero {
+      position: relative;
+      height: 100svh;
+      min-height: 540px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ── Layer –1: WebGL shader canvas ── */
+    #shader-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      display: block;
+    }
+
+    /* ── Layer 0: deep background (transparent — shader provides base color) ── */
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background: transparent;
+      z-index: 1;
+    }
+
+    /* radial glow layers — centered for single-column layout */
+    .hero-bg::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 65% at 50% 52%, rgba(27,108,168,0.20) 0%, transparent 55%),
+        radial-gradient(ellipse 40% 45% at 50% 48%, rgba(27,108,168,0.10) 0%, transparent 60%),
+        radial-gradient(ellipse 100% 55% at 50% 115%, rgba(13,27,46,0.96) 0%, transparent 62%);
+      animation: bgBreathe 10s ease-in-out infinite alternate;
+    }
+
+    /* SVG grain texture */
+    .hero-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      opacity: 0.035;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 220px 220px;
+    }
+
+    /* ── Layer 1: technical grid ── */
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      background-image:
+        linear-gradient(rgba(178,190,201,0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(178,190,201,0.045) 1px, transparent 1px);
+      background-size: 64px 64px;
+      -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 18%, #000 82%, transparent 100%);
+      mask-image:         linear-gradient(180deg, transparent 0%, #000 18%, #000 82%, transparent 100%);
+    }
+
+
+
+    /* ═══════════════════════════════════════
+       NAVIGATION
+    ═══════════════════════════════════════ */
+    .nav {
+      position: relative;
+      z-index: 20;
+      opacity: 0;
+      animation: fadeUp 0.7s ease 0.1s forwards;
+    }
+    .nav-inner {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 0 clamp(1.25rem, 5vw, 3rem);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: clamp(56px, 8vh, 74px);
+      gap: 2rem;
+    }
+
+    /* logo block */
+    .logo-block {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+    }
+    .logo-img {
+      height: 34px;
+      width: auto;
+      display: block;
+      opacity: 0.92;
+      transition: opacity 0.2s ease;
+    }
+    .logo-block:hover .logo-img { opacity: 1; }
+
+    /* nav links */
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2.25rem;
+      list-style: none;
+    }
+    @media (max-width: 860px) { .nav-links { display: none; } }
+    .nav-links a {
+      font-size: 0.875rem; font-weight: 500;
+      color: var(--n500);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      position: relative;
+      transition: color 0.2s ease;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; left: 0;
+      width: 0; height: 1px;
+      background: var(--platino);
+      transition: width 0.25s cubic-bezier(0.16,1,0.3,1);
+    }
+    .nav-links a:hover { color: var(--platino); }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-links a:focus-visible { outline: 2px solid var(--platino); outline-offset: 4px; }
+
+    /* nav divider */
+    .nav-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(178,190,201,0.12) 30%, rgba(178,190,201,0.12) 70%, transparent);
+    }
+
+    /* ═══════════════════════════════════════
+       HERO CONTENT — single column, centered
+    ═══════════════════════════════════════ */
+    .hero-body {
+      position: relative;
+      z-index: 10;
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(1.5rem, 4vh, 4rem) clamp(1.25rem, 5vw, 3rem);
+    }
+    .hero-body-inner {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+    .hero-content {
+      max-width: 860px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: clamp(1rem, 2.2vh, 2rem);
+    }
+
+    /* ── Eyebrow ── */
+    .eyebrow {
+      font-family: 'Inter', sans-serif;
+      font-size: clamp(0.62rem, 1.2vw, 0.75rem);
+      font-weight: 600;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--acero);
+      opacity: 0;
+      transform: translateY(12px);
+      animation: fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.4s forwards;
+    }
+
+    /* ── Headline — the manifesto ── */
+    .headline {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      /* scales by width AND height — never overflows viewport */
+      font-size: clamp(2.8rem, min(8.5vw, 10vh), 6.5rem);
+      line-height: 1.0;
+      letter-spacing: -0.025em;
+      color: #fff;
+      opacity: 0;
+      transform: translateY(32px);
+      animation: fadeUp 1.0s cubic-bezier(0.16,1,0.3,1) 0.5s forwards;
+    }
+    .headline .accent {
+      color: var(--platino);
+      display: block;
+    }
+
+    /* ── Accent rule ── */
+    .accent-rule {
+      width: 72px; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--acero) 50%, transparent);
+      opacity: 0;
+      animation: fadeIn 0.8s ease 0.9s forwards;
+      flex-shrink: 0;
+    }
+
+    /* ── Sub-headline ── */
+    .subline {
+      font-size: clamp(1rem, 1.6vw, 1.125rem);
+      font-weight: 400; line-height: 1.7;
+      color: var(--n500);
+      max-width: 52ch;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 0.9s cubic-bezier(0.16,1,0.3,1) 0.9s forwards;
+    }
+
+    /* ── Sector tags ── */
+    .sectors {
+      display: flex; flex-wrap: wrap;
+      gap: 0.45rem;
+      justify-content: center;
+    }
+    .sector-tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 13px;
+      border: 1px solid rgba(178,190,201,0.15);
+      font-size: 0.68rem; font-weight: 500;
+      letter-spacing: 0.09em; text-transform: uppercase;
+      color: var(--n500);
+      opacity: 0;
+      transform: translateY(12px);
+      transition: border-color 0.2s ease, color 0.2s ease;
+    }
+    .sector-tag:hover { border-color: rgba(178,190,201,0.4); color: var(--platino); }
+    .sector-tag .dot {
+      width: 3px; height: 3px; border-radius: 50%;
+      background: var(--acero);
+      flex-shrink: 0;
+    }
+    .sector-tag:nth-child(1) { animation: fadeUp 0.6s cubic-bezier(0.16,1,0.3,1) 1.0s forwards; }
+    .sector-tag:nth-child(2) { animation: fadeUp 0.6s cubic-bezier(0.16,1,0.3,1) 1.07s forwards; }
+    .sector-tag:nth-child(3) { animation: fadeUp 0.6s cubic-bezier(0.16,1,0.3,1) 1.14s forwards; }
+    .sector-tag:nth-child(4) { animation: fadeUp 0.6s cubic-bezier(0.16,1,0.3,1) 1.21s forwards; }
+
+    /* ── CTA buttons ── */
+    .cta-group {
+      display: flex; flex-wrap: wrap;
+      gap: 0.75rem; align-items: center;
+      justify-content: center;
+      opacity: 0; transform: translateY(20px);
+      animation: fadeUp 0.9s cubic-bezier(0.16,1,0.3,1) 1.1s forwards;
+    }
+
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 9px;
+      padding: 13px 26px;
+      background: var(--acero);
+      color: #fff;
+      font-size: 0.9rem; font-weight: 600;
+      letter-spacing: 0.01em;
+      text-decoration: none;
+      border: 1.5px solid transparent;
+      clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+      position: relative; overflow: hidden;
+      transition: transform 0.22s cubic-bezier(0.16,1,0.3,1), box-shadow 0.22s ease;
+      box-shadow: 0 4px 24px rgba(27,108,168,0.38), 0 1px 6px rgba(0,0,0,0.3);
+    }
+    .btn-primary::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.14) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 36px rgba(27,108,168,0.55), 0 2px 10px rgba(0,0,0,0.4);
+    }
+    .btn-primary:hover::before { opacity: 1; }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-primary:focus-visible { outline: 2px solid var(--platino); outline-offset: 3px; }
+    .btn-primary svg { transition: transform 0.2s cubic-bezier(0.16,1,0.3,1); }
+    .btn-primary:hover svg { transform: translateX(3px); }
+
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 9px;
+      padding: 12px 25px;
+      background: transparent;
+      color: var(--platino);
+      font-size: 0.9rem; font-weight: 500;
+      letter-spacing: 0.01em;
+      text-decoration: none;
+      border: 1px solid rgba(178,190,201,0.3);
+      transition: border-color 0.22s ease, background 0.22s ease, transform 0.22s cubic-bezier(0.16,1,0.3,1), color 0.22s ease;
+    }
+    .btn-ghost:hover {
+      border-color: rgba(178,190,201,0.7);
+      background: rgba(178,190,201,0.06);
+      transform: translateY(-2px);
+    }
+    .btn-ghost:active { transform: translateY(0); }
+    .btn-ghost:focus-visible { outline: 2px solid var(--platino); outline-offset: 3px; }
+
+    /* ═══════════════════════════════════════
+       STATS BAR (bottom)
+    ═══════════════════════════════════════ */
+    .stats-section {
+      position: relative;
+      z-index: 10;
+      opacity: 0;
+      transform: translateY(18px);
+      animation: fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 1.35s forwards;
+    }
+    .stats-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(178,190,201,0.13) 25%, rgba(178,190,201,0.13) 75%, transparent);
+    }
+    .stats-inner {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: clamp(0.8rem, 1.5vh, 1.4rem) clamp(1.25rem, 5vw, 3rem);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      flex-wrap: nowrap;
+    }
+    .stat {
+      padding: 0 clamp(1rem, 2.5vw, 2rem);
+      position: relative;
+      flex-shrink: 0;
+    }
+    .stat + .stat::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 50%;
+      transform: translateY(-50%);
+      height: 22px; width: 1px;
+      background: rgba(178,190,201,0.18);
+    }
+    .stat-val {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700; font-size: clamp(1.1rem, 1.8vw, 1.5rem);
+      color: var(--platino); line-height: 1;
+      letter-spacing: -0.01em;
+    }
+    .stat-lbl {
+      font-size: clamp(0.58rem, 0.8vw, 0.68rem); font-weight: 500;
+      letter-spacing: 0.09em; text-transform: uppercase;
+      color: var(--plomo); margin-top: 3px;
+      white-space: nowrap;
+    }
+
+    /* scroll nudge */
+    .scroll-nudge {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 5px;
+      padding: 0 2rem;
+    }
+    .scroll-nudge-line {
+      width: 1px; height: 36px;
+      background: linear-gradient(to bottom, rgba(178,190,201,0.45), transparent);
+      animation: scrollBlink 2.2s ease-in-out infinite;
+    }
+    .scroll-nudge-label {
+      font-size: 0.6rem; font-weight: 500;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--plomo);
+    }
+
+
+    /* ═══════════════════════════════════════
+       KEYFRAMES
+    ═══════════════════════════════════════ */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(var(--from-y, 22px)); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+    @keyframes bgBreathe {
+      0%   { opacity: 0.85; transform: scale(1); }
+      100% { opacity: 1;    transform: scale(1.04); }
+    }
+    @keyframes dotPulse {
+      0%,100% { box-shadow: 0 0 0 0   rgba(26,124,79,0.55); }
+      50%     { box-shadow: 0 0 0 6px rgba(26,124,79,0); }
+    }
+    @keyframes scrollBlink {
+      0%,100% { opacity: 0.25; transform: scaleY(1); }
+      50%     { opacity: 0.7;  transform: scaleY(1.15); }
+    }
+
+    /* ═══════════════════════════════════════
+       RESPONSIVE
+    ═══════════════════════════════════════ */
+    @media (max-width: 640px) {
+      .nav-links, .scroll-nudge { display: none; }
+      .stat { padding: 0 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<section class="hero">
+
+  <!-- ────────── SHADER CANVAS (Layer –1) ────────── -->
+  <canvas id="shader-bg" aria-hidden="true"></canvas>
+
+  <!-- ────────── BG LAYERS ────────── -->
+  <div class="hero-bg" aria-hidden="true"></div>
+  <div class="hero-grid" aria-hidden="true"></div>
+
+
+  <!-- ════════════════════════════
+       NAVIGATION
+  ════════════════════════════ -->
+  <nav class="nav" role="navigation" aria-label="Navegación principal">
+    <div class="nav-inner">
+      <a href="#" class="logo-block">
+        <img src="brand_assets/Logo_MTEC-blanco.png" alt="MTEC" class="logo-img" />
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="#">Servicios</a></li>
+        <li><a href="#">Sectores</a></li>
+        <li><a href="#">Tecnología</a></li>
+        <li><a href="#">Nosotros</a></li>
+      </ul>
+
+      <a href="#contacto" class="btn-primary" style="padding:10px 20px;font-size:0.84rem;">
+        Contactar
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    </div>
+    <div class="nav-divider"></div>
+  </nav>
+
+  <!-- ════════════════════════════
+       HERO BODY
+  ════════════════════════════ -->
+  <div class="hero-body">
+    <div class="hero-body-inner">
+      <div class="hero-content">
+
+        <!-- Eyebrow -->
+        <p class="eyebrow">MTEC, Continuidad Operacional</p>
+
+        <!-- Main headline — the manifesto -->
+        <h1 class="headline">
+          Donde la falla<br>
+          <span class="accent">no es una opción.</span>
+        </h1>
+
+        <!-- Accent rule -->
+        <div class="accent-rule" aria-hidden="true"></div>
+
+        <!-- Subline -->
+        <p class="subline">
+          Servicios técnicos especializados para refinería, minería, energía e industria.
+          Ejecutamos donde la continuidad operacional no admite improvisación.
+        </p>
+
+        <!-- Sector tags -->
+        <div class="sectors">
+          <span class="sector-tag"><span class="dot" aria-hidden="true"></span>Refinería</span>
+          <span class="sector-tag"><span class="dot" aria-hidden="true"></span>Minería</span>
+          <span class="sector-tag"><span class="dot" aria-hidden="true"></span>Energía</span>
+          <span class="sector-tag"><span class="dot" aria-hidden="true"></span>Oil &amp; Gas</span>
+        </div>
+
+        <!-- CTAs -->
+        <div class="cta-group">
+          <a href="#servicios" class="btn-primary">
+            Conoce nuestros servicios
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+          <a href="#contacto" class="btn-ghost">
+            Contactar equipo técnico
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════
+       STATS BAR
+  ════════════════════════════ -->
+  <div class="stats-section">
+    <div class="stats-divider"></div>
+    <div class="stats-inner">
+
+      <div class="stat" style="padding-left:0;">
+        <div class="stat-val">2014</div>
+        <div class="stat-lbl">Fundación</div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-val">4+</div>
+        <div class="stat-lbl">Sectores clave</div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-val">&lt;4 h</div>
+        <div class="stat-lbl">Respuesta en terreno</div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-val">ISO</div>
+        <div class="stat-lbl">Procesos certificados</div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-val">ERRES</div>
+        <div class="stat-lbl">Ecosistema respaldo</div>
+      </div>
+
+      <div class="stat scroll-nudge">
+        <div class="scroll-nudge-line"></div>
+        <div class="scroll-nudge-label">scroll</div>
+      </div>
+
+    </div>
+  </div>
+
+</section>
+
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   MTEC · WebGL Plasma Shader Background
+   Colors: Azul Refinería (#0D1B2E) · Platino MTEC (#B2BEC9)
+           Acero Activo (#1B6CA8)
+═══════════════════════════════════════════════════════════ */
+(function () {
+  'use strict';
+
+  const canvas = document.getElementById('shader-bg');
+  if (!canvas) return;
+
+  const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+  if (!gl) { canvas.style.display = 'none'; return; }
+
+  /* ── Vertex shader ── */
+  const VS = `
+    attribute vec4 aPos;
+    void main() { gl_Position = aPos; }
+  `;
+
+  /* ── Fragment shader — MTEC brand palette ── */
+  const FS = `
+    precision highp float;
+    uniform vec2  iResolution;
+    uniform float iTime;
+
+    const float overallSpeed     = 0.15;
+    const float gridSmoothWidth  = 0.015;
+    const float scale            = 5.0;
+    const float minLineWidth     = 0.006;
+    const float maxLineWidth     = 0.14;
+    const float lineSpeed        = 1.0  * overallSpeed;
+    const float lineAmplitude    = 0.85;
+    const float lineFrequency    = 0.2;
+    const float warpSpeed        = 0.2  * overallSpeed;
+    const float warpFrequency    = 0.5;
+    const float warpAmplitude    = 0.8;
+    const float offsetFrequency  = 0.5;
+    const float offsetSpeed      = 1.33 * overallSpeed;
+    const float minOffsetSpread  = 0.6;
+    const float maxOffsetSpread  = 2.0;
+    const int   linesPerGroup    = 16;
+
+    /* Platino MTEC #B2BEC9 */
+    const vec4 platino = vec4(0.698, 0.745, 0.788, 1.0);
+    /* Acero Activo #1B6CA8 */
+    const vec4 acero   = vec4(0.106, 0.424, 0.659, 1.0);
+
+    #define drawCircle(pos,radius,coord) \
+      smoothstep(radius + gridSmoothWidth, radius, length(coord-(pos)))
+    #define drawSmoothLine(pos,hw,t) \
+      smoothstep(hw, 0.0, abs(pos-(t)))
+    #define drawCrispLine(pos,hw,t) \
+      smoothstep(hw + gridSmoothWidth, hw, abs(pos-(t)))
+
+    float rng(float t) {
+      return (cos(t) + cos(t*1.3+1.3) + cos(t*1.4+1.4)) / 3.0;
+    }
+
+    float plasmaY(float x, float hFade, float off) {
+      return rng(x * lineFrequency + iTime * lineSpeed) * hFade * lineAmplitude + off;
+    }
+
+    void main() {
+      vec2 uv    = gl_FragCoord.xy / iResolution.xy;
+      vec2 space = (gl_FragCoord.xy - iResolution.xy * 0.5) / iResolution.x * 2.0 * scale;
+
+      float hFade = 1.0 - (cos(uv.x * 6.28318) * 0.5 + 0.5);
+      /* softer vertical vignette — edges dim to ~35%, not full black */
+      float vFade = mix(0.35, 1.0, 1.0 - (cos(uv.y * 6.28318) * 0.5 + 0.5));
+
+      space.y += rng(space.x * warpFrequency + iTime * warpSpeed)          * warpAmplitude * (0.5 + hFade);
+      space.x += rng(space.y * warpFrequency + iTime * warpSpeed + 2.0)    * warpAmplitude * hFade;
+
+      vec4 lines = vec4(0.0);
+
+      for (int l = 0; l < linesPerGroup; l++) {
+        float ni          = float(l) / float(linesPerGroup);
+        float offTime     = iTime * offsetSpeed;
+        float offPos      = float(l) + space.x * offsetFrequency;
+        float rand        = rng(offPos + offTime) * 0.5 + 0.5;
+        float halfWidth   = mix(minLineWidth, maxLineWidth, rand * hFade) * 0.5;
+        float offset      = rng(offPos + offTime * (1.0 + ni)) * mix(minOffsetSpread, maxOffsetSpread, hFade);
+        float linePos     = plasmaY(space.x, hFade, offset);
+
+        float line = drawSmoothLine(linePos, halfWidth, space.y) * 0.5
+                   + drawCrispLine(linePos, halfWidth * 0.15, space.y);
+
+        float cx = mod(float(l) + iTime * lineSpeed, 25.0) - 12.0;
+        float circle = drawCircle(vec2(cx, plasmaY(cx, hFade, offset)), 0.01, space) * 4.0;
+
+        /* blend platino→acero across line index for colour variety */
+        vec4 lineColor = mix(acero, platino, ni);
+
+        lines += (line + circle) * lineColor * rand;
+      }
+
+      /* Azul Refinería #0D1B2E → deep carbon #050D1A horizontal gradient */
+      vec4 bg = mix(
+        vec4(0.051, 0.106, 0.180, 1.0),
+        vec4(0.020, 0.051, 0.102, 1.0),
+        uv.x
+      );
+      bg    *= vFade;
+      bg.a   = 1.0;
+      bg    += lines * 0.15;
+
+      gl_FragColor = bg;
+    }
+  `;
+
+  /* ── Compile & link ── */
+  function compileShader(type, src) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
+      console.warn('[MTEC shader]', gl.getShaderInfoLog(s));
+      gl.deleteShader(s);
+      return null;
+    }
+    return s;
+  }
+
+  const vs = compileShader(gl.VERTEX_SHADER,   VS);
+  const fs = compileShader(gl.FRAGMENT_SHADER, FS);
+  if (!vs || !fs) { canvas.style.display = 'none'; return; }
+
+  const prog = gl.createProgram();
+  gl.attachShader(prog, vs);
+  gl.attachShader(prog, fs);
+  gl.linkProgram(prog);
+  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+    console.warn('[MTEC shader] link failed');
+    canvas.style.display = 'none';
+    return;
+  }
+
+  /* ── Geometry (full-screen quad) ── */
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+
+  const posLoc = gl.getAttribLocation(prog,  'aPos');
+  const resLoc = gl.getUniformLocation(prog, 'iResolution');
+  const timLoc = gl.getUniformLocation(prog, 'iTime');
+
+  /* ── Resize ── */
+  function resize() {
+    const w = canvas.offsetWidth  || window.innerWidth;
+    const h = canvas.offsetHeight || window.innerHeight;
+    if (canvas.width !== w || canvas.height !== h) {
+      canvas.width  = w;
+      canvas.height = h;
+      gl.viewport(0, 0, w, h);
+    }
+  }
+
+  if (typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(resize).observe(canvas.parentElement);
+  } else {
+    window.addEventListener('resize', resize);
+  }
+  resize();
+
+  /* ── Render loop ── */
+  const t0 = performance.now();
+  (function loop() {
+    gl.useProgram(prog);
+    gl.uniform2f(resLoc, canvas.width, canvas.height);
+    gl.uniform1f(timLoc, (performance.now() - t0) / 1000);
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(posLoc);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    requestAnimationFrame(loop);
+  })();
+}());
+</script>
+</body>
+</html>

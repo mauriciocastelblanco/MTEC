@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MTEC — Donde la falla no es una opción</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,500;0,600;0,700;1,300&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { line-height: 1.15; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: "Inter", sans-serif;
+  background: #060C14;
+  color: #EDF1F5;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+::selection { background: rgba(27,108,168,0.35); color: #fff; }
+a { text-decoration: none; color: inherit; }
+img { max-width: 100%; display: block; }
+
+:root {
+  --acero:   #1B6CA8;
+  --platino: #B2BEC9;
+  --azul:    #0D1B2E;
+  --n500:    #8896A5;
+  --vapor:   #EDF1F5;
+}
+
+/* ══ PROGRESS BAR ══════════════════════ */
+.page-progress {
+  position: fixed; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, #1B6CA8 0%, rgba(27,108,168,0.55) 100%);
+  transform-origin: left; transform: scaleX(0);
+  z-index: 200; pointer-events: none; will-change: transform;
+}
+
+/* ══ CHAPTER DOTS ══════════════════════ */
+.chapter-nav {
+  position: fixed; right: 28px; top: 50%; transform: translateY(-50%);
+  z-index: 40; display: flex; flex-direction: column; gap: 18px;
+  opacity: 0; transition: opacity 0.6s ease;
+}
+.chapter-nav.visible { opacity: 1; }
+@media (max-width: 860px) { .chapter-nav { display: none; } }
+.ch-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: rgba(178,190,201,0.2);
+  transition: background 0.4s, box-shadow 0.4s, transform 0.4s;
+  cursor: pointer; position: relative;
+}
+.ch-dot::before {
+  content: attr(data-label);
+  position: absolute; right: 18px; top: 50%; transform: translateY(-50%);
+  white-space: nowrap; font-size: 9px; font-family: "Inter", sans-serif;
+  color: rgba(178,190,201,0.4); opacity: 0;
+  transition: opacity 0.25s; letter-spacing: 0.1em; font-weight: 600;
+  pointer-events: none;
+}
+.ch-dot:hover::before, .ch-dot.active::before { opacity: 1; }
+.ch-dot.active {
+  background: var(--acero); transform: scale(1.6);
+  box-shadow: 0 0 14px rgba(27,108,168,0.7);
+}
+.ch-dot.active::before { color: rgba(178,190,201,0.75); }
+
+/* ══════════════════════════════════════
+   NAV
+══════════════════════════════════════ */
+.nav {
+  position: absolute; top: 0; left: 0; right: 0; z-index: 50;
+  opacity: 0; animation: fadeDown 0.8s cubic-bezier(0.22,1,0.36,1) 0.2s forwards;
+}
+.nav-inner {
+  max-width: 1320px; margin: 0 auto;
+  padding: 0 clamp(1.25rem, 5vw, 3rem);
+  display: flex; align-items: center;
+  justify-content: space-between;
+  height: clamp(76px, 10vh, 96px); gap: 2rem;
+}
+.logo-block { display: flex; align-items: center; }
+.logo-img { height: 58px; width: auto; opacity: 0.95; transition: opacity 0.2s; }
+.logo-block:hover .logo-img { opacity: 1; }
+.nav-links { display: flex; align-items: center; gap: 2.25rem; list-style: none; }
+@media (max-width: 860px) { .nav-links { display: none; } }
+.nav-links a {
+  font-size: 0.875rem; font-weight: 500;
+  color: rgba(255,255,255,0.82); letter-spacing: 0.02em;
+  position: relative; transition: color 0.2s;
+}
+.nav-links a::after {
+  content: ''; position: absolute; bottom: -3px; left: 0;
+  width: 0; height: 1px; background: var(--platino);
+  transition: width 0.25s cubic-bezier(0.16,1,0.3,1);
+}
+.nav-links a:hover { color: #fff; }
+.nav-links a:hover::after { width: 100%; }
+.nav-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(178,190,201,0.1) 30%, rgba(178,190,201,0.1) 70%, transparent);
+}
+.nav-cta {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 20px; background: var(--acero); color: #fff;
+  font-size: 0.84rem; font-weight: 600; letter-spacing: 0.01em;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
+  transition: transform 0.22s cubic-bezier(0.16,1,0.3,1), box-shadow 0.22s;
+  box-shadow: 0 4px 20px rgba(27,108,168,0.35), 0 1px 5px rgba(0,0,0,0.25);
+}
+.nav-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(27,108,168,0.5); }
+.nav-cta:active { transform: translateY(0); }
+.nav-cta svg { transition: transform 0.2s cubic-bezier(0.16,1,0.3,1); }
+.nav-cta:hover svg { transform: translateX(3px); }
+
+/* ══════════════════════════════════════
+   HERO — CAPÍTULO 0
+══════════════════════════════════════ */
+.hero {
+  position: relative; min-height: 100svh;
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.hero-bg {
+  position: absolute; inset: 0;
+  background: linear-gradient(160deg,
+    #1B6CA8 0%, #155888 28%, #0E3D68 52%,
+    #0A2645 72%, #0A1E38 100%
+  );
+}
+.hero-video {
+  position: absolute;
+  top: -15%; left: 0; width: 100%; height: 130%;
+  object-fit: cover; opacity: 0.38;
+  mix-blend-mode: luminosity;
+  will-change: transform;
+}
+/* Blends hero bottom exactly to s-quienes top color */
+.hero-fade {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 50%;
+  background: linear-gradient(to bottom,
+    transparent 0%,
+    rgba(10,30,56,0.35) 30%,
+    rgba(10,30,56,0.78) 60%,
+    #0A1E38 100%
+  );
+  pointer-events: none; z-index: 1;
+}
+.hero-beam {
+  position: absolute; top: -20px; left: 58%; transform: translateX(-50%);
+  width: 0; height: 0;
+  border-left: 220px solid transparent; border-right: 220px solid transparent;
+  border-top: 720px solid rgba(255,255,255,0.055);
+  pointer-events: none; filter: blur(22px);
+}
+.hero-beam-2 {
+  position: absolute; top: -10px; left: 58%; transform: translateX(-50%);
+  width: 0; height: 0;
+  border-left: 80px solid transparent; border-right: 80px solid transparent;
+  border-top: 500px solid rgba(255,255,255,0.09);
+  pointer-events: none; filter: blur(6px);
+}
+.hero-glow {
+  position: absolute; top: 0; left: 50%; transform: translateX(-8%);
+  width: 260px; height: 100px;
+  background: radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.4) 0%, rgba(178,215,255,0.1) 45%, transparent 70%);
+  pointer-events: none;
+}
+.hero-bar {
+  position: absolute; left: 0; bottom: 0; top: 0; width: 3px;
+  background: linear-gradient(to bottom, transparent 20%, #1B6CA8 60%, rgba(27,108,168,0.15) 100%);
+  z-index: 2; transform: scaleY(0); transform-origin: bottom;
+  animation: scaleUp 1.2s cubic-bezier(0.22,1,0.36,1) 0.6s forwards;
+}
+.hero-content {
+  position: relative; z-index: 2; width: 100%; flex: 1;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 0 clamp(1.5rem, 5vw, 80px) 96px clamp(1.5rem, 5vw, 80px);
+  will-change: transform;
+}
+.hero-eyebrow {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.22em;
+  text-transform: uppercase; color: rgba(178,190,201,0.6);
+  margin-bottom: 18px;
+  opacity: 0; transform: translateY(8px);
+  animation: fadeUp 0.5s ease 0.15s forwards;
+}
+.hero-h1 {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: clamp(54px, 9vw, 112px); font-weight: 700;
+  color: #fff; letter-spacing: -0.03em; line-height: 0.92;
+  margin-bottom: 22px;
+  opacity: 0; transform: translateY(16px);
+  animation: fadeUp 0.65s cubic-bezier(0.22,1,0.36,1) 0.25s forwards;
+}
+.hero-desc {
+  font-size: clamp(14px, 1.3vw, 16px); font-weight: 400;
+  color: rgba(178,190,201,0.68); line-height: 1.65;
+  max-width: 54ch; margin-bottom: 28px;
+  opacity: 0; transform: translateY(8px);
+  animation: fadeUp 0.55s ease 0.38s forwards;
+}
+.hero-divider {
+  height: 1px; width: 100%;
+  background: linear-gradient(90deg, rgba(178,190,201,0.28) 0%, transparent 70%);
+  transform-origin: left; transform: scaleX(0);
+  margin-bottom: 20px;
+  animation: drawLine 0.7s cubic-bezier(0.22,1,0.36,1) 0.45s forwards;
+}
+.hero-lines {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 0;
+  opacity: 0; transform: translateY(6px);
+  animation: fadeUp 0.5s ease 0.52s forwards;
+}
+.hero-line-item {
+  font-size: 12px; font-weight: 600; letter-spacing: 0.1em;
+  text-transform: uppercase; color: rgba(255,255,255,0.75);
+}
+.hero-sep {
+  color: rgba(178,190,201,0.3); padding: 0 14px; font-size: 10px;
+}
+.scroll-cue {
+  position: absolute; bottom: 36px; right: clamp(1.5rem, 5vw, 80px);
+  z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 8px;
+  opacity: 0; animation: fadeUp 0.6s ease 0.7s forwards;
+  transition: opacity 0.5s ease;
+}
+.scroll-cue.hidden { opacity: 0 !important; pointer-events: none; }
+.scroll-cue span {
+  font-size: 9px; font-weight: 600; letter-spacing: 0.2em;
+  text-transform: uppercase; color: rgba(178,190,201,0.35);
+  writing-mode: vertical-rl; transform: rotate(180deg);
+}
+.scroll-line {
+  width: 1px; height: 40px;
+  background: linear-gradient(to bottom, rgba(178,190,201,0.5), transparent);
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+
+/* ══════════════════════════════════════
+   QUIÉNES SOMOS — CAPÍTULO 1
+   Starts #0A1E38 (= hero-fade end), bleeds down to #060C14
+══════════════════════════════════════ */
+.s-quienes {
+  background: linear-gradient(180deg,
+    #0A1E38 0%,
+    #0D2A52 18%,
+    #0E3060 42%,
+    #0C2648 68%,
+    #060C14 100%
+  );
+  padding: 130px 0 200px;
+  position: relative; overflow: hidden;
+}
+.s-quienes::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(178,190,201,0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(178,190,201,0.022) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+}
+.s-quienes-glow {
+  position: absolute; top: 0; right: 0;
+  width: 55%; height: 100%;
+  background: radial-gradient(ellipse at 75% 38%, rgba(27,108,168,0.14) 0%, transparent 65%);
+  pointer-events: none;
+}
+.s-quienes-inner {
+  max-width: 1320px; margin: 0 auto;
+  padding: 0 clamp(1.5rem, 5vw, 80px);
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 80px; align-items: center;
+  position: relative; z-index: 1;
+}
+@media (max-width: 900px) { .s-quienes-inner { grid-template-columns: 1fr; gap: 48px; } }
+
+/* ══════════════════════════════════════
+   QUÉ HACEMOS — CAPÍTULO 2
+   Sits on #060C14 (= body bg = quienes bottom)
+══════════════════════════════════════ */
+.s-hacemos {
+  background: #060C14;
+  padding: 80px 0 140px;
+  position: relative; overflow: hidden;
+}
+.s-hacemos::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: radial-gradient(circle, rgba(178,190,201,0.038) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+/* Soft blue remnant from quienes bleeding down */
+.s-hacemos-top-glow {
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 90%; height: 280px;
+  background: radial-gradient(ellipse at 50% 0%, rgba(13,42,82,0.45) 0%, transparent 70%);
+  pointer-events: none;
+}
+.s-hacemos-inner {
+  max-width: 1320px; margin: 0 auto;
+  padding: 0 clamp(1.5rem, 5vw, 80px);
+  position: relative; z-index: 1;
+}
+.s-intro-row {
+  display: flex; align-items: flex-end;
+  justify-content: space-between; gap: 40px; margin-bottom: 64px;
+}
+@media (max-width: 800px) { .s-intro-row { flex-direction: column; align-items: flex-start; } }
+
+/* ══════════════════════════════════════
+   TECNOLOGÍA — CAPÍTULO 3
+   Dark, warms at bottom to connect with contacto
+══════════════════════════════════════ */
+.s-tech {
+  background: linear-gradient(180deg,
+    #060C14 0%,
+    #070E1B 45%,
+    #0A1E38 100%
+  );
+  padding: 100px 0 180px;
+  position: relative; overflow: hidden;
+}
+.s-tech::before {
+  content: '';
+  position: absolute; top: 0; left: 0; width: 60%; height: 100%;
+  background: radial-gradient(ellipse at 0% 50%, rgba(27,108,168,0.07) 0%, transparent 60%);
+  pointer-events: none;
+}
+.tech-watermark {
+  position: absolute; right: -20px; top: 50%;
+  transform: translateY(-50%);
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 260px; font-weight: 700;
+  color: rgba(27,108,168,0.028); letter-spacing: -0.06em;
+  pointer-events: none; user-select: none;
+  will-change: transform; line-height: 1;
+}
+.s-tech-inner {
+  max-width: 1320px; margin: 0 auto;
+  padding: 0 clamp(1.5rem, 5vw, 80px);
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 80px; align-items: center;
+  position: relative; z-index: 1;
+}
+@media (max-width: 900px) { .s-tech-inner { grid-template-columns: 1fr; gap: 48px; } }
+
+/* ══════════════════════════════════════
+   CONTACTO — CAPÍTULO 4
+   Starts #0A1E38 (= s-tech bottom), peaks to #1B6CA8
+══════════════════════════════════════ */
+.s-contacto {
+  background: linear-gradient(155deg,
+    #0A1E38 0%, #0D2E5C 22%,
+    #1B6CA8 58%, #155888 78%, #0D3A60 100%
+  );
+  padding: 120px 0 120px;
+  position: relative; overflow: hidden;
+}
+.s-contacto::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.038) 1px, transparent 1px);
+  background-size: 36px 36px;
+  pointer-events: none;
+}
+.s-contacto-quote {
+  position: absolute; right: 4%; bottom: -60px;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 400px; font-weight: 700;
+  color: rgba(255,255,255,0.025); line-height: 1;
+  pointer-events: none; user-select: none;
+}
+.s-contacto-inner {
+  max-width: 1320px; margin: 0 auto;
+  padding: 0 clamp(1.5rem, 5vw, 80px);
+  position: relative; z-index: 1;
+  display: grid; grid-template-columns: 1fr auto;
+  gap: 80px; align-items: center;
+}
+@media (max-width: 800px) { .s-contacto-inner { grid-template-columns: 1fr; gap: 48px; } }
+
+/* ══════════════════════════════════════
+   SHARED SECTION COMPONENTS
+══════════════════════════════════════ */
+.s-label {
+  display: inline-flex; align-items: center; gap: 12px;
+  font-size: 10px; font-weight: 600;
+  letter-spacing: 0.28em; text-transform: uppercase; color: #1B6CA8;
+  margin-bottom: 28px;
+}
+.s-label::before {
+  content: ''; display: block; width: 32px; height: 2px; background: currentColor;
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.7s cubic-bezier(0.22,1,0.36,1) 0.15s;
+}
+.s-label.visible::before { transform: scaleX(1); }
+.s-label-light { color: rgba(255,255,255,0.55); }
+.s-h2 {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: clamp(30px, 4vw, 52px); font-weight: 600;
+  color: #fff; letter-spacing: -0.02em; line-height: 1.1;
+  margin-bottom: 24px;
+}
+.s-body {
+  font-size: clamp(14px, 1.2vw, 16px); font-weight: 400;
+  color: rgba(178,190,201,0.62); line-height: 1.75;
+  max-width: 48ch; margin-bottom: 36px;
+}
+.s-link {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: 13px; font-weight: 600; letter-spacing: 0.04em;
+  color: rgba(178,190,201,0.62);
+  border-bottom: 1px solid rgba(178,190,201,0.18);
+  padding-bottom: 4px;
+  transition: color 0.2s, border-color 0.2s;
+}
+.s-link:hover { color: #fff; border-color: #1B6CA8; }
+.s-link svg { transition: transform 0.2s cubic-bezier(0.16,1,0.3,1); }
+.s-link:hover svg { transform: translateX(4px); }
+
+/* Stats */
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+.stat-card {
+  padding: 32px 28px;
+  background: rgba(255,255,255,0.025);
+  border: 1px solid rgba(178,190,201,0.07);
+  position: relative; overflow: hidden;
+  transition: background 0.3s, border-color 0.3s;
+}
+.stat-card:hover { background: rgba(27,108,168,0.09); border-color: rgba(27,108,168,0.22); }
+.stat-card::before {
+  content: ''; position: absolute;
+  top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, #1B6CA8, transparent);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.8s cubic-bezier(0.22,1,0.36,1);
+}
+.stat-card.visible::before { transform: scaleX(1); }
+.stat-num {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 52px; font-weight: 700; color: #fff;
+  line-height: 1; letter-spacing: -0.03em;
+  text-shadow: 0 0 40px rgba(27,108,168,0.35);
+}
+.stat-unit { font-size: 24px; font-weight: 300; color: rgba(178,190,201,0.52); }
+.stat-label {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.12em;
+  text-transform: uppercase; color: rgba(178,190,201,0.38); margin-top: 8px;
+}
+.stat-detail { font-size: 12px; color: rgba(178,190,201,0.28); margin-top: 4px; line-height: 1.4; }
+
+/* Linea cards */
+.lineas-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+@media (max-width: 900px) { .lineas-grid { grid-template-columns: 1fr; } }
+.linea-card {
+  padding: 48px 36px;
+  background: rgba(13,27,46,0.5);
+  border: 1px solid rgba(178,190,201,0.07);
+  position: relative; overflow: hidden;
+  transition: background 0.35s, border-color 0.35s, transform 0.35s;
+  cursor: default; will-change: transform;
+}
+.linea-card:hover { background: rgba(27,108,168,0.09); border-color: rgba(27,108,168,0.18); }
+.linea-card-bar {
+  position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: #1B6CA8;
+  transition: width 0.5s cubic-bezier(0.22,1,0.36,1);
+}
+.linea-card:hover .linea-card-bar { width: 3px; }
+.linea-card::after {
+  content: ''; position: absolute;
+  top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, rgba(27,108,168,0.9), transparent);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.5s cubic-bezier(0.22,1,0.36,1);
+}
+.linea-card:hover::after { transform: scaleX(1); }
+.linea-num {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 72px; font-weight: 700;
+  color: rgba(27,108,168,0.1); line-height: 1;
+  letter-spacing: -0.04em; margin-bottom: 20px;
+  transition: color 0.35s;
+}
+.linea-card:hover .linea-num { color: rgba(27,108,168,0.22); }
+.linea-title {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 28px; font-weight: 600;
+  color: #EDF1F5; letter-spacing: -0.01em;
+  margin-bottom: 16px; line-height: 1.1;
+}
+.linea-text { font-size: 13px; color: rgba(178,190,201,0.5); line-height: 1.7; }
+.linea-tag {
+  display: inline-block; margin-top: 24px;
+  font-size: 9px; font-weight: 600; letter-spacing: 0.2em;
+  text-transform: uppercase; color: #1B6CA8;
+}
+.services-strip {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0; margin-top: 48px;
+  border-top: 1px solid rgba(178,190,201,0.06);
+}
+.service-chip {
+  padding: 18px 24px;
+  border-right: 1px solid rgba(178,190,201,0.06);
+  display: flex; align-items: center; gap: 10px;
+  font-size: 12px; font-weight: 500; color: rgba(178,190,201,0.42);
+  transition: color 0.2s, background 0.2s;
+}
+.service-chip:last-child { border-right: none; }
+.service-chip:hover { color: rgba(178,190,201,0.82); background: rgba(27,108,168,0.05); }
+.service-chip::before { content: '—'; color: #1B6CA8; font-weight: 700; flex-shrink: 0; }
+
+/* Tech */
+.tech-metric { display: flex; flex-direction: column; gap: 4px; margin-bottom: 40px; }
+.tech-metric-value {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: clamp(64px, 9vw, 120px); font-weight: 700;
+  color: #fff; letter-spacing: -0.04em; line-height: 1;
+}
+.tech-metric-label {
+  font-size: 13px; color: rgba(178,190,201,0.4);
+  letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600;
+}
+.tech-caption {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: clamp(18px, 2vw, 24px); font-weight: 300;
+  color: rgba(237,241,245,0.68); line-height: 1.45;
+  max-width: 40ch; font-style: italic;
+}
+.tech-highlights { display: flex; flex-direction: column; gap: 0; }
+.tech-hl {
+  padding: 24px 0;
+  border-bottom: 1px solid rgba(178,190,201,0.06);
+  display: grid; grid-template-columns: 24px 1fr;
+  gap: 20px; align-items: flex-start;
+  opacity: 0; transform: translateX(28px);
+  transition: opacity 0.75s cubic-bezier(0.22,1,0.36,1),
+              transform 0.75s cubic-bezier(0.22,1,0.36,1);
+}
+.tech-hl.visible { opacity: 1; transform: translateX(0); }
+.tech-hl:last-child { border-bottom: none; }
+.tech-hl-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #1B6CA8; margin-top: 7px; flex-shrink: 0;
+  box-shadow: 0 0 8px rgba(27,108,168,0.55);
+}
+.tech-hl-title { font-size: 14px; font-weight: 600; color: #EDF1F5; margin-bottom: 4px; }
+.tech-hl-text { font-size: 13px; color: rgba(178,190,201,0.48); line-height: 1.6; }
+
+/* Contacto */
+.contacto-headline {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: clamp(36px, 5vw, 72px); font-weight: 700;
+  color: #fff; letter-spacing: -0.02em; line-height: 1.05;
+  margin-bottom: 20px;
+}
+.contacto-sub {
+  font-size: clamp(14px, 1.2vw, 17px); color: rgba(255,255,255,0.6);
+  max-width: 52ch; line-height: 1.65; margin-bottom: 40px;
+}
+.contacto-channels { display: flex; flex-direction: column; gap: 12px; }
+.contacto-ch {
+  display: flex; align-items: center; gap: 14px;
+  font-size: 14px; color: rgba(255,255,255,0.72); transition: color 0.2s;
+}
+.contacto-ch:hover { color: #fff; }
+.contacto-ch-icon {
+  width: 36px; height: 36px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.contacto-ch-icon svg { width: 16px; height: 16px; stroke: rgba(255,255,255,0.75); fill: none; stroke-width: 1.5; }
+.contacto-right { display: flex; flex-direction: column; gap: 16px; align-items: flex-start; }
+.btn-agenda {
+  display: inline-flex; align-items: center; gap: 12px;
+  padding: 18px 32px; background: #fff; color: #0D1B2E;
+  font-family: "Inter", sans-serif; font-size: 14px; font-weight: 600;
+  letter-spacing: 0.02em;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+  transition: transform 0.25s cubic-bezier(0.16,1,0.3,1), box-shadow 0.25s, background 0.2s;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.3), 0 2px 8px rgba(0,0,0,0.2);
+  will-change: transform;
+}
+.btn-agenda:hover { background: #EDF1F5; transform: translateY(-3px); box-shadow: 0 16px 56px rgba(0,0,0,0.4); }
+.btn-agenda:active { transform: translateY(0); }
+.btn-agenda svg { transition: transform 0.2s cubic-bezier(0.16,1,0.3,1); }
+.btn-agenda:hover svg { transform: translateX(4px); }
+.btn-agenda-alt {
+  font-size: 12px; color: rgba(255,255,255,0.5);
+  letter-spacing: 0.04em; border-bottom: 1px solid rgba(255,255,255,0.18);
+  padding-bottom: 2px; transition: color 0.2s, border-color 0.2s;
+}
+.btn-agenda-alt:hover { color: rgba(255,255,255,0.88); border-color: rgba(255,255,255,0.45); }
+
+/* ══════════════════════════════════════
+   WORLD-CLASS ANIMATION SYSTEM
+══════════════════════════════════════ */
+
+/* Standard fade-up */
+.reveal {
+  opacity: 0; transform: translateY(28px);
+  transition: opacity 0.9s cubic-bezier(0.22,1,0.36,1),
+              transform 0.9s cubic-bezier(0.22,1,0.36,1);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* From left */
+.reveal-x {
+  opacity: 0; transform: translateX(-32px);
+  transition: opacity 0.9s cubic-bezier(0.22,1,0.36,1),
+              transform 0.9s cubic-bezier(0.22,1,0.36,1);
+}
+.reveal-x.visible { opacity: 1; transform: translateX(0); }
+
+/* From right */
+.reveal-x-r {
+  opacity: 0; transform: translateX(32px);
+  transition: opacity 0.9s cubic-bezier(0.22,1,0.36,1),
+              transform 0.9s cubic-bezier(0.22,1,0.36,1);
+}
+.reveal-x-r.visible { opacity: 1; transform: translateX(0); }
+
+/* Scale */
+.reveal-scale {
+  opacity: 0; transform: scale(0.92);
+  transition: opacity 0.9s cubic-bezier(0.22,1,0.36,1),
+              transform 0.9s cubic-bezier(0.22,1,0.36,1);
+}
+.reveal-scale.visible { opacity: 1; transform: scale(1); }
+
+/* ── LINE REVEAL — text slides up from overflow:hidden parent ── */
+.line-wrap { display: block; overflow: hidden; }
+.line-reveal {
+  display: block;
+  transform: translateY(108%) skewY(1.5deg);
+  transition: transform 1.15s cubic-bezier(0.16,1,0.3,1);
+}
+.line-reveal.visible { transform: translateY(0) skewY(0deg); }
+
+/* ── BLUR REVEAL ── */
+.blur-reveal {
+  opacity: 0; filter: blur(5px); transform: translateY(14px);
+  transition: opacity 0.95s ease,
+              filter 1.1s ease,
+              transform 0.95s cubic-bezier(0.22,1,0.36,1);
+}
+.blur-reveal.visible { opacity: 1; filter: blur(0); transform: translateY(0); }
+
+/* ── CLIP WIPE (horizontal, left→right) ── */
+.clip-reveal {
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 1.1s cubic-bezier(0.22,1,0.36,1);
+}
+.clip-reveal.visible { clip-path: inset(0 0% 0 0); }
+
+/* Stagger delays */
+[data-delay="50"]  { transition-delay: 0.05s; }
+[data-delay="100"] { transition-delay: 0.1s; }
+[data-delay="150"] { transition-delay: 0.15s; }
+[data-delay="200"] { transition-delay: 0.2s; }
+[data-delay="250"] { transition-delay: 0.25s; }
+[data-delay="300"] { transition-delay: 0.3s; }
+[data-delay="400"] { transition-delay: 0.4s; }
+[data-delay="500"] { transition-delay: 0.5s; }
+[data-delay="600"] { transition-delay: 0.6s; }
+[data-delay="700"] { transition-delay: 0.7s; }
+
+/* ── KEYFRAMES ── */
+@keyframes fadeUp   { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeDown { from{opacity:0;transform:translateY(-10px)} to{opacity:1;transform:translateY(0)} }
+@keyframes slideUp  { to{opacity:1;transform:translateY(0)} }
+@keyframes drawLine { to{transform:scaleX(1)} }
+@keyframes scaleUp  { to{transform:scaleY(1)} }
+@keyframes blink    { 50%{opacity:0} }
+@keyframes scrollPulse {
+  0%,100%{opacity:0.5;transform:scaleY(1)}
+  50%    {opacity:1;transform:scaleY(1.3)}
+}
+</style>
+</head>
+<body>
+
+<!-- Progress bar -->
+<div class="page-progress" id="pageProgress"></div>
+
+<!-- Chapter dots -->
+<nav class="chapter-nav" id="chapterNav" aria-hidden="true">
+  <div class="ch-dot" data-ch="0" data-label="Inicio"></div>
+  <div class="ch-dot" data-ch="1" data-label="Quiénes Somos"></div>
+  <div class="ch-dot" data-ch="2" data-label="Qué Hacemos"></div>
+  <div class="ch-dot" data-ch="3" data-label="Tecnología"></div>
+  <div class="ch-dot" data-ch="4" data-label="Contacto"></div>
+</nav>
+
+<!-- ══ HERO ══════════════════════════════════ -->
+<section class="hero" id="ch0">
+  <div class="hero-bg"></div>
+  <video class="hero-video" id="heroVideo" autoplay muted loop playsinline>
+    <source src="brand_assets/video_3df4ad65-fd77-4de5-b448-83538ec2e73a.mp4" type="video/mp4">
+  </video>
+  <div class="hero-fade"></div>
+  <div class="hero-beam"></div>
+  <div class="hero-beam-2"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-bar"></div>
+
+  <nav class="nav" id="mainNav" role="navigation" aria-label="Navegación principal">
+    <div class="nav-inner">
+      <a href="index.html" class="logo-block">
+        <img src="deliverables/logos/PNG/Logo MTEC_final_Blanco.png" alt="MTEC" class="logo-img">
+      </a>
+      <ul class="nav-links">
+        <li><a href="quienes-somos.html">Quiénes Somos</a></li>
+        <li><a href="que-hacemos.html">Qué Hacemos</a></li>
+        <li><a href="tecnologia.html">Tecnología & I+D</a></li>
+        <li><a href="contacto.html">Contacto</a></li>
+      </ul>
+      <a href="contacto.html" class="nav-cta">
+        Agenda una reunión
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    </div>
+    <div class="nav-divider"></div>
+  </nav>
+
+  <div class="hero-content" id="heroContent">
+    <div class="hero-eyebrow">Refinería &nbsp;·&nbsp; Minería &nbsp;·&nbsp; Energía &nbsp;·&nbsp; Oil & Gas</div>
+    <h1 class="hero-h1">Servicios Técnicos<br>Especializados</h1>
+    <p class="hero-desc">Para la gran industria chilena. Ejecución en terreno<br>cuando la continuidad operacional no admite improvisación.</p>
+    <div class="hero-divider"></div>
+    <div class="hero-lines">
+      <span class="hero-line-item">Comercialización</span>
+      <span class="hero-sep">·</span>
+      <span class="hero-line-item">Representación técnica</span>
+      <span class="hero-sep">·</span>
+      <span class="hero-line-item">Servicios en terreno</span>
+    </div>
+  </div>
+
+  <div class="scroll-cue" id="scrollCue">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- ══ QUIÉNES SOMOS ═══════════════════════ -->
+<section class="s-quienes" id="ch1">
+  <div class="s-quienes-glow"></div>
+  <div class="s-quienes-inner">
+
+    <div>
+      <div class="s-label reveal">Quiénes Somos</div>
+      <div class="line-wrap">
+        <h2 class="line-reveal s-h2" data-delay="100">
+          Más de una década construyendo confianza en los sectores más exigentes de Chile.
+        </h2>
+      </div>
+      <p class="s-body blur-reveal" data-delay="200">
+        Nacidos en 2014 como spin-off del ecosistema ERRES SpA, MTEC fue creado para operar donde la continuidad operacional no admite improvisación. Combinamos experiencia real de terreno con tecnología de proceso para responder rápido, ejecutar bien, y construir relaciones que duran más que un contrato.
+      </p>
+      <a href="quienes-somos.html" class="s-link reveal" data-delay="300">
+        Conoce nuestra historia
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    </div>
+
+    <div class="stats-grid reveal-x-r" data-delay="150">
+      <div class="stat-card">
+        <div class="stat-num" data-count="2014">2014</div>
+        <div class="stat-label">Fundación</div>
+        <div class="stat-detail">Más de una década en terreno industrial</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num"><span data-count="12">0</span><span class="stat-unit">+</span></div>
+        <div class="stat-label">Años de experiencia</div>
+        <div class="stat-detail">En refinería, minería, energía y oil & gas</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num"><span data-count="4">0</span></div>
+        <div class="stat-label">Sectores críticos</div>
+        <div class="stat-detail">Donde la continuidad operacional es vital</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" style="font-size:38px;padding-top:6px;">ERRES</div>
+        <div class="stat-label">Ecosistema de respaldo</div>
+        <div class="stat-detail">Trayectoria comprobada, agilidad especializada</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ QUÉ HACEMOS ═════════════════════════ -->
+<section class="s-hacemos" id="ch2">
+  <div class="s-hacemos-top-glow"></div>
+  <div class="s-hacemos-inner">
+
+    <div class="s-intro-row">
+      <div>
+        <div class="s-label reveal">Qué Hacemos</div>
+        <div class="line-wrap">
+          <h2 class="line-reveal s-h2" data-delay="100" style="max-width:22ch;">
+            Ejecutamos donde otros aún están consultando.
+          </h2>
+        </div>
+      </div>
+      <div class="reveal" data-delay="200" style="flex-shrink:0;">
+        <a href="que-hacemos.html" class="s-link">
+          Ver todos los servicios
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="lineas-grid">
+      <div class="linea-card reveal" data-delay="0">
+        <div class="linea-card-bar"></div>
+        <div class="linea-num">01</div>
+        <div class="linea-title">Comercialización</div>
+        <div class="linea-text">Provisión de productos, equipos y consumibles especializados. Catálogo técnico con trazabilidad y certificación para operaciones críticas.</div>
+        <div class="linea-tag">Equipos & Productos</div>
+      </div>
+      <div class="linea-card reveal" data-delay="150">
+        <div class="linea-card-bar"></div>
+        <div class="linea-num">02</div>
+        <div class="linea-title">Representación</div>
+        <div class="linea-text">Representación técnica de marcas líderes en soluciones de proceso, mantenimiento y seguridad industrial. Soporte técnico local con respaldo del fabricante.</div>
+        <div class="linea-tag">Marcas Líderes</div>
+      </div>
+      <div class="linea-card reveal" data-delay="300">
+        <div class="linea-card-bar"></div>
+        <div class="linea-num">03</div>
+        <div class="linea-title">Servicios Especializados</div>
+        <div class="linea-text">Ejecución técnica directa en planta. Encapsulados, reparaciones bajo presión, intervenciones sin detención de proceso. Tiempo de respuesta medido en horas.</div>
+        <div class="linea-tag">Ejecución en Terreno</div>
+      </div>
+    </div>
+
+    <div class="services-strip reveal" data-delay="400">
+      <div class="service-chip">Encapsulado de fugas bajo presión</div>
+      <div class="service-chip">Tapones Pop-a-Plug certificados</div>
+      <div class="service-chip">Inspección y diagnóstico técnico</div>
+      <div class="service-chip">Mantenimiento predictivo</div>
+      <div class="service-chip">Suministro de repuestos críticos</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ TECNOLOGÍA ══════════════════════════ -->
+<section class="s-tech" id="ch3">
+  <div class="tech-watermark" id="techWatermark">I+D</div>
+  <div class="s-tech-inner">
+
+    <div>
+      <div class="s-label reveal">Tecnología & I+D</div>
+      <div class="tech-metric reveal" data-delay="100">
+        <div class="tech-metric-value">20<span style="font-size:0.55em;color:rgba(178,190,201,0.42);font-weight:300;">min</span></div>
+        <div class="tech-metric-label">De 2 horas · a 20 minutos. Sin soldadura. Con certificación.</div>
+      </div>
+      <p class="tech-caption blur-reveal" data-delay="200">
+        "La precisión no se improvisa.<br>Se demuestra con datos."
+      </p>
+      <div style="margin-top:32px;" class="reveal" data-delay="300">
+        <a href="tecnologia.html" class="s-link">
+          Nuestra capacidad técnica
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="tech-highlights">
+      <div class="tech-hl" data-delay="0">
+        <div class="tech-hl-dot"></div>
+        <div>
+          <div class="tech-hl-title">Reducción de tiempos de intervención</div>
+          <div class="tech-hl-text">Métodos y equipos que reducen dramáticamente el tiempo de parada. De horas a minutos en intervenciones críticas de planta.</div>
+        </div>
+      </div>
+      <div class="tech-hl" data-delay="100">
+        <div class="tech-hl-dot"></div>
+        <div>
+          <div class="tech-hl-title">Seguridad en proceso activo</div>
+          <div class="tech-hl-text">Técnicas de intervención que eliminan la necesidad de detener el proceso. Menor riesgo. Mayor continuidad operacional.</div>
+        </div>
+      </div>
+      <div class="tech-hl" data-delay="200">
+        <div class="tech-hl-dot"></div>
+        <div>
+          <div class="tech-hl-title">I+D aplicada en terreno</div>
+          <div class="tech-hl-text">No investigamos en laboratorio. Desarrollamos soluciones desde el problema real, validadas en planta y con impacto medible.</div>
+        </div>
+      </div>
+      <div class="tech-hl" data-delay="300">
+        <div class="tech-hl-dot"></div>
+        <div>
+          <div class="tech-hl-title">Estándares internacionales</div>
+          <div class="tech-hl-text">Procedimientos certificados bajo normas ASME, API y NORSOK. Trazabilidad completa en cada intervención.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ CONTACTO ════════════════════════════ -->
+<section class="s-contacto" id="ch4">
+  <div class="s-contacto-quote">"</div>
+  <div class="s-contacto-inner">
+
+    <div>
+      <div class="s-label s-label-light reveal">Iniciemos una conversación</div>
+      <div class="line-wrap">
+        <h2 class="line-reveal contacto-headline" data-delay="100">
+          Su operación no puede esperar.<br>Nosotros tampoco.
+        </h2>
+      </div>
+      <p class="contacto-sub blur-reveal" data-delay="200">
+        No un pitch. Una conversación técnica real sobre su desafío operacional. Cuéntenos qué necesita resolver — llegamos preparados.
+      </p>
+      <div class="contacto-channels reveal" data-delay="300">
+        <a href="tel:+56900000000" class="contacto-ch">
+          <div class="contacto-ch-icon">
+            <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 8.63 19.79 19.79 0 01.12 2.18 2 2 0 012.11 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          </div>
+          +56 9 0000 0000
+        </a>
+        <a href="mailto:contacto@mtec.cl" class="contacto-ch">
+          <div class="contacto-ch-icon">
+            <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          contacto@mtec.cl
+        </a>
+      </div>
+    </div>
+
+    <div class="contacto-right reveal-scale" data-delay="300">
+      <a href="contacto.html" class="btn-agenda" id="btnAgenda">
+        Agenda una reunión
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      <a href="contacto.html" class="btn-agenda-alt">O escríbenos directamente</a>
+    </div>
+
+  </div>
+</section>
+
+<script>
+/* ════════════════════════
+   SCROLL ENGINE (rAF loop)
+════════════════════════ */
+const heroVideo   = document.getElementById('heroVideo');
+const heroContent = document.getElementById('heroContent');
+const mainNav     = document.getElementById('mainNav');
+const scrollCue   = document.getElementById('scrollCue');
+const progressBar = document.getElementById('pageProgress');
+const chapterNav  = document.getElementById('chapterNav');
+const techWM      = document.getElementById('techWatermark');
+const chDots      = Array.from(document.querySelectorAll('.ch-dot'));
+const sections    = ['ch0','ch1','ch2','ch3','ch4'].map(id => document.getElementById(id));
+
+let heroH    = sections[0].offsetHeight;
+let isMobile = window.innerWidth < 860;
+let ticking  = false;
+let scrolledOnce = false;
+
+window.addEventListener('resize', () => {
+  heroH = sections[0].offsetHeight;
+  isMobile = window.innerWidth < 860;
+}, { passive: true });
+
+function updateChapter(sy) {
+  let active = 0;
+  sections.forEach((sec, i) => {
+    if (sec && sec.getBoundingClientRect().top <= window.innerHeight * 0.42) active = i;
+  });
+  chDots.forEach((dot, i) => dot.classList.toggle('active', i === active));
+  chapterNav.classList.toggle('visible', sy > heroH * 0.45);
+}
+
+function runFrame() {
+  const sy = window.scrollY;
+  const maxSY = document.documentElement.scrollHeight - window.innerHeight;
+
+  /* Progress bar */
+  progressBar.style.transform = `scaleX(${maxSY > 0 ? sy / maxSY : 0})`;
+
+  /* Hide scroll cue */
+  if (!scrolledOnce && sy > 60) {
+    scrolledOnce = true;
+    scrollCue.classList.add('hidden');
+  }
+
+  /* Hero parallax — desktop only */
+  if (!isMobile && sy < heroH * 1.3) {
+    heroVideo.style.transform   = `translateY(${sy * 0.22}px)`;
+    heroContent.style.transform = `translateY(${sy * 0.09}px)`;
+  }
+
+  /* Tech watermark slow-float */
+  if (techWM && !isMobile) {
+    const r = techWM.getBoundingClientRect();
+    if (r.bottom > 0 && r.top < window.innerHeight) {
+      const mid = r.top + r.height / 2 - window.innerHeight / 2;
+      techWM.style.transform = `translateY(calc(-50% + ${mid * -0.06}px))`;
+    }
+  }
+
+  /* Sticky nav */
+  if (sy > heroH * 0.8) {
+    mainNav.style.cssText = `
+      position:fixed;top:0;left:0;right:0;
+      background:rgba(6,12,20,0.94);
+      backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+      border-bottom:1px solid rgba(178,190,201,0.08);
+      animation:none;opacity:1;z-index:50;
+    `;
+  } else {
+    mainNav.style.cssText = `position:absolute;background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;border-bottom:none;opacity:1;z-index:50;`;
+  }
+
+  updateChapter(sy);
+  ticking = false;
+}
+
+window.addEventListener('scroll', () => {
+  if (!ticking) { requestAnimationFrame(runFrame); ticking = true; }
+}, { passive: true });
+
+runFrame();
+
+/* ════════════════════════
+   INTERSECTION OBSERVER
+════════════════════════ */
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(({ isIntersecting, target }) => {
+    if (!isIntersecting) return;
+    target.classList.add('visible');
+    io.unobserve(target);
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -44px 0px' });
+
+document.querySelectorAll(
+  '.reveal,.reveal-x,.reveal-x-r,.reveal-scale,.line-reveal,.blur-reveal,.clip-reveal,.tech-hl,.s-label,.stat-card'
+).forEach(el => io.observe(el));
+
+/* ════════════════════════
+   COUNT-UP
+════════════════════════ */
+function countUp(el, target, ms) {
+  const t0 = performance.now();
+  (function step(now) {
+    const p = Math.min((now - t0) / ms, 1);
+    el.textContent = Math.round(target * (1 - Math.pow(1 - p, 4)));
+    if (p < 1) requestAnimationFrame(step);
+    else el.textContent = target;
+  })(t0);
+}
+
+const cio = new IntersectionObserver((entries) => {
+  entries.forEach(({ isIntersecting, target }) => {
+    if (!isIntersecting) return;
+    const el = target.querySelector('[data-count]');
+    if (el) countUp(el, +el.dataset.count, 1500);
+    cio.unobserve(target);
+  });
+}, { threshold: 0.3 });
+document.querySelectorAll('.stat-card').forEach(el => cio.observe(el));
+
+/* ════════════════════════
+   CHAPTER DOT CLICK
+════════════════════════ */
+chDots.forEach(dot => {
+  dot.addEventListener('click', () => {
+    sections[+dot.dataset.ch]?.scrollIntoView({ behavior: 'smooth' });
+  });
+});
+
+/* ════════════════════════
+   3D TILT ON LINEA CARDS
+════════════════════════ */
+if (!isMobile) {
+  document.querySelectorAll('.linea-card').forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const r = card.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width  - 0.5;
+      const y = (e.clientY - r.top)  / r.height - 0.5;
+      card.style.transform = `perspective(900px) rotateX(${-y * 4}deg) rotateY(${x * 4}deg)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = 'perspective(900px) rotateX(0) rotateY(0)';
+    });
+  });
+}
+
+/* ════════════════════════
+   MAGNETIC CTA BUTTON
+════════════════════════ */
+const btnAgenda = document.getElementById('btnAgenda');
+if (btnAgenda && !isMobile) {
+  btnAgenda.addEventListener('mousemove', e => {
+    const r  = btnAgenda.getBoundingClientRect();
+    const dx = (e.clientX - (r.left + r.width  / 2)) * 0.2;
+    const dy = (e.clientY - (r.top  + r.height / 2)) * 0.2;
+    btnAgenda.style.transform = `translate(${dx}px,${dy}px)`;
+  });
+  btnAgenda.addEventListener('mouseleave', () => {
+    btnAgenda.style.transform = 'translate(0,0)';
+  });
+}
+</script>
+</body>
+</html>

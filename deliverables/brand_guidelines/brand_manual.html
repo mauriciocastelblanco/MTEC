@@ -1,0 +1,1575 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MTEC — Brand Guidelines</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ── Brand Tokens ─────────────────────────────────── */
+    :root {
+      --color-primary:     #1B6CA8;
+      --color-secondary:   #B2BEC9;
+      --color-accent:      #1B6CA8;
+      --color-slate:       #536073;
+      --color-surface:     #EDF1F5;
+
+      --color-neutral-50:  #FFFFFF;
+      --color-neutral-100: #F4F6F9;
+      --color-neutral-300: #D6DDE5;
+      --color-neutral-500: #8896A5;
+      --color-neutral-700: #3D4856;
+      --color-neutral-900: #0F161E;
+
+      --color-success:     #1A7C4F;
+      --color-warning:     #B07A16;
+      --color-error:       #B52A2A;
+      --color-info:        #0E7490;
+
+      --font-heading: 'Barlow Condensed', 'Arial Narrow', Arial, sans-serif;
+      --font-body:    'Inter', 'Helvetica Neue', system-ui, sans-serif;
+
+      --text-display: 3.8rem;
+      --text-h1:      3.05rem;
+      --text-h2:      2.44rem;
+      --text-h3:      1.94rem;
+      --text-h4:      1.56rem;
+      --text-h5:      1.25rem;
+      --text-body-l:  1.125rem;
+      --text-body:    1rem;
+      --text-small:   0.8rem;
+
+      --radius:    8px;
+      --max-width: 920px;
+    }
+
+    /* ── Reset ────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      font-size: var(--text-body);
+      color: var(--color-neutral-900);
+      background: var(--color-neutral-100);
+      line-height: 1.6;
+    }
+
+    /* ── Nav ──────────────────────────────────────────── */
+    .toc-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: white;
+      border-bottom: 1px solid var(--color-neutral-300);
+      padding: 0.75rem 2rem;
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+      overflow-x: auto;
+    }
+    .toc-nav a {
+      font-family: var(--font-body);
+      font-size: var(--text-small);
+      color: var(--color-neutral-700);
+      text-decoration: none;
+      white-space: nowrap;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .toc-nav a:hover { color: var(--color-accent); }
+    .toc-nav .brand-name {
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--color-primary);
+      margin-right: auto;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    /* ── Cover ────────────────────────────────────────── */
+    .cover {
+      min-height: 100vh;
+      background: var(--color-primary);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 6rem 5rem;
+      position: relative;
+      overflow: hidden;
+      page-break-after: always;
+    }
+    .cover::before {
+      content: '';
+      position: absolute;
+      bottom: -120px; right: -120px;
+      width: 500px; height: 500px;
+      border-radius: 50%;
+      background: rgba(178,190,201,0.05);
+    }
+    .cover::after {
+      content: '';
+      position: absolute;
+      top: -60px; left: 60%;
+      width: 280px; height: 280px;
+      border-radius: 50%;
+      background: rgba(27,108,168,0.08);
+    }
+    /* Isometric grid decoration */
+    .cover-grid {
+      position: absolute;
+      top: 0; right: 0;
+      width: 50%;
+      height: 100%;
+      background-image:
+        linear-gradient(rgba(178,190,201,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(178,190,201,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+    .cover-accent-line {
+      position: absolute;
+      top: 0; left: 5rem;
+      width: 2px;
+      height: 40%;
+      background: var(--color-secondary);
+      opacity: 0.4;
+    }
+    .cover-eyebrow {
+      font-family: var(--font-body);
+      font-size: var(--text-small);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--color-secondary);
+      margin-bottom: 1.5rem;
+      opacity: 0.8;
+      position: relative;
+    }
+    .cover-title {
+      font-family: var(--font-heading);
+      font-size: clamp(4rem, 10vw, 7rem);
+      font-weight: 700;
+      color: white;
+      line-height: 1.0;
+      letter-spacing: -0.01em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      position: relative;
+    }
+    .cover-subtitle {
+      font-family: var(--font-heading);
+      font-size: var(--text-h3);
+      font-weight: 300;
+      color: var(--color-secondary);
+      letter-spacing: 0.05em;
+      margin-bottom: 4rem;
+      position: relative;
+    }
+    .cover-tagline {
+      font-family: var(--font-heading);
+      font-size: var(--text-h4);
+      font-weight: 500;
+      color: rgba(255,255,255,0.55);
+      font-style: italic;
+      margin-bottom: 3rem;
+      position: relative;
+    }
+    .cover-meta {
+      font-family: var(--font-body);
+      font-size: var(--text-small);
+      color: rgba(255,255,255,0.35);
+      display: flex;
+      gap: 2.5rem;
+      position: relative;
+      border-top: 1px solid rgba(178,190,201,0.15);
+      padding-top: 1.5rem;
+    }
+
+    /* ── Page wrapper ─────────────────────────────────── */
+    .page { max-width: var(--max-width); margin: 0 auto; padding: 5rem 2rem; }
+
+    /* ── Section header ───────────────────────────────── */
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 2px solid var(--color-neutral-300);
+    }
+    .section-num {
+      font-family: var(--font-heading);
+      font-size: var(--text-h4);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--color-secondary);
+      flex-shrink: 0;
+    }
+    .section-title {
+      font-family: var(--font-heading);
+      font-size: var(--text-h2);
+      font-weight: 600;
+      color: var(--color-neutral-900);
+      letter-spacing: -0.01em;
+      text-transform: uppercase;
+    }
+
+    /* ── Subsection title ─────────────────────────────── */
+    .subsection-title {
+      font-family: var(--font-heading);
+      font-size: var(--text-h4);
+      font-weight: 600;
+      color: var(--color-neutral-900);
+      margin: 2.5rem 0 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+
+    /* ── Brand overview ──────────────────────────────── */
+    .overview-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    .overview-card {
+      background: white;
+      border: 1px solid var(--color-neutral-300);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+    }
+    .overview-card-label {
+      font-family: var(--font-body);
+      font-size: var(--text-small);
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-accent);
+      margin-bottom: 0.5rem;
+    }
+    .overview-card-value {
+      font-size: var(--text-body-l);
+      color: var(--color-neutral-900);
+      line-height: 1.5;
+    }
+    .mission-block {
+      background: var(--color-primary);
+      color: white;
+      border-radius: var(--radius);
+      padding: 2.5rem 3rem;
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .mission-block::after {
+      content: '';
+      position: absolute;
+      right: -20px; bottom: -20px;
+      width: 150px; height: 150px;
+      border-radius: 50%;
+      background: rgba(178,190,201,0.06);
+    }
+    .mission-block .label {
+      font-family: var(--font-body);
+      font-size: var(--text-small);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--color-secondary);
+      opacity: 0.8;
+      margin-bottom: 0.75rem;
+    }
+    .mission-block .text {
+      font-family: var(--font-heading);
+      font-size: var(--text-h3);
+      font-weight: 400;
+      color: white;
+      line-height: 1.4;
+      position: relative;
+    }
+    .vision-block {
+      background: white;
+      border: 1px solid var(--color-neutral-300);
+      border-left: 4px solid var(--color-secondary);
+      border-radius: var(--radius);
+      padding: 1.5rem 2rem;
+      margin-bottom: 2rem;
+    }
+    .vision-block .label {
+      font-size: var(--text-small);
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-slate);
+      margin-bottom: 0.5rem;
+    }
+    .vision-block .text {
+      font-family: var(--font-heading);
+      font-size: var(--text-h4);
+      font-weight: 500;
+      color: var(--color-neutral-900);
+      line-height: 1.4;
+    }
+    .values-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin: 1.5rem 0;
+    }
+    .value-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5em 1.1em;
+      background: var(--color-primary);
+      color: var(--color-secondary);
+      border-radius: 100px;
+      font-family: var(--font-heading);
+      font-size: var(--text-body);
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .adjectives-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    .adjective-tag {
+      display: inline-block;
+      padding: 0.35em 0.9em;
+      background: var(--color-neutral-100);
+      border: 1px solid var(--color-neutral-300);
+      border-radius: 100px;
+      font-size: var(--text-small);
+      font-weight: 500;
+      color: var(--color-neutral-700);
+    }
+
+    /* ── Color swatches ───────────────────────────────── */
+    .color-tier { margin-bottom: 3rem; }
+    .color-tier-label {
+      font-family: var(--font-body);
+      font-size: var(--text-small);
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--color-neutral-500);
+      margin-bottom: 1.25rem;
+    }
+    .color-row { display: flex; flex-wrap: wrap; gap: 1rem; }
+    .color-card {
+      width: 170px;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--color-neutral-300);
+      background: white;
+    }
+    .color-swatch { height: 90px; width: 100%; }
+    .color-info { padding: 0.75rem; }
+    .color-name {
+      font-family: var(--font-heading);
+      font-size: var(--text-body);
+      font-weight: 600;
+      color: var(--color-neutral-900);
+      margin-bottom: 0.3rem;
+      letter-spacing: 0.02em;
+    }
+    .color-values {
+      font-size: 0.7rem;
+      color: var(--color-neutral-500);
+      line-height: 1.7;
+      font-family: 'Courier New', monospace;
+    }
+    .color-use {
+      font-size: 0.7rem;
+      color: var(--color-neutral-700);
+      margin-top: 0.4rem;
+      line-height: 1.4;
+    }
+    .palette-strip {
+      height: 52px;
+      border-radius: var(--radius);
+      overflow: hidden;
+      display: flex;
+      margin: 2rem 0;
+    }
+    .palette-strip-color { flex: 1; }
+
+    /* ── Semantic row ─────────────────────────────────── */
+    .semantic-row { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .semantic-card {
+      flex: 1;
+      min-width: 140px;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--color-neutral-300);
+      background: white;
+    }
+    .semantic-swatch { height: 52px; }
+    .semantic-label {
+      padding: 0.5rem 0.75rem;
+      font-family: var(--font-heading);
+      font-size: var(--text-body);
+      font-weight: 600;
+      color: var(--color-neutral-900);
+      letter-spacing: 0.02em;
+    }
+    .semantic-hex {
+      padding: 0 0.75rem 0.5rem;
+      font-size: 0.7rem;
+      font-family: monospace;
+      color: var(--color-neutral-500);
+    }
+
+    /* ── Typography samples ───────────────────────────── */
+    .type-sample-block {
+      background: white;
+      border: 1px solid var(--color-neutral-300);
+      border-radius: var(--radius);
+      padding: 2rem 2.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .type-label {
+      font-family: var(--font-body);
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--color-accent);
+      margin-bottom: 0.5rem;
+    }
+    .type-display {
+      font-family: var(--font-heading);
+      font-size: var(--text-display);
+      font-weight: 700;
+      color: var(--color-neutral-900);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+    }
+    .type-h1 {
+      font-family: var(--font-heading);
+      font-size: var(--text-h1);
+      font-weight: 700;
+      color: var(--color-neutral-900);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+    .type-h2 {
+      font-family: var(--font-heading);
+      font-size: var(--text-h2);
+      font-weight: 600;
+      color: var(--color-neutral-900);
+      line-height: 1.2;
+    }
+    .type-h3 {
+      font-family: var(--font-heading);
+      font-size: var(--text-h3);
+      font-weight: 500;
+      color: var(--color-neutral-900);
+      line-height: 1.25;
+    }
+    .type-body {
+      font-family: var(--font-body);
+      font-size: var(--text-body-l);
+      font-weight: 400;
+      color: var(--color-neutral-700);
+      line-height: 1.6;
+    }
+    .type-scale-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--color-neutral-300);
+    }
+    .type-scale-table th {
+      background: var(--color-primary);
+      color: var(--color-secondary);
+      font-family: var(--font-body);
+      font-size: var(--text-small);
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.75rem 1rem;
+      text-align: left;
+    }
+    .type-scale-table td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--color-neutral-300);
+      font-size: var(--text-small);
+      color: var(--color-neutral-700);
+      vertical-align: middle;
+    }
+    .type-scale-table tr:last-child td { border-bottom: none; }
+    .type-scale-table tr:nth-child(even) td { background: var(--color-neutral-100); }
+    .font-tag {
+      display: inline-block;
+      padding: 0.2em 0.6em;
+      background: var(--color-surface);
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 0.7rem;
+      color: var(--color-slate);
+    }
+
+    /* ── Voice section ────────────────────────────────── */
+    .pillar-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    .pillar-card {
+      background: white;
+      border: 1px solid var(--color-neutral-300);
+      border-top: 3px solid var(--color-secondary);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+    }
+    .pillar-name {
+      font-family: var(--font-heading);
+      font-size: var(--text-h5);
+      font-weight: 700;
+      color: var(--color-primary);
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+    }
+    .pillar-desc {
+      font-size: var(--text-body);
+      color: var(--color-neutral-700);
+      line-height: 1.5;
+    }
+    .tagline-primary {
+      font-family: var(--font-heading);
+      font-size: var(--text-h2);
+      font-weight: 700;
+      color: var(--color-primary);
+      letter-spacing: -0.01em;
+      padding: 2rem 2.5rem;
+      background: var(--color-surface);
+      border-radius: var(--radius);
+      border-left: 4px solid var(--color-secondary);
+      margin: 1.5rem 0;
+    }
+    .tagline-alts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin: 1rem 0;
+    }
+    .tagline-alt {
+      padding: 0.5em 1.2em;
+      background: white;
+      border: 1px solid var(--color-neutral-300);
+      border-radius: 100px;
+      font-family: var(--font-heading);
+      font-size: var(--text-body);
+      color: var(--color-neutral-700);
+    }
+    .elevator-pitch {
+      background: var(--color-primary);
+      color: white;
+      padding: 2rem 2.5rem;
+      border-radius: var(--radius);
+      font-family: var(--font-heading);
+      font-size: var(--text-h4);
+      font-weight: 400;
+      line-height: 1.5;
+      margin: 1.5rem 0;
+    }
+    .message-list { list-style: none; }
+    .message-item {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--color-neutral-300);
+      background: white;
+    }
+    .message-item:first-child { border-radius: var(--radius) var(--radius) 0 0; }
+    .message-item:last-child { border-bottom: none; border-radius: 0 0 var(--radius) var(--radius); }
+    .message-headline {
+      font-family: var(--font-heading);
+      font-size: var(--text-h5);
+      font-weight: 600;
+      color: var(--color-primary);
+      letter-spacing: 0.02em;
+      margin-bottom: 0.4rem;
+    }
+    .message-expansion { font-size: var(--text-body); color: var(--color-neutral-700); }
+
+    .do-dont { margin: 1.5rem 0; }
+    .do-dont-pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      margin-bottom: 0.5rem;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--color-neutral-300);
+    }
+    .do-cell {
+      padding: 1rem 1.25rem;
+      background: #f0fdf4;
+      border-right: 1px solid var(--color-neutral-300);
+    }
+    .dont-cell {
+      padding: 1rem 1.25rem;
+      background: #fef2f2;
+    }
+    .do-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-success);
+      margin-bottom: 0.4rem;
+    }
+    .dont-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-error);
+      margin-bottom: 0.4rem;
+    }
+    .do-cell p, .dont-cell p { font-size: var(--text-small); color: var(--color-neutral-900); line-height: 1.4; }
+
+    /* ── Logo section ─────────────────────────────────── */
+    .logo-showcase {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    .logo-panel {
+      border-radius: var(--radius);
+      padding: 3rem 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 180px;
+      position: relative;
+      overflow: hidden;
+    }
+    .logo-panel-dark { background: var(--color-primary); }
+    .logo-panel-light { background: var(--color-neutral-100); border: 1px solid var(--color-neutral-300); }
+    .logo-panel-label {
+      position: absolute;
+      bottom: 0.75rem;
+      left: 1rem;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .logo-panel-dark .logo-panel-label { color: rgba(255,255,255,0.3); }
+    .logo-panel-light .logo-panel-label { color: var(--color-neutral-500); }
+    .logo-img {
+      max-height: 80px;
+      max-width: 100%;
+      object-fit: contain;
+    }
+    .logo-note {
+      background: white;
+      border: 1px solid var(--color-neutral-300);
+      border-left: 3px solid var(--color-accent);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+      font-size: var(--text-body);
+      color: var(--color-neutral-700);
+      line-height: 1.5;
+    }
+
+    /* ── Cards image grid ─────────────────────────────── */
+    .cards-image-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin: 1rem 0 2.5rem;
+    }
+    .card-image-item {
+      background: var(--color-neutral-100);
+      border: 1px solid var(--color-neutral-300);
+      border-radius: var(--radius);
+      overflow: hidden;
+      position: relative;
+    }
+    .card-image-item img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .card-image-caption {
+      position: absolute;
+      bottom: 0.5rem;
+      left: 0.75rem;
+      font-family: var(--font-body);
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-neutral-500);
+      background: rgba(255,255,255,0.85);
+      padding: 0.2em 0.6em;
+      border-radius: 4px;
+      backdrop-filter: blur(4px);
+    }
+    .cards-section-label {
+      display: inline-block;
+      padding: 0.3em 0.9em;
+      background: var(--color-primary);
+      color: var(--color-secondary);
+      border-radius: 100px;
+      font-family: var(--font-body);
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-left: 0.75rem;
+      vertical-align: middle;
+    }
+
+    /* ── Imagery section ──────────────────────────────── */
+    .imagery-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .imagery-card {
+      background: white;
+      border: 1px solid var(--color-neutral-300);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .imagery-placeholder {
+      height: 120px;
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-slate) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .imagery-placeholder-text {
+      font-family: var(--font-heading);
+      font-size: var(--text-small);
+      color: rgba(255,255,255,0.4);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .imagery-info { padding: 1rem; }
+    .imagery-type {
+      font-family: var(--font-heading);
+      font-size: var(--text-body);
+      font-weight: 600;
+      color: var(--color-neutral-900);
+      margin-bottom: 0.3rem;
+    }
+    .imagery-desc { font-size: var(--text-small); color: var(--color-neutral-700); line-height: 1.4; }
+
+    /* ── Usage examples ───────────────────────────────── */
+    .usage-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+
+    /* Business card mockup */
+    .business-card {
+      background: var(--color-primary);
+      border-radius: var(--radius);
+      padding: 1.75rem 2rem;
+      min-height: 140px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+    .business-card::after {
+      content: '';
+      position: absolute;
+      bottom: -30px; right: -30px;
+      width: 100px; height: 100px;
+      border-radius: 50%;
+      background: rgba(178,190,201,0.06);
+    }
+    .bc-name {
+      font-family: var(--font-heading);
+      font-size: var(--text-h4);
+      font-weight: 700;
+      color: white;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .bc-role {
+      font-family: var(--font-body);
+      font-size: var(--text-small);
+      color: var(--color-secondary);
+      margin-top: 0.2rem;
+      letter-spacing: 0.05em;
+    }
+    .bc-contact {
+      font-family: var(--font-body);
+      font-size: 0.65rem;
+      color: rgba(255,255,255,0.45);
+      line-height: 1.6;
+    }
+
+    /* Social post mockup */
+    .social-post {
+      background: white;
+      border: 1px solid var(--color-neutral-300);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .social-post-header {
+      background: var(--color-primary);
+      height: 80px;
+      display: flex;
+      align-items: center;
+      padding: 0 1.25rem;
+      gap: 0.75rem;
+    }
+    .social-post-avatar {
+      width: 36px;
+      height: 36px;
+      background: var(--color-secondary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--color-primary);
+      flex-shrink: 0;
+    }
+    .social-post-brand {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      color: white;
+      font-size: var(--text-body);
+      letter-spacing: 0.05em;
+    }
+    .social-post-body { padding: 1.25rem; }
+    .social-post-text { font-size: var(--text-small); color: var(--color-neutral-700); line-height: 1.5; margin-bottom: 0.75rem; }
+    .social-post-tags { font-size: 0.65rem; color: var(--color-accent); }
+
+    /* Email signature mockup */
+    .email-sig {
+      background: white;
+      border: 1px solid var(--color-neutral-300);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+    }
+    .email-sig-name {
+      font-family: var(--font-heading);
+      font-size: var(--text-h5);
+      font-weight: 700;
+      color: var(--color-primary);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .email-sig-role { font-size: var(--text-small); color: var(--color-slate); margin-bottom: 0.75rem; }
+    .email-sig-divider { height: 2px; background: var(--color-secondary); width: 40px; margin-bottom: 0.75rem; }
+    .email-sig-contact { font-size: 0.7rem; color: var(--color-neutral-700); line-height: 1.7; }
+    .email-sig-brand {
+      font-family: var(--font-heading);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--color-primary);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-top: 1rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--color-neutral-300);
+    }
+    .email-sig-tagline { font-size: 0.65rem; color: var(--color-neutral-500); letter-spacing: 0.05em; }
+
+    /* Letterhead mockup */
+    .letterhead {
+      background: white;
+      border: 1px solid var(--color-neutral-300);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .letterhead-header {
+      background: var(--color-primary);
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .letterhead-brand {
+      font-family: var(--font-heading);
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: white;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .letterhead-tagline-small { font-size: 0.6rem; color: var(--color-secondary); letter-spacing: 0.1em; text-align: right; }
+    .letterhead-body { padding: 1.5rem; }
+    .letterhead-date { font-size: 0.65rem; color: var(--color-neutral-500); margin-bottom: 1rem; }
+    .letterhead-line { height: 1px; background: var(--color-neutral-300); margin-bottom: 0.75rem; }
+    .letterhead-text { font-size: 0.7rem; color: var(--color-neutral-700); line-height: 1.6; }
+    .letterhead-footer { background: var(--color-neutral-100); padding: 0.75rem 1.5rem; display: flex; justify-content: space-between; }
+    .letterhead-footer-text { font-size: 0.6rem; color: var(--color-neutral-500); }
+
+    /* ── Info box ─────────────────────────────────────── */
+    .info-box {
+      background: var(--color-surface);
+      border: 1px solid var(--color-neutral-300);
+      border-left: 3px solid var(--color-accent);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+      font-size: var(--text-body);
+      color: var(--color-neutral-700);
+      line-height: 1.5;
+      margin: 1.5rem 0;
+    }
+
+    /* ── Footer ───────────────────────────────────────── */
+    .manual-footer {
+      background: var(--color-primary);
+      color: rgba(255,255,255,0.4);
+      text-align: center;
+      padding: 3rem 2rem;
+      font-size: var(--text-small);
+      font-family: var(--font-body);
+      letter-spacing: 0.05em;
+    }
+    .manual-footer strong {
+      color: var(--color-secondary);
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* ── Section separator ────────────────────────────── */
+    .section-sep {
+      border: none;
+      height: 1px;
+      background: var(--color-neutral-300);
+      margin: 0;
+    }
+    section { background: white; border-top: 1px solid var(--color-neutral-300); }
+    section:nth-child(odd) { background: var(--color-neutral-100); }
+
+    /* ── Print styles ─────────────────────────────────── */
+    @media print {
+      .toc-nav { display: none; }
+      section { page-break-before: always; background: white !important; }
+      .cover { page-break-after: always; min-height: auto; padding: 4rem; }
+      body { background: white; }
+    }
+
+    @media (max-width: 680px) {
+      .overview-grid, .pillar-grid, .logo-showcase, .usage-grid, .imagery-grid, .cards-image-grid { grid-template-columns: 1fr; }
+      .do-dont-pair { grid-template-columns: 1fr; }
+      .cover { padding: 3rem 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="toc-nav">
+  <span class="brand-name">MTEC</span>
+  <a href="#overview">01 Identidad</a>
+  <a href="#colors">02 Colores</a>
+  <a href="#typography">03 Tipografía</a>
+  <a href="#voice">04 Voz</a>
+  <a href="#logo">05 Logo</a>
+  <a href="#usage">06 Aplicaciones</a>
+</nav>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-grid"></div>
+  <div class="cover-accent-line"></div>
+  <p class="cover-eyebrow">Brand Guidelines · 2026</p>
+  <h1 class="cover-title">MTEC</h1>
+  <p class="cover-subtitle">Manual de Marca</p>
+  <p class="cover-tagline">Donde la falla no es una opción.</p>
+  <div class="cover-meta">
+    <span>Versión 1.0</span>
+    <span>Abril 2026</span>
+    <span>Spin-off de ERRES SpA</span>
+    <span>Confidencial — Uso interno</span>
+  </div>
+</div>
+
+<!-- 01 BRAND OVERVIEW -->
+<section id="overview">
+  <div class="page">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2 class="section-title">Identidad de Marca</h2>
+    </div>
+
+    <div class="mission-block">
+      <div class="label">Misión</div>
+      <div class="text">Proveer a la gran industria soluciones especializadas en servicios, productos y tecnología, aportando conocimiento técnico, alta capacidad de respuesta y estándares de excelencia que garanticen la continuidad operacional y la creación de valor para nuestros clientes.</div>
+    </div>
+
+    <div class="vision-block">
+      <div class="label">Visión</div>
+      <div class="text">Consolidarnos como empresa líder en el país en soluciones tecnológicas, productos y servicios especializados para los sectores petroquímico, energético, minero e industrial.</div>
+    </div>
+
+    <div class="overview-grid">
+      <div class="overview-card">
+        <div class="overview-card-label">Industria</div>
+        <div class="overview-card-value">Servicios técnicos industriales especializados — refinería, oil & gas, minería, energía, celulosa, sanitarias</div>
+      </div>
+      <div class="overview-card">
+        <div class="overview-card-label">Origen</div>
+        <div class="overview-card-value">Fundada en 2014 · Spin-off de ERRES SpA, reactivada en 2026 con foco en servicios especializados de alto valor</div>
+      </div>
+      <div class="overview-card">
+        <div class="overview-card-label">Audiencia objetivo</div>
+        <div class="overview-card-value">Grandes empresas industriales chilenas: ENAP, sector energético, minero, refinería, celulosa y sanitarias. Decisores técnicos y de operaciones.</div>
+      </div>
+      <div class="overview-card">
+        <div class="overview-card-label">Proyección 2026–2028</div>
+        <div class="overview-card-value">Consolidación como proveedor especializado → expansión de cartera → presencia autónoma con sinergia ERRES</div>
+      </div>
+    </div>
+
+    <h3 class="subsection-title">Valores de Marca</h3>
+    <div class="values-grid">
+      <span class="value-pill">Especialización técnica</span>
+      <span class="value-pill">Confiabilidad operacional</span>
+      <span class="value-pill">Rapidez de respuesta</span>
+      <span class="value-pill">Innovación</span>
+      <span class="value-pill">Integridad</span>
+    </div>
+
+    <h3 class="subsection-title" style="margin-top:2.5rem">Personalidad</h3>
+    <div class="adjectives-row">
+      <span class="adjective-tag">Técnica</span>
+      <span class="adjective-tag">Confiable</span>
+      <span class="adjective-tag">Ágil</span>
+      <span class="adjective-tag">Especializada</span>
+      <span class="adjective-tag">Innovadora</span>
+    </div>
+  </div>
+</section>
+
+<!-- 02 COLORS -->
+<section id="colors">
+  <div class="page">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2 class="section-title">Sistema de Color</h2>
+    </div>
+
+    <p style="color:var(--color-neutral-700); margin-bottom:2rem; font-size:var(--text-body-l); line-height:1.6;">
+      El sistema de color de MTEC está construido alrededor del isotipo existente: plata/platino sobre fondos oscuros. La paleta traduce esa estética metálica-industrial a un sistema completo para digital e impresión.
+    </p>
+
+    <!-- Palette strip -->
+    <div class="palette-strip">
+      <div class="palette-strip-color" style="background:#1B6CA8;"></div>
+      <div class="palette-strip-color" style="background:#B2BEC9;"></div>
+      <div class="palette-strip-color" style="background:#536073;"></div>
+      <div class="palette-strip-color" style="background:#F4F6F9;"></div>
+      <div class="palette-strip-color" style="background:#D6DDE5;"></div>
+      <div class="palette-strip-color" style="background:#EDF1F5;"></div>
+      <div class="palette-strip-color" style="background:#0D1B2E;"></div>
+      <div class="palette-strip-color" style="background:#8896A5;"></div>
+      <div class="palette-strip-color" style="background:#3D4856;"></div>
+      <div class="palette-strip-color" style="background:#0F161E;"></div>
+    </div>
+
+    <!-- Primary -->
+    <div class="color-tier">
+      <div class="color-tier-label">Colores Primarios</div>
+      <div class="color-row">
+        <div class="color-card">
+          <div class="color-swatch" style="background:#1B6CA8;"></div>
+          <div class="color-info">
+            <div class="color-name">Acero Activo</div>
+            <div class="color-values">HEX: #1B6CA8<br>RGB: 27 108 168<br>CMYK: 84 36 0 34</div>
+            <div class="color-use">Color primario. Fondos hero, portadas, headers.</div>
+          </div>
+        </div>
+        <div class="color-card">
+          <div class="color-swatch" style="background:#B2BEC9;"></div>
+          <div class="color-info">
+            <div class="color-name">Platino MTEC</div>
+            <div class="color-values">HEX: #B2BEC9<br>RGB: 178 190 201<br>CMYK: 11 6 0 21</div>
+            <div class="color-use">Acento de identidad. Logo, iconografía, highlights sobre oscuro.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Secondary -->
+    <div class="color-tier">
+      <div class="color-tier-label">Colores Secundarios</div>
+      <div class="color-row">
+        <div class="color-card">
+          <div class="color-swatch" style="background:#536073;"></div>
+          <div class="color-info">
+            <div class="color-name">Plomo Industrial</div>
+            <div class="color-values">HEX: #536073<br>RGB: 83 96 115<br>CMYK: 28 17 0 55</div>
+            <div class="color-use">Texto secundario, iconos, borders activos.</div>
+          </div>
+        </div>
+        <div class="color-card">
+          <div class="color-swatch" style="background:#F4F6F9; border:1px solid #D6DDE5;"></div>
+          <div class="color-info">
+            <div class="color-name">Neblina N100</div>
+            <div class="color-values">HEX: #F4F6F9<br>RGB: 244 246 249<br>CMYK: 2 1 0 2</div>
+            <div class="color-use">Fondo base de páginas en modo claro.</div>
+          </div>
+        </div>
+        <div class="color-card">
+          <div class="color-swatch" style="background:#D6DDE5;"></div>
+          <div class="color-info">
+            <div class="color-name">Bruma N300</div>
+            <div class="color-values">HEX: #D6DDE5<br>RGB: 214 221 229<br>CMYK: 7 4 0 10</div>
+            <div class="color-use">Bordes, dividers, estados deshabilitados.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Neutrals -->
+    <div class="color-tier">
+      <div class="color-tier-label">Paleta Neutra</div>
+      <div class="color-row">
+        <div class="color-card">
+          <div class="color-swatch" style="background:#EDF1F5; border:1px solid #D6DDE5;"></div>
+          <div class="color-info">
+            <div class="color-name">Vapor Industrial</div>
+            <div class="color-values">HEX: #EDF1F5<br>RGB: 237 241 245<br>CMYK: 3 2 0 4</div>
+            <div class="color-use">Fondos de secciones alternas, superficies.</div>
+          </div>
+        </div>
+        <div class="color-card">
+          <div class="color-swatch" style="background:#0D1B2E;"></div>
+          <div class="color-info">
+            <div class="color-name">Azul Refinería</div>
+            <div class="color-values">HEX: #0D1B2E<br>RGB: 13 27 46<br>CMYK: 72 41 0 82</div>
+            <div class="color-use">Fondos de alto contraste, modo oscuro.</div>
+          </div>
+        </div>
+        <div class="color-card">
+          <div class="color-swatch" style="background:#8896A5;"></div>
+          <div class="color-info">
+            <div class="color-name">Acero N500</div>
+            <div class="color-values">HEX: #8896A5<br>RGB: 136 150 165</div>
+            <div class="color-use">Placeholder, iconos decorativos.</div>
+          </div>
+        </div>
+        <div class="color-card">
+          <div class="color-swatch" style="background:#3D4856;"></div>
+          <div class="color-info">
+            <div class="color-name">Grafito N700</div>
+            <div class="color-values">HEX: #3D4856<br>RGB: 61 72 86</div>
+            <div class="color-use">Texto secundario, labels.</div>
+          </div>
+        </div>
+        <div class="color-card">
+          <div class="color-swatch" style="background:#0F161E;"></div>
+          <div class="color-info">
+            <div class="color-name">Carbón N900</div>
+            <div class="color-values">HEX: #0F161E<br>RGB: 15 22 30</div>
+            <div class="color-use">Texto principal, headings.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Semantic -->
+    <div class="color-tier">
+      <div class="color-tier-label">Colores Semánticos</div>
+      <div class="semantic-row">
+        <div class="semantic-card">
+          <div class="semantic-swatch" style="background:#1A7C4F;"></div>
+          <div class="semantic-label">Verde Operacional</div>
+          <div class="semantic-hex">#1A7C4F — Éxito</div>
+        </div>
+        <div class="semantic-card">
+          <div class="semantic-swatch" style="background:#B07A16;"></div>
+          <div class="semantic-label">Ámbar Técnico</div>
+          <div class="semantic-hex">#B07A16 — Advertencia</div>
+        </div>
+        <div class="semantic-card">
+          <div class="semantic-swatch" style="background:#B52A2A;"></div>
+          <div class="semantic-label">Rojo Crítico</div>
+          <div class="semantic-hex">#B52A2A — Error</div>
+        </div>
+        <div class="semantic-card">
+          <div class="semantic-swatch" style="background:#0E7490;"></div>
+          <div class="semantic-label">Cian Info</div>
+          <div class="semantic-hex">#0E7490 — Info</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-box">
+      <strong>Principios de uso:</strong> Acero Activo es el color primario — fondos hero, portadas, headers y todos los CTAs. Plomo Industrial para texto secundario, iconos y borders. Azul Refinería (neutro ancla) para fondos de alto contraste y modo oscuro. Platino MTEC brilla sobre oscuro, nunca como texto en fondos claros.
+    </div>
+  </div>
+</section>
+
+<!-- 03 TYPOGRAPHY -->
+<section id="typography">
+  <div class="page">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2 class="section-title">Sistema Tipográfico</h2>
+    </div>
+
+    <div class="overview-grid" style="margin-bottom:2.5rem;">
+      <div class="overview-card">
+        <div class="overview-card-label">Fuente Display / Titulares</div>
+        <div class="overview-card-value" style="font-family:var(--font-heading); font-size:1.5rem; font-weight:700; letter-spacing:0.02em; text-transform:uppercase;">Barlow Condensed</div>
+        <div style="font-size:var(--text-small); color:var(--color-neutral-500); margin-top:0.5rem;">Display · H1 · H2 · H3 · Pesos: 300 500 600 700</div>
+        <div style="font-size:var(--text-small); color:var(--color-accent); margin-top:0.4rem;">Google Fonts</div>
+      </div>
+      <div class="overview-card">
+        <div class="overview-card-label">Fuente Cuerpo / UI</div>
+        <div class="overview-card-value" style="font-family:var(--font-body); font-size:1.1rem; font-weight:600;">Inter</div>
+        <div style="font-size:var(--text-small); color:var(--color-neutral-500); margin-top:0.5rem;">H4 · H5 · Body · UI · Captions · Pesos: 400 500 600</div>
+        <div style="font-size:var(--text-small); color:var(--color-accent); margin-top:0.4rem;">Google Fonts</div>
+      </div>
+    </div>
+
+    <h3 class="subsection-title">Jerarquía Tipográfica</h3>
+
+    <div class="type-sample-block">
+      <div class="type-label">Display — Barlow Condensed 700 · 61px · Tracking −0.02em</div>
+      <div class="type-display">MTEC</div>
+    </div>
+
+    <div class="type-sample-block">
+      <div class="type-label">H1 — Barlow Condensed 700 · 49px · Tracking −0.02em</div>
+      <div class="type-h1">Continuidad operacional en industrias críticas</div>
+    </div>
+
+    <div class="type-sample-block">
+      <div class="type-label">H2 — Barlow Condensed 600 · 39px</div>
+      <div class="type-h2">Servicios técnicos especializados</div>
+    </div>
+
+    <div class="type-sample-block">
+      <div class="type-label">H3 — Barlow Condensed 500 · 31px</div>
+      <div class="type-h3">Encapsulado de fugas · Torque industrial · Tratamientos térmicos</div>
+    </div>
+
+    <div class="type-sample-block">
+      <div class="type-label">Body L — Inter 400 · 18px · Line height 1.6</div>
+      <div class="type-body">MTEC es el socio técnico que opera donde la falla no es una opción. Combinamos especialización de terreno con capacidad de respuesta inmediata para sostener tu operación en los momentos que importan.</div>
+    </div>
+
+    <h3 class="subsection-title">Escala Completa</h3>
+
+    <table class="type-scale-table">
+      <thead>
+        <tr>
+          <th>Nivel</th>
+          <th>Fuente</th>
+          <th>Tamaño</th>
+          <th>Peso</th>
+          <th>Line Height</th>
+          <th>Tracking</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Display</td><td><span class="font-tag">Barlow Condensed</span></td><td>61px / 3.8rem</td><td>700</td><td>1.1</td><td>−0.02em</td></tr>
+        <tr><td>H1</td><td><span class="font-tag">Barlow Condensed</span></td><td>49px / 3.05rem</td><td>700</td><td>1.15</td><td>−0.02em</td></tr>
+        <tr><td>H2</td><td><span class="font-tag">Barlow Condensed</span></td><td>39px / 2.44rem</td><td>600</td><td>1.2</td><td>−0.01em</td></tr>
+        <tr><td>H3</td><td><span class="font-tag">Barlow Condensed</span></td><td>31px / 1.94rem</td><td>500</td><td>1.25</td><td>0</td></tr>
+        <tr><td>H4</td><td><span class="font-tag">Inter</span></td><td>25px / 1.56rem</td><td>600</td><td>1.3</td><td>0</td></tr>
+        <tr><td>H5</td><td><span class="font-tag">Inter</span></td><td>20px / 1.25rem</td><td>500</td><td>1.4</td><td>+0.01em</td></tr>
+        <tr><td>Body L</td><td><span class="font-tag">Inter</span></td><td>18px / 1.125rem</td><td>400</td><td>1.6</td><td>0</td></tr>
+        <tr><td>Body</td><td><span class="font-tag">Inter</span></td><td>16px / 1rem</td><td>400</td><td>1.6</td><td>0</td></tr>
+        <tr><td>Small</td><td><span class="font-tag">Inter</span></td><td>13px / 0.8rem</td><td>400</td><td>1.5</td><td>+0.02em</td></tr>
+      </tbody>
+    </table>
+
+    <div class="info-box" style="margin-top:2rem;">
+      <strong>Reglas de uso:</strong> Barlow Condensed solo en H1–H3 y Display. Inter en 400 para todo el cuerpo de texto; 600 exclusivo para H4 y H5. Ancho máximo de párrafo: 72ch. Sin cursiva en headings.
+    </div>
+  </div>
+</section>
+
+<!-- 04 VOICE -->
+<section id="voice">
+  <div class="page">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2 class="section-title">Tono de Voz</h2>
+    </div>
+
+    <h3 class="subsection-title">Pilares de Voz</h3>
+    <div class="pillar-grid">
+      <div class="pillar-card">
+        <div class="pillar-name">Autoridad técnica</div>
+        <div class="pillar-desc">MTEC habla desde la experiencia de terreno real. Lenguaje preciso, con números y estándares. Sin genericidades. Si hay un dato, se menciona.</div>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-name">Confiabilidad sin ruido</div>
+        <div class="pillar-desc">Comunicación directa y calmada, sin hipérbole. La confianza se construye siendo específico y cumpliendo lo prometido, no con exclamaciones.</div>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-name">Agilidad demostrable</div>
+        <div class="pillar-desc">La rapidez de respuesta se demuestra con datos concretos: "de 2 horas a 20 minutos", no "soluciones rápidas e innovadoras".</div>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-name">Socio de largo plazo</div>
+        <div class="pillar-desc">Habla de construir relaciones, no de cerrar ventas. El tono es de colega técnico senior que conoce la operación del cliente.</div>
+      </div>
+    </div>
+
+    <h3 class="subsection-title">Tagline</h3>
+    <div class="tagline-primary">Donde la falla no es una opción.</div>
+    <div class="tagline-alts">
+      <span class="tagline-alt">Especialización técnica para la continuidad operacional</span>
+      <span class="tagline-alt">En terreno cuando más importa</span>
+      <span class="tagline-alt">Precisión. Respuesta. Confianza.</span>
+      <span class="tagline-alt">Tu operación, nuestra responsabilidad</span>
+    </div>
+
+    <h3 class="subsection-title">Elevator Pitch</h3>
+    <div class="elevator-pitch">
+      MTEC es una empresa de servicios técnicos especializados para la gran industria chilena. Nacimos del ecosistema ERRES para operar donde la continuidad operacional no admite improvisación: refinería, minería, energía, oil & gas. Combinamos experiencia de terreno con tecnología de proceso para responder rápido, ejecutar bien, y construir relaciones que duran más que un contrato.
+    </div>
+
+    <h3 class="subsection-title">Mensajes Clave</h3>
+    <ul class="message-list">
+      <li class="message-item">
+        <div class="message-headline">Rapidez sin sacrificar calidad</div>
+        <div class="message-expansion">En emergencias industriales, la velocidad de respuesta es tan crítica como la precisión técnica. MTEC lo ofrece en un solo equipo.</div>
+      </li>
+      <li class="message-item">
+        <div class="message-headline">Especialización que se nota en terreno</div>
+        <div class="message-expansion">Cada servicio está respaldado por formación, certificación y experiencia real en industrias de alta exigencia.</div>
+      </li>
+      <li class="message-item">
+        <div class="message-headline">Un socio técnico, no un proveedor transaccional</div>
+        <div class="message-expansion">Las empresas que trabajan con MTEC integran un equipo técnico externo que entiende profundamente su operación.</div>
+      </li>
+      <li class="message-item">
+        <div class="message-headline">Respaldo del ecosistema ERRES</div>
+        <div class="message-expansion">El peso de una empresa con trayectoria comprobada en energía y minería, con la agilidad de una organización especializada y focalizada.</div>
+      </li>
+    </ul>
+
+    <h3 class="subsection-title">Do / Don't</h3>
+    <div class="do-dont">
+      <div class="do-dont-pair">
+        <div class="do-cell">
+          <div class="do-label">✓ Escribir así</div>
+          <p>"Ejecutamos el encapsulado de fuga sin detener el flujo en línea. Tiempo de instalación: bajo 4 horas."</p>
+        </div>
+        <div class="dont-cell">
+          <div class="dont-label">✗ Evitar</div>
+          <p>"¡Somos líderes en soluciones de encapsulado con los mejores resultados del mercado!"</p>
+        </div>
+      </div>
+      <div class="do-dont-pair">
+        <div class="do-cell">
+          <div class="do-label">✓ Escribir así</div>
+          <p>"Tapones Pop-a-Plug: de 2 horas a 20 minutos. Sin soldadura. Con certificación."</p>
+        </div>
+        <div class="dont-cell">
+          <div class="dont-label">✗ Evitar</div>
+          <p>"Utilizamos tecnología avanzada de última generación para optimizar sus procesos."</p>
+        </div>
+      </div>
+      <div class="do-dont-pair">
+        <div class="do-cell">
+          <div class="do-label">✓ Escribir así</div>
+          <p>"Trabajamos con clientes que no pueden permitirse tiempos de parada no planificados."</p>
+        </div>
+        <div class="dont-cell">
+          <div class="dont-label">✗ Evitar</div>
+          <p>"Atendemos a empresas de todos los sectores que necesitan servicios de calidad."</p>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="subsection-title">Vocabulario</h3>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1rem;">
+      <div class="overview-card">
+        <div class="overview-card-label" style="color:var(--color-success);">Usar</div>
+        <div style="font-size:var(--text-small); color:var(--color-neutral-700); line-height:1.9;">
+          continuidad operacional · ejecución técnica · respuesta en terreno · estándares de excelencia · confiabilidad · especialización · procesos certificados · socio estratégico · precisión
+        </div>
+      </div>
+      <div class="overview-card">
+        <div class="overview-card-label" style="color:var(--color-error);">Evitar</div>
+        <div style="font-size:var(--text-small); color:var(--color-neutral-700); line-height:1.9;">
+          innovador (genérico) · disruptivo · soluciones integrales · de clase mundial · apasionados · mejor que la competencia · número uno · eco-friendly
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 LOGO -->
+<section id="logo">
+  <div class="page">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <h2 class="section-title">Sistema de Logo</h2>
+    </div>
+
+    <p style="color:var(--color-neutral-700); margin-bottom:2rem; font-size:var(--text-body-l); line-height:1.6;">
+      El isotipo de MTEC es una marca geométrica isométrica tridimensional que abstrae la letra "M" mediante bloques angulares apilados. Comunica estructura, ingeniería, precisión y profundidad técnica. El sistema cuenta con cuatro versiones finales en formato vectorial SVG para garantizar escalabilidad perfecta en cualquier soporte.
+    </p>
+
+    <div class="logo-showcase">
+      <div class="logo-panel logo-panel-light">
+        <img src="../logos/SVG/Logo%20MTEC_final-color%201.svg" alt="Logo MTEC — Color principal" class="logo-img" style="max-height:110px;">
+        <span class="logo-panel-label">Color principal · Fondo claro</span>
+      </div>
+      <div class="logo-panel logo-panel-dark">
+        <img src="../logos/SVG/Logo%20MTEC_final-color%202.svg" alt="Logo MTEC — Color alternativo" class="logo-img" style="max-height:110px;">
+        <span class="logo-panel-label">Color alternativo · Fondo oscuro</span>
+      </div>
+      <div class="logo-panel logo-panel-light">
+        <img src="../logos/SVG/Logo%20MTEC_final-negro.svg" alt="Logo MTEC — Negro" class="logo-img" style="max-height:110px;">
+        <span class="logo-panel-label">Versión negra · Fondo claro</span>
+      </div>
+      <div class="logo-panel logo-panel-dark">
+        <img src="../logos/SVG/Logo%20MTEC_final-blanco.svg" alt="Logo MTEC — Blanco" class="logo-img" style="max-height:110px;">
+        <span class="logo-panel-label">Versión blanca · Fondo oscuro</span>
+      </div>
+    </div>
+
+    <div class="logo-note">
+      <strong>Archivos finales disponibles (SVG):</strong> Color principal, color alternativo, versión negra y versión blanca. Todos los archivos están en formato vectorial editable y se ubican en <code style="background:var(--color-surface); padding:0.1em 0.4em; border-radius:3px; font-size:0.85em;">deliverables/logos/SVG/</code>.
+    </div>
+
+    <h3 class="subsection-title">Reglas de Uso</h3>
+    <div class="overview-grid">
+      <div class="overview-card">
+        <div class="overview-card-label" style="color:var(--color-success);">Usos correctos</div>
+        <div class="overview-card-value" style="font-size:var(--text-small); line-height:1.8;">
+          · Logo plata sobre Azul Refinería (#0D1B2E)<br>
+          · Logo blanco sobre fondos oscuros (navy, antracita)<br>
+          · Logo plata sobre fotografía industrial oscura<br>
+          · Logo Carbón N900 sobre fondos blancos/claros
+        </div>
+      </div>
+      <div class="overview-card">
+        <div class="overview-card-label" style="color:var(--color-error);">Usos incorrectos</div>
+        <div class="overview-card-value" style="font-size:var(--text-small); line-height:1.8;">
+          · No usar logo plata sobre fondos claros (sin contraste)<br>
+          · No distorsionar ni rotar el isotipo<br>
+          · No usar sobre fondos de color saturado<br>
+          · No aplicar sombras, bordes o efectos externos
+        </div>
+      </div>
+    </div>
+
+    <div class="info-box">
+      <strong>Espacio mínimo:</strong> Mantener un área libre equivalente a la altura de la letra "M" del logotipo en todos los lados. <strong>Tamaño mínimo:</strong> 24px de altura en digital, 8mm en impresión.
+    </div>
+  </div>
+</section>
+
+<!-- 06 USAGE EXAMPLES -->
+<section id="usage">
+  <div class="page">
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <h2 class="section-title">Aplicaciones</h2>
+    </div>
+
+    <p style="color:var(--color-neutral-700); margin-bottom:2.5rem; font-size:var(--text-body-l); line-height:1.6;">
+      Ejemplos de cómo se aplica el sistema de marca MTEC en touchpoints reales: tarjetas de presentación impresas, versiones digitales y comunicaciones cotidianas.
+    </p>
+
+    <h3 class="subsection-title">Tarjetas de Presentación <span class="cards-section-label">Físicas</span></h3>
+    <p style="color:var(--color-neutral-700); margin-bottom:1.25rem; font-size:var(--text-body); line-height:1.6;">
+      Diseño impreso en tinta plana sobre papel mate de gramaje alto. Versiones de frente y reverso para comunicar identidad, datos de contacto y respaldo del ecosistema ERRES.
+    </p>
+    <div class="cards-image-grid">
+      <div class="card-image-item">
+        <img src="../tarjetas/Fisica/Tarjeta%20de%20visita%20f%C3%ADsica_Mesa%20de%20trabajo%201.jpg" alt="Tarjeta de visita física — Diseño principal">
+      </div>
+      <div class="card-image-item">
+        <img src="../tarjetas/Fisica/Tarjeta%20de%20visita%20f%C3%ADsica-02.jpg" alt="Tarjeta de visita física — Variante 02">
+      </div>
+      <div class="card-image-item">
+        <img src="../tarjetas/Fisica/Tarjeta%20de%20visita%20f%C3%ADsica-03.jpg" alt="Tarjeta de visita física — Variante 03">
+      </div>
+      <div class="card-image-item">
+        <img src="../tarjetas/Fisica/Tarjeta%20de%20visita%20f%C3%ADsica-04.jpg" alt="Tarjeta de visita física — Variante 04">
+      </div>
+    </div>
+
+    <h3 class="subsection-title">Tarjetas de Presentación <span class="cards-section-label" style="background:var(--color-slate);">Digitales</span></h3>
+    <p style="color:var(--color-neutral-700); margin-bottom:1.25rem; font-size:var(--text-body); line-height:1.6;">
+      Versión digital optimizada para compartir vía link, QR o firma de correo. Mantiene la jerarquía y paleta de la versión impresa, adaptada a interacción en pantalla.
+    </p>
+    <div class="cards-image-grid">
+      <div class="card-image-item">
+        <img src="../tarjetas/Digital/Tarjeta%20de%20visita%20digital_Mesa%20de%20trabajo%201.jpg" alt="Tarjeta de visita digital — Diseño principal">
+      </div>
+      <div class="card-image-item">
+        <img src="../tarjetas/Digital/Tarjeta%20de%20visita%20digital-02.jpg" alt="Tarjeta de visita digital — Variante 02">
+      </div>
+    </div>
+
+    <h3 class="subsection-title">Otros Touchpoints</h3>
+    <div class="usage-grid">
+      <!-- Email signature -->
+      <div>
+        <div style="font-size:var(--text-small); font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--color-neutral-500); margin-bottom:0.75rem;">Firma de Email</div>
+        <div class="email-sig">
+          <div class="email-sig-name">Carlos Mendoza</div>
+          <div class="email-sig-role">Gerente Técnico — Servicios Industriales</div>
+          <div class="email-sig-divider"></div>
+          <div class="email-sig-contact">
+            M: +56 9 8765 4321<br>
+            E: cmendoza@mtec.cl<br>
+            W: mtec.cl
+          </div>
+          <div class="email-sig-brand">MTEC</div>
+          <div class="email-sig-tagline">Donde la falla no es una opción.</div>
+        </div>
+      </div>
+
+      <!-- Social post -->
+      <div>
+        <div style="font-size:var(--text-small); font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:var(--color-neutral-500); margin-bottom:0.75rem;">Post LinkedIn / Redes</div>
+        <div class="social-post">
+          <div class="social-post-header">
+            <div class="social-post-avatar">M</div>
+            <div>
+              <div class="social-post-brand">MTEC</div>
+              <div style="font-size:0.6rem; color:rgba(255,255,255,0.4);">Servicios Técnicos Industriales</div>
+            </div>
+          </div>
+          <div class="social-post-body">
+            <div class="social-post-text">Encapsulado de fugas sin detener el proceso. En refinería, minería o petroquímica, el tiempo de parada no planificado es el costo que nadie quiere calcular. Eso es lo que resolvemos.</div>
+            <div class="social-post-tags">#MTEC #ContinuidadOperacional #ServiciosTécnicos #OilAndGas</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="manual-footer">
+  <p><strong>MTEC</strong></p>
+  <p style="margin-top:0.5rem;">Brand Guidelines · Versión 1.0 · Abril 2026</p>
+  <p style="margin-top:0.25rem;">Generado por Brand Knight · Documento confidencial de uso interno</p>
+</footer>
+
+</body>
+</html>
