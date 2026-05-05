@@ -138,7 +138,7 @@ img { max-width: 100%; display: block; }
   height: clamp(80px, 9vh, 100px); gap: 2rem;
 }
 .logo-block { display: flex; align-items: center; }
-.logo-img { height: 64px; width: auto; opacity: 0.95; transition: opacity 0.2s; }
+.logo-img { height: 128px; width: auto; opacity: 0.95; transition: opacity 0.2s; }
 .logo-block:hover .logo-img { opacity: 1; }
 .nav-links { display: flex; align-items: center; gap: 2.25rem; list-style: none; }
 @media (max-width: 860px) { .nav-links { display: none; } }
@@ -570,86 +570,108 @@ img { max-width: 100%; display: block; }
 }
 
 /* ══════════════════════════════════════
-   QUÉ HACEMOS — service stripes
-   Editorial horizontal rows. Each stripe = a service.
+   QUÉ HACEMOS — service cards (horizontal)
+   3-column grid. Each card has a circular icon space + title +
+   description + inline tags + a "ver más" CTA. Icons are SVG with
+   no background so they integrate seamlessly with the page.
 ══════════════════════════════════════ */
-.serv-stripes { display: flex; flex-direction: column; }
-.serv-stripe {
+.serv-cards {
   display: grid;
-  grid-template-columns: clamp(72px, 8vw, 110px) 1fr 36px;
-  gap: clamp(24px, 3.5vw, 56px); align-items: center;
-  padding: 32px clamp(0px, 1.5vw, 24px) 32px 0;
-  border-top: 1px solid rgba(255,255,255,0.16);
-  position: relative; text-decoration: none; color: inherit;
-  transition: padding-left 0.5s cubic-bezier(0.22,1,0.36,1),
-              background 0.4s ease;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(24px, 3vw, 48px);
 }
-.serv-stripe::before {
-  content: ''; position: absolute;
-  left: 0; top: -1px; height: 1px; width: 0;
-  background: #fff;
-  transition: width 0.6s cubic-bezier(0.22,1,0.36,1);
+@media (max-width: 900px) {
+  .serv-cards { grid-template-columns: 1fr; gap: 56px; }
 }
-.serv-stripe:hover {
-  padding-left: 24px;
-  background: linear-gradient(90deg, rgba(255,255,255,0.05), transparent 70%);
+.serv-card {
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center; text-decoration: none; color: inherit;
+  padding: 28px 24px;
+  position: relative;
+  transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
 }
-.serv-stripe:hover::before { width: 120px; }
-.serv-stripe:last-child { border-bottom: 1px solid rgba(255,255,255,0.16); }
+.serv-card:hover { transform: translateY(-6px); }
 
-.serv-num {
-  font-family: "Barlow Condensed", sans-serif;
-  font-size: clamp(48px, 5.5vw, 84px);
-  font-weight: 700; line-height: 0.9;
-  color: rgba(255,255,255,0.85); letter-spacing: -0.02em;
-  transition: color 0.3s, transform 0.4s cubic-bezier(0.22,1,0.36,1);
-  display: block;
+/* Circular icon container — subtle glass surround, no fill bg */
+.serv-circle {
+  width: clamp(140px, 14vw, 188px);
+  height: clamp(140px, 14vw, 188px);
+  border-radius: 50%;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.22);
+  display: grid; place-items: center;
+  margin-bottom: 32px;
+  position: relative;
+  transition: background 0.45s ease, border-color 0.45s ease,
+              box-shadow 0.45s ease;
 }
-.serv-stripe:hover .serv-num { color: #fff; transform: translateX(-4px); }
+.serv-circle::before {
+  content: ''; position: absolute; inset: -1px;
+  border-radius: 50%;
+  background: conic-gradient(from 90deg,
+    rgba(255,255,255,0.0), rgba(255,255,255,0.45),
+    rgba(255,255,255,0.0), rgba(255,255,255,0.0));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+          mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  padding: 1px;
+  opacity: 0; transition: opacity 0.5s;
+}
+.serv-card:hover .serv-circle {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.40);
+  box-shadow: 0 0 60px rgba(255,255,255,0.10);
+}
+.serv-card:hover .serv-circle::before { opacity: 1; }
 
-.serv-content {
-  display: flex; flex-direction: column; gap: 10px; min-width: 0;
+.serv-icon {
+  width: 44%; height: 44%;
+  color: #fff;
+  transition: transform 0.5s cubic-bezier(0.22,1,0.36,1);
 }
-.serv-title {
+.serv-card:hover .serv-icon { transform: scale(1.08) rotate(-2deg); }
+
+.serv-card-title {
   font-family: "Barlow Condensed", sans-serif;
-  font-size: clamp(22px, 2.4vw, 32px); font-weight: 600;
-  color: #fff; letter-spacing: -0.005em; line-height: 1.05;
+  font-size: clamp(22px, 2.1vw, 30px); font-weight: 600;
+  color: #fff; letter-spacing: -0.005em; line-height: 1.1;
+  margin: 0 0 14px;
 }
-.serv-desc {
+.serv-card-desc {
   font-size: 14px; line-height: 1.6;
   color: rgba(255,255,255,0.78);
-  max-width: 70ch;
+  margin: 0 0 18px;
+  max-width: 34ch;
 }
-.serv-tags {
-  display: flex; flex-wrap: wrap; align-items: center;
-  margin-top: 4px;
-}
-.serv-tag {
+.serv-card-tags {
+  display: flex; flex-wrap: wrap; justify-content: center;
   font-size: 10px; letter-spacing: 0.18em;
   text-transform: uppercase; font-weight: 600;
+  color: rgba(255,255,255,0.62);
+  margin-bottom: 24px;
+}
+.serv-card-tags span { display: inline-flex; align-items: center; }
+.serv-card-tags span::before {
+  content: '·'; padding: 0 10px;
+  color: rgba(255,255,255,0.30);
+  font-weight: 400;
+}
+.serv-card-tags span:first-child::before { display: none; }
+
+.serv-card-cta {
+  display: inline-flex; align-items: center; gap: 8px;
+  margin-top: auto;
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 0.16em; text-transform: uppercase;
   color: rgba(255,255,255,0.65);
-  display: inline-flex; align-items: center;
+  border-bottom: 1px solid rgba(255,255,255,0.0);
+  padding-bottom: 4px;
+  transition: color 0.3s, border-color 0.3s, gap 0.3s;
 }
-.serv-tag::before {
-  content: '·'; padding: 0 12px;
-  color: rgba(255,255,255,0.30); font-weight: 400;
-}
-.serv-tag:first-child::before { display: none; }
-
-.serv-arrow {
-  display: flex; align-items: center; justify-content: center;
-  color: rgba(255,255,255,0.50);
-  transition: color 0.3s, transform 0.4s cubic-bezier(0.22,1,0.36,1);
-}
-.serv-stripe:hover .serv-arrow {
+.serv-card:hover .serv-card-cta {
   color: #fff;
-  transform: translateX(8px);
-}
-
-@media (max-width: 720px) {
-  .serv-stripe { grid-template-columns: 56px 1fr; padding-right: 0; }
-  .serv-arrow { display: none; }
-  .serv-stripe:hover { padding-left: 12px; }
+  border-bottom-color: rgba(255,255,255,0.45);
+  gap: 12px;
 }
 
 /* Linea cards */
@@ -886,9 +908,8 @@ img { max-width: 100%; display: block; }
 ══════════════════════════════════════ */
 .footer {
   position: relative;
-  background: rgba(0,0,0,0.18);
-  border-top: 1px solid rgba(255,255,255,0.10);
-  padding: 88px 0 32px;
+  background: transparent;
+  padding: 64px 0 32px;
   z-index: 2;
 }
 .footer-inner {
@@ -907,7 +928,7 @@ img { max-width: 100%; display: block; }
 /* — Brand block — */
 .footer-brand { display: flex; flex-direction: column; gap: 22px; max-width: 48ch; }
 .footer-logo {
-  height: 72px; width: auto; opacity: 0.95; align-self: flex-start;
+  height: 128px; width: auto; opacity: 0.95; align-self: flex-start;
 }
 .footer-tagline {
   font-size: 14px; line-height: 1.65;
@@ -1063,7 +1084,7 @@ img { max-width: 100%; display: block; }
       </a>
       <ul class="nav-links">
         <li><a href="quienes-somos.html">Quiénes Somos</a></li>
-        <li><a href="que-hacemos.html">Qué Hacemos</a></li>
+        <li><span class="nav-static">Qué Hacemos</span></li>
         <li><span class="nav-static">Innovación</span></li>
         <li><span class="nav-static">Contacto</span></li>
       </ul>
@@ -1180,55 +1201,72 @@ img { max-width: 100%; display: block; }
       </div>
     </div>
 
-    <div class="serv-stripes">
-      <a href="que-hacemos.html#especializados" class="serv-stripe reveal" data-delay="0">
-        <span class="serv-num">01</span>
-        <span class="serv-content">
-          <span class="serv-title">Servicios Especializados</span>
-          <span class="serv-desc">Ejecución técnica directa en planta. Encapsulados, reparaciones bajo presión e intervenciones sin detener el proceso. Tiempo de respuesta medido en horas.</span>
-          <span class="serv-tags">
-            <span class="serv-tag">Encapsulado</span>
-            <span class="serv-tag">Pop-a-Plug</span>
-            <span class="serv-tag">Inspección</span>
-            <span class="serv-tag">Mantenimiento predictivo</span>
-          </span>
-        </span>
-        <span class="serv-arrow" aria-hidden="true">
-          <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
+    <div class="serv-cards">
+      <a href="que-hacemos.html#especializados" class="serv-card reveal" data-delay="0">
+        <div class="serv-circle">
+          <svg class="serv-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+          </svg>
+        </div>
+        <h3 class="serv-card-title">Servicios Especializados</h3>
+        <p class="serv-card-desc">Ejecución técnica directa en planta. Encapsulados, reparaciones bajo presión e intervenciones sin detener el proceso.</p>
+        <div class="serv-card-tags">
+          <span>Encapsulado</span>
+          <span>Pop-a-Plug</span>
+          <span>Inspección</span>
+        </div>
+        <span class="serv-card-cta" aria-hidden="true">
+          Ver más
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
             <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </span>
       </a>
-      <a href="que-hacemos.html#representacion" class="serv-stripe reveal" data-delay="120">
-        <span class="serv-num">02</span>
-        <span class="serv-content">
-          <span class="serv-title">Representación</span>
-          <span class="serv-desc">Representación técnica de marcas líderes en soluciones de proceso, mantenimiento y seguridad industrial. Soporte técnico local con respaldo del fabricante.</span>
-          <span class="serv-tags">
-            <span class="serv-tag">Marcas líderes</span>
-            <span class="serv-tag">Soporte técnico</span>
-            <span class="serv-tag">Repuestos críticos</span>
-          </span>
-        </span>
-        <span class="serv-arrow" aria-hidden="true">
-          <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
+
+      <a href="que-hacemos.html#representacion" class="serv-card reveal" data-delay="120">
+        <div class="serv-circle">
+          <svg class="serv-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="6" cy="6" r="3"/>
+            <circle cx="18" cy="6" r="3"/>
+            <circle cx="6" cy="18" r="3"/>
+            <circle cx="18" cy="18" r="3"/>
+            <path d="M9 6h6M6 9v6M18 9v6M9 18h6"/>
+          </svg>
+        </div>
+        <h3 class="serv-card-title">Representación</h3>
+        <p class="serv-card-desc">Representación técnica de marcas líderes en soluciones de proceso, mantenimiento y seguridad industrial.</p>
+        <div class="serv-card-tags">
+          <span>Marcas líderes</span>
+          <span>Soporte técnico</span>
+          <span>Repuestos</span>
+        </div>
+        <span class="serv-card-cta" aria-hidden="true">
+          Ver más
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
             <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </span>
       </a>
-      <a href="que-hacemos.html#comercializacion" class="serv-stripe reveal" data-delay="240">
-        <span class="serv-num">03</span>
-        <span class="serv-content">
-          <span class="serv-title">Comercialización</span>
-          <span class="serv-desc">Provisión de productos, equipos y consumibles especializados. Catálogo técnico con trazabilidad y certificación para operaciones críticas.</span>
-          <span class="serv-tags">
-            <span class="serv-tag">Equipos certificados</span>
-            <span class="serv-tag">Trazabilidad</span>
-            <span class="serv-tag">Catálogo técnico</span>
-          </span>
-        </span>
-        <span class="serv-arrow" aria-hidden="true">
-          <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
+
+      <a href="que-hacemos.html#comercializacion" class="serv-card reveal" data-delay="240">
+        <div class="serv-circle">
+          <svg class="serv-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M16.5 9.4l-9-5.19"/>
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+            <line x1="12" y1="22.08" x2="12" y2="12"/>
+          </svg>
+        </div>
+        <h3 class="serv-card-title">Comercialización</h3>
+        <p class="serv-card-desc">Provisión de productos, equipos y consumibles especializados. Catálogo técnico con trazabilidad y certificación.</p>
+        <div class="serv-card-tags">
+          <span>Equipos certificados</span>
+          <span>Trazabilidad</span>
+          <span>Catálogo</span>
+        </div>
+        <span class="serv-card-cta" aria-hidden="true">
+          Ver más
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
             <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </span>
@@ -1292,6 +1330,7 @@ const chapterNav  = document.getElementById('chapterNav');
 const techWM      = document.getElementById('techWatermark');
 const chDots      = Array.from(document.querySelectorAll('.ch-dot'));
 const sections    = ['ch0','ch1','ch2'].map(id => document.getElementById(id));
+const footerEl    = document.querySelector('.footer');
 const footerYear  = document.getElementById('footerYear');
 if (footerYear) footerYear.textContent = new Date().getFullYear();
 
@@ -1311,7 +1350,12 @@ function updateChapter(sy) {
     if (sec && sec.getBoundingClientRect().top <= window.innerHeight * 0.42) active = i;
   });
   chDots.forEach((dot, i) => dot.classList.toggle('active', i === active));
-  chapterNav.classList.toggle('visible', sy > heroH * 0.45);
+  /* Hide chapter nav once the footer enters the viewport — there's no
+     dot mapped to it, so showing the last active is misleading. */
+  const footerInView = footerEl
+    ? footerEl.getBoundingClientRect().top <= window.innerHeight * 0.6
+    : false;
+  chapterNav.classList.toggle('visible', sy > heroH * 0.45 && !footerInView);
 }
 
 function runFrame() {
