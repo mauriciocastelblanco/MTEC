@@ -12,10 +12,11 @@
 html { line-height: 1.15; -webkit-text-size-adjust: 100%; }
 body {
   font-family: "Inter", sans-serif;
-  background: #060C14;
+  background: #06101C;
   color: #EDF1F5;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+  position: relative;
 }
 ::selection { background: rgba(27,108,168,0.35); color: #fff; }
 a { text-decoration: none; color: inherit; }
@@ -24,9 +25,78 @@ img { max-width: 100%; display: block; }
 :root {
   --acero:   #1B6CA8;
   --platino: #B2BEC9;
+  --plomo:   #536073;
   --azul:    #0D1B2E;
   --n500:    #8896A5;
   --vapor:   #EDF1F5;
+}
+
+/* ══════════════════════════════════════
+   GLOBAL ATMOSPHERIC BACKGROUND
+   Image-driven canvas with darken overlay
+══════════════════════════════════════ */
+.bg-canvas,
+.bg-mesh,
+.bg-drift,
+.bg-grid,
+.bg-noise {
+  position: fixed; inset: 0;
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* Layer 1 — image background (fixed parallax, covers viewport) */
+.bg-canvas {
+  z-index: -5;
+  background:
+    #06101C
+    url("brand_assets/background_image_1.png")
+    center center / cover no-repeat;
+  background-attachment: fixed;
+}
+
+/* Layer 2 — darkening + blue tint overlay for legibility */
+.bg-mesh {
+  z-index: -4;
+  background:
+    /* deeper bottom anchor */
+    linear-gradient(180deg,
+      rgba(6,16,28,0.30) 0%,
+      rgba(8,23,44,0.55) 45%,
+      rgba(6,16,28,0.78) 100%),
+    /* brand acero tint everywhere */
+    linear-gradient(180deg,
+      rgba(13,27,46,0.45),
+      rgba(13,27,46,0.45));
+}
+
+/* Layer 3 — subtle vignette + light pull on hero zone */
+.bg-drift {
+  z-index: -3;
+  background:
+    radial-gradient(120% 80% at 50% 0%, rgba(27,108,168,0.18), transparent 60%),
+    radial-gradient(140% 100% at 50% 100%, rgba(6,12,22,0.55), transparent 70%);
+}
+
+/* Layer 4 — fine dot grid, masked to fade at edges */
+.bg-grid {
+  z-index: -2;
+  background-image: radial-gradient(circle, rgba(178,190,201,0.05) 1px, transparent 1px);
+  background-size: 44px 44px;
+  -webkit-mask-image: radial-gradient(ellipse 90% 75% at 50% 50%, #000 45%, transparent 100%);
+          mask-image: radial-gradient(ellipse 90% 75% at 50% 50%, #000 45%, transparent 100%);
+}
+
+/* Layer 5 — SVG turbulence grain for film-like depth */
+.bg-noise {
+  z-index: -1;
+  opacity: 0.045;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='7'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.9 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bg-drift { animation: none; }
 }
 
 /* ══ PROGRESS BAR ══════════════════════ */
@@ -123,9 +193,12 @@ img { max-width: 100%; display: block; }
 }
 .hero-bg {
   position: absolute; inset: 0;
-  background: linear-gradient(160deg,
-    #1B6CA8 0%, #155888 28%, #0E3D68 52%,
-    #0A2645 72%, #0A1E38 100%
+  /* Transparent backing — defers to global canvas. Keeps subtle gradient
+     wash to anchor the video against the canvas mesh without a hard block. */
+  background: linear-gradient(165deg,
+    rgba(27,108,168,0.18) 0%,
+    rgba(14,61,104,0.10) 40%,
+    rgba(10,30,56,0.0)   80%
   );
 }
 .hero-video {
@@ -135,14 +208,14 @@ img { max-width: 100%; display: block; }
   mix-blend-mode: luminosity;
   will-change: transform;
 }
-/* Blends hero bottom exactly to s-quienes top color */
+/* Soft fade so the video doesn't stop abruptly — no hard transition to next section */
 .hero-fade {
-  position: absolute; bottom: 0; left: 0; right: 0; height: 50%;
+  position: absolute; bottom: 0; left: 0; right: 0; height: 55%;
   background: linear-gradient(to bottom,
     transparent 0%,
-    rgba(10,30,56,0.35) 30%,
-    rgba(10,30,56,0.78) 60%,
-    #0A1E38 100%
+    rgba(8,18,34,0.25) 35%,
+    rgba(6,16,28,0.55) 70%,
+    rgba(6,16,28,0.85) 100%
   );
   pointer-events: none; z-index: 1;
 }
@@ -242,29 +315,16 @@ img { max-width: 100%; display: block; }
    Starts #0A1E38 (= hero-fade end), bleeds down to #060C14
 ══════════════════════════════════════ */
 .s-quienes {
-  background: linear-gradient(180deg,
-    #0A1E38 0%,
-    #0D2A52 18%,
-    #0E3060 42%,
-    #0C2648 68%,
-    #060C14 100%
-  );
+  background: transparent;
   padding: 130px 0 200px;
   position: relative; overflow: hidden;
 }
-.s-quienes::before {
-  content: '';
-  position: absolute; inset: 0;
-  background-image:
-    linear-gradient(rgba(178,190,201,0.022) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(178,190,201,0.022) 1px, transparent 1px);
-  background-size: 48px 48px;
-  pointer-events: none;
-}
+/* Subtle local atmospheric — bleeds into global canvas, no hard edges */
 .s-quienes-glow {
-  position: absolute; top: 0; right: 0;
-  width: 55%; height: 100%;
-  background: radial-gradient(ellipse at 75% 38%, rgba(27,108,168,0.14) 0%, transparent 65%);
+  position: absolute; top: -10%; right: -5%;
+  width: 65%; height: 120%;
+  background: radial-gradient(ellipse at 75% 38%, rgba(27,108,168,0.10) 0%, transparent 70%);
+  filter: blur(20px);
   pointer-events: none;
 }
 .s-quienes-inner {
@@ -281,22 +341,16 @@ img { max-width: 100%; display: block; }
    Sits on #060C14 (= body bg = quienes bottom)
 ══════════════════════════════════════ */
 .s-hacemos {
-  background: #060C14;
+  background: transparent;
   padding: 80px 0 140px;
   position: relative; overflow: hidden;
 }
-.s-hacemos::before {
-  content: '';
-  position: absolute; inset: 0;
-  background-image: radial-gradient(circle, rgba(178,190,201,0.038) 1px, transparent 1px);
-  background-size: 40px 40px;
-  pointer-events: none;
-}
-/* Soft blue remnant from quienes bleeding down */
+/* Soft fade-in glow — no edges */
 .s-hacemos-top-glow {
-  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-  width: 90%; height: 280px;
-  background: radial-gradient(ellipse at 50% 0%, rgba(13,42,82,0.45) 0%, transparent 70%);
+  position: absolute; top: -15%; left: 50%; transform: translateX(-50%);
+  width: 95%; height: 360px;
+  background: radial-gradient(ellipse at 50% 0%, rgba(27,108,168,0.10) 0%, transparent 75%);
+  filter: blur(30px);
   pointer-events: none;
 }
 .s-hacemos-inner {
@@ -315,18 +369,15 @@ img { max-width: 100%; display: block; }
    Dark, warms at bottom to connect with contacto
 ══════════════════════════════════════ */
 .s-tech {
-  background: linear-gradient(180deg,
-    #060C14 0%,
-    #070E1B 45%,
-    #0A1E38 100%
-  );
+  background: transparent;
   padding: 100px 0 180px;
   position: relative; overflow: hidden;
 }
 .s-tech::before {
   content: '';
-  position: absolute; top: 0; left: 0; width: 60%; height: 100%;
-  background: radial-gradient(ellipse at 0% 50%, rgba(27,108,168,0.07) 0%, transparent 60%);
+  position: absolute; top: 0; left: -10%; width: 70%; height: 100%;
+  background: radial-gradient(ellipse at 0% 50%, rgba(83,96,115,0.16) 0%, transparent 65%);
+  filter: blur(20px);
   pointer-events: none;
 }
 .tech-watermark {
@@ -352,18 +403,23 @@ img { max-width: 100%; display: block; }
    Starts #0A1E38 (= s-tech bottom), peaks to #1B6CA8
 ══════════════════════════════════════ */
 .s-contacto {
-  background: linear-gradient(155deg,
-    #0A1E38 0%, #0D2E5C 22%,
-    #1B6CA8 58%, #155888 78%, #0D3A60 100%
-  );
+  background: transparent;
   padding: 120px 0 120px;
   position: relative; overflow: hidden;
 }
+/* Acero peak glow — soft, blurred, integrates into global canvas */
 .s-contacto::before {
   content: '';
-  position: absolute; inset: 0;
-  background-image: radial-gradient(circle, rgba(255,255,255,0.038) 1px, transparent 1px);
-  background-size: 36px 36px;
+  position: absolute; top: -10%; right: -15%; width: 90%; height: 120%;
+  background: radial-gradient(ellipse at 70% 50%, rgba(27,108,168,0.32) 0%, transparent 65%);
+  filter: blur(40px);
+  pointer-events: none;
+}
+.s-contacto::after {
+  content: '';
+  position: absolute; bottom: -10%; left: -10%; width: 70%; height: 80%;
+  background: radial-gradient(ellipse at 30% 70%, rgba(178,190,201,0.06) 0%, transparent 70%);
+  filter: blur(30px);
   pointer-events: none;
 }
 .s-contacto-quote {
@@ -683,6 +739,13 @@ img { max-width: 100%; display: block; }
 </style>
 </head>
 <body>
+
+<!-- ══ GLOBAL ATMOSPHERIC CANVAS ══════════ -->
+<div class="bg-canvas" aria-hidden="true"></div>
+<div class="bg-mesh"   aria-hidden="true"></div>
+<div class="bg-drift"  aria-hidden="true"></div>
+<div class="bg-grid"   aria-hidden="true"></div>
+<div class="bg-noise"  aria-hidden="true"></div>
 
 <!-- Progress bar -->
 <div class="page-progress" id="pageProgress"></div>
