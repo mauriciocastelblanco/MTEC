@@ -45,37 +45,33 @@ img { max-width: 100%; display: block; }
   will-change: transform;
 }
 
-/* Layer 1 — image background (fixed parallax, covers viewport) */
+/* Layer 1 — solid acero base (dominant brand color) */
 .bg-canvas {
   z-index: -5;
-  background:
-    #06101C
-    url("brand_assets/background_image_1.png")
-    center center / cover no-repeat;
-  background-attachment: fixed;
+  background: #1B6CA8;
 }
 
-/* Layer 2 — darkening + blue tint overlay for legibility */
+/* Layer 2 — image with `lighten` blend
+   Per channel: max(image, acero). White swirls stay pure white;
+   any pixel darker than acero is replaced by acero — no gray bleed. */
 .bg-mesh {
   z-index: -4;
-  background:
-    /* deeper bottom anchor */
-    linear-gradient(180deg,
-      rgba(6,16,28,0.30) 0%,
-      rgba(8,23,44,0.55) 45%,
-      rgba(6,16,28,0.78) 100%),
-    /* brand acero tint everywhere */
-    linear-gradient(180deg,
-      rgba(13,27,46,0.45),
-      rgba(13,27,46,0.45));
+  background: url("brand_assets/background_image_1.png") center center / cover no-repeat;
+  background-attachment: fixed;
+  mix-blend-mode: lighten;
+  opacity: 0.78;
 }
 
-/* Layer 3 — subtle vignette + light pull on hero zone */
+/* Layer 3 — acero saturation lock + bottom darken for legibility */
 .bg-drift {
   z-index: -3;
   background:
-    radial-gradient(120% 80% at 50% 0%, rgba(27,108,168,0.18), transparent 60%),
-    radial-gradient(140% 100% at 50% 100%, rgba(6,12,22,0.55), transparent 70%);
+    /* re-saturate toward acero in the mid */
+    linear-gradient(180deg,
+      rgba(27,108,168,0.18) 0%,
+      rgba(27,108,168,0.10) 50%,
+      rgba(13,27,46,0.55) 100%);
+  mix-blend-mode: multiply;
 }
 
 /* Layer 4 — fine dot grid, masked to fade at edges */
