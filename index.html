@@ -29,15 +29,18 @@ img { max-width: 100%; display: block; }
   --azul:    #0D1B2E;
   --n500:    #8896A5;
   --vapor:   #EDF1F5;
+  --page-pad: clamp(2rem, 10vw, 200px);
+  --page-max: none;
 }
 
 /* ══════════════════════════════════════
    GLOBAL ATMOSPHERIC BACKGROUND
-   Image-driven canvas with darken overlay
+   Synthetic — solid acero + radial blooms + SVG strokes.
+   No raster photo dependency: tone is exactly #1B6CA8 everywhere.
 ══════════════════════════════════════ */
 .bg-canvas,
 .bg-mesh,
-.bg-drift,
+.bg-waves,
 .bg-grid,
 .bg-noise {
   position: fixed; inset: 0;
@@ -51,27 +54,19 @@ img { max-width: 100%; display: block; }
   background: #1B6CA8;
 }
 
-/* Layer 2 — image with `lighten` blend
-   Per channel: max(image, acero). White swirls stay pure white;
-   any pixel darker than acero is replaced by acero — no gray bleed. */
+/* Layer 2 — volumetric light blooms (replace the photo's bright zones).
+   Soft white radials fade to transparent so the acero base reads through. */
 .bg-mesh {
   z-index: -4;
-  background: url("brand_assets/background_image_1.png") center center / cover no-repeat;
-  background-attachment: fixed;
-  mix-blend-mode: lighten;
-  opacity: 0.78;
+  background:
+    radial-gradient(900px 700px at 14% 18%, rgba(255,255,255,0.18), transparent 65%),
+    radial-gradient(900px 700px at 82% 46%, rgba(255,255,255,0.10), transparent 70%),
+    radial-gradient(1200px 600px at 55% 100%, rgba(255,255,255,0.13), transparent 65%);
 }
 
-/* Layer 3 — acero saturation lock + bottom darken for legibility */
-.bg-drift {
+/* Layer 3 — synthetic wave strokes (rendered by the inline <svg class="bg-waves">) */
+.bg-waves {
   z-index: -3;
-  background:
-    /* re-saturate toward acero in the mid */
-    linear-gradient(180deg,
-      rgba(27,108,168,0.18) 0%,
-      rgba(27,108,168,0.10) 50%,
-      rgba(13,27,46,0.55) 100%);
-  mix-blend-mode: multiply;
 }
 
 /* Layer 4 — fine dot grid, masked to fade at edges */
@@ -89,10 +84,6 @@ img { max-width: 100%; display: block; }
   opacity: 0.045;
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='7'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.9 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .bg-drift { animation: none; }
 }
 
 /* ══ PROGRESS BAR ══════════════════════ */
@@ -113,7 +104,7 @@ img { max-width: 100%; display: block; }
 @media (max-width: 860px) { .chapter-nav { display: none; } }
 .ch-dot {
   width: 5px; height: 5px; border-radius: 50%;
-  background: rgba(178,190,201,0.2);
+  background: rgba(255,255,255,0.40);
   transition: background 0.4s, box-shadow 0.4s, transform 0.4s;
   cursor: pointer; position: relative;
 }
@@ -121,16 +112,16 @@ img { max-width: 100%; display: block; }
   content: attr(data-label);
   position: absolute; right: 18px; top: 50%; transform: translateY(-50%);
   white-space: nowrap; font-size: 9px; font-family: "Inter", sans-serif;
-  color: rgba(178,190,201,0.4); opacity: 0;
+  color: rgba(255,255,255,0.65); opacity: 0;
   transition: opacity 0.25s; letter-spacing: 0.1em; font-weight: 600;
   pointer-events: none;
 }
 .ch-dot:hover::before, .ch-dot.active::before { opacity: 1; }
 .ch-dot.active {
-  background: var(--acero); transform: scale(1.6);
-  box-shadow: 0 0 14px rgba(27,108,168,0.7);
+  background: #fff; transform: scale(1.6);
+  box-shadow: 0 0 14px rgba(255,255,255,0.7);
 }
-.ch-dot.active::before { color: rgba(178,190,201,0.75); }
+.ch-dot.active::before { color: #fff; }
 
 /* ══════════════════════════════════════
    NAV
@@ -140,14 +131,14 @@ img { max-width: 100%; display: block; }
   opacity: 0; animation: fadeDown 0.8s cubic-bezier(0.22,1,0.36,1) 0.2s forwards;
 }
 .nav-inner {
-  max-width: 1320px; margin: 0 auto;
-  padding: 0 clamp(1.25rem, 5vw, 3rem);
+  margin: 0 auto;
+  padding: 0 var(--page-pad);
   display: flex; align-items: center;
   justify-content: space-between;
-  height: clamp(76px, 10vh, 96px); gap: 2rem;
+  height: clamp(80px, 9vh, 100px); gap: 2rem;
 }
 .logo-block { display: flex; align-items: center; }
-.logo-img { height: 58px; width: auto; opacity: 0.95; transition: opacity 0.2s; }
+.logo-img { height: 64px; width: auto; opacity: 0.95; transition: opacity 0.2s; }
 .logo-block:hover .logo-img { opacity: 1; }
 .nav-links { display: flex; align-items: center; gap: 2.25rem; list-style: none; }
 @media (max-width: 860px) { .nav-links { display: none; } }
@@ -163,6 +154,11 @@ img { max-width: 100%; display: block; }
 }
 .nav-links a:hover { color: #fff; }
 .nav-links a:hover::after { width: 100%; }
+.nav-static {
+  font-size: 0.875rem; font-weight: 500;
+  color: rgba(255,255,255,0.55); letter-spacing: 0.02em;
+  cursor: default;
+}
 .nav-divider {
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(178,190,201,0.1) 30%, rgba(178,190,201,0.1) 70%, transparent);
@@ -184,17 +180,20 @@ img { max-width: 100%; display: block; }
    HERO — CAPÍTULO 0
 ══════════════════════════════════════ */
 .hero {
-  position: relative; min-height: 100svh;
+  position: relative; min-height: 82svh;
   display: flex; flex-direction: column; overflow: hidden;
 }
 .hero-bg {
   position: absolute; inset: 0;
-  /* Transparent backing — defers to global canvas. Keeps subtle gradient
-     wash to anchor the video against the canvas mesh without a hard block. */
-  background: linear-gradient(165deg,
-    rgba(27,108,168,0.18) 0%,
-    rgba(14,61,104,0.10) 40%,
-    rgba(10,30,56,0.0)   80%
+  /* Moody dark base over the global acero canvas — gives the video
+     cinematic contrast in the upper hero. Bottom is left transparent
+     so .hero-fade can ramp into solid acero seamlessly. */
+  background: linear-gradient(180deg,
+    rgba(6,14,26,0.88)   0%,
+    rgba(8,22,42,0.78)   28%,
+    rgba(11,38,68,0.55)  55%,
+    rgba(15,60,98,0.20)  78%,
+    transparent          100%
   );
 }
 .hero-video {
@@ -204,14 +203,27 @@ img { max-width: 100%; display: block; }
   mix-blend-mode: luminosity;
   will-change: transform;
 }
-/* Soft fade so the video doesn't stop abruptly — no hard transition to next section */
+/* Wave veil — same SVG strokes as the global bg, with screen blend
+   so the white curves carry across the hero on top of the video.
+   Mirrors .bg-waves so the seam reads as one continuous "film". */
+.hero-waves {
+  position: absolute; inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: screen;
+  opacity: 0.55;
+}
+/* Soft fade — starts earlier in the hero so the brightening to acero
+   is well underway before reaching the next section. */
 .hero-fade {
-  position: absolute; bottom: 0; left: 0; right: 0; height: 55%;
+  position: absolute; bottom: 0; left: 0; right: 0; height: 78%;
   background: linear-gradient(to bottom,
-    transparent 0%,
-    rgba(8,18,34,0.25) 35%,
-    rgba(6,16,28,0.55) 70%,
-    rgba(6,16,28,0.85) 100%
+    transparent              0%,
+    rgba(11,38,68,0.18)     18%,
+    rgba(20,82,138,0.45)    40%,
+    rgba(27,108,168,0.78)   62%,
+    rgba(27,108,168,0.95)   85%,
+    #1B6CA8                100%
   );
   pointer-events: none; z-index: 1;
 }
@@ -244,7 +256,7 @@ img { max-width: 100%; display: block; }
 .hero-content {
   position: relative; z-index: 2; width: 100%; flex: 1;
   display: flex; flex-direction: column; justify-content: flex-end;
-  padding: 0 clamp(1.5rem, 5vw, 80px) 96px clamp(1.5rem, 5vw, 80px);
+  padding: 0 var(--page-pad) 200px var(--page-pad);
   will-change: transform;
 }
 .hero-eyebrow {
@@ -256,22 +268,40 @@ img { max-width: 100%; display: block; }
 }
 .hero-h1 {
   font-family: "Barlow Condensed", sans-serif;
-  font-size: clamp(54px, 9vw, 112px); font-weight: 700;
-  color: #fff; letter-spacing: -0.03em; line-height: 0.92;
+  font-size: clamp(46px, 7.5vw, 92px); font-weight: 700;
+  color: #fff; letter-spacing: -0.03em; line-height: 0.95;
   margin-bottom: 22px;
+  display: grid; position: relative;
+}
+.hero-h1 .h1-cycle {
+  grid-column: 1; grid-row: 1;
   opacity: 0; transform: translateY(16px);
-  animation: fadeUp 0.65s cubic-bezier(0.22,1,0.36,1) 0.25s forwards;
+  animation: heroCycle 9s cubic-bezier(0.22,1,0.36,1) infinite;
+  white-space: nowrap;
+}
+.hero-h1 .h1-cycle--1 { animation-delay: 0.6s; }
+.hero-h1 .h1-cycle--2 { animation-delay: 3.6s; }
+.hero-h1 .h1-cycle--3 { animation-delay: 6.6s; }
+@keyframes heroCycle {
+  0%      { opacity: 0; transform: translateY(16px); }
+  5%      { opacity: 1; transform: translateY(0); }
+  33.33%  { opacity: 1; transform: translateY(0); }
+  38%     { opacity: 0; transform: translateY(-16px); }
+  100%    { opacity: 0; transform: translateY(-16px); }
+}
+@media (max-width: 720px) {
+  .hero-h1 .h1-cycle { white-space: normal; }
 }
 .hero-desc {
   font-size: clamp(14px, 1.3vw, 16px); font-weight: 400;
-  color: rgba(178,190,201,0.68); line-height: 1.65;
+  color: rgba(255,255,255,0.85); line-height: 1.65;
   max-width: 54ch; margin-bottom: 28px;
   opacity: 0; transform: translateY(8px);
   animation: fadeUp 0.55s ease 0.38s forwards;
 }
 .hero-divider {
   height: 1px; width: 100%;
-  background: linear-gradient(90deg, rgba(178,190,201,0.28) 0%, transparent 70%);
+  background: linear-gradient(90deg, rgba(255,255,255,0.55) 0%, transparent 70%);
   transform-origin: left; transform: scaleX(0);
   margin-bottom: 20px;
   animation: drawLine 0.7s cubic-bezier(0.22,1,0.36,1) 0.45s forwards;
@@ -286,34 +316,25 @@ img { max-width: 100%; display: block; }
   text-transform: uppercase; color: rgba(255,255,255,0.75);
 }
 .hero-sep {
-  color: rgba(178,190,201,0.3); padding: 0 14px; font-size: 10px;
-}
-.scroll-cue {
-  position: absolute; bottom: 36px; right: clamp(1.5rem, 5vw, 80px);
-  z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 8px;
-  opacity: 0; animation: fadeUp 0.6s ease 0.7s forwards;
-  transition: opacity 0.5s ease;
-}
-.scroll-cue.hidden { opacity: 0 !important; pointer-events: none; }
-.scroll-cue span {
-  font-size: 9px; font-weight: 600; letter-spacing: 0.2em;
-  text-transform: uppercase; color: rgba(178,190,201,0.35);
-  writing-mode: vertical-rl; transform: rotate(180deg);
-}
-.scroll-line {
-  width: 1px; height: 40px;
-  background: linear-gradient(to bottom, rgba(178,190,201,0.5), transparent);
-  animation: scrollPulse 2s ease-in-out infinite;
+  color: rgba(255,255,255,0.5); padding: 0 14px; font-size: 10px;
 }
 
 /* ══════════════════════════════════════
    QUIÉNES SOMOS — CAPÍTULO 1
    Starts #0A1E38 (= hero-fade end), bleeds down to #060C14
 ══════════════════════════════════════ */
+/* Section as a sober "slide" panel that emerges from the hero with a
+   convex curved top edge. The SVG draws both the gradient panel fill
+   AND the hairline stroke that traces the curve. */
 .s-quienes {
   background: transparent;
-  padding: 130px 0 200px;
-  position: relative; overflow: hidden;
+  margin-top: -200px;     /* curve area extends into the hero */
+  padding: 220px 0 110px; /* compensates the negative margin */
+  position: relative; z-index: 1;
+}
+.sq-curve {
+  position: absolute; inset: 0;
+  pointer-events: none;
 }
 /* Subtle local atmospheric — bleeds into global canvas, no hard edges */
 .s-quienes-glow {
@@ -324,8 +345,8 @@ img { max-width: 100%; display: block; }
   pointer-events: none;
 }
 .s-quienes-inner {
-  max-width: 1320px; margin: 0 auto;
-  padding: 0 clamp(1.5rem, 5vw, 80px);
+  max-width: var(--page-max); margin: 0 auto;
+  padding: 0 var(--page-pad);
   display: grid; grid-template-columns: 1fr 1fr;
   gap: 80px; align-items: center;
   position: relative; z-index: 1;
@@ -350,8 +371,8 @@ img { max-width: 100%; display: block; }
   pointer-events: none;
 }
 .s-hacemos-inner {
-  max-width: 1320px; margin: 0 auto;
-  padding: 0 clamp(1.5rem, 5vw, 80px);
+  max-width: var(--page-max); margin: 0 auto;
+  padding: 0 var(--page-pad);
   position: relative; z-index: 1;
 }
 .s-intro-row {
@@ -386,8 +407,8 @@ img { max-width: 100%; display: block; }
   will-change: transform; line-height: 1;
 }
 .s-tech-inner {
-  max-width: 1320px; margin: 0 auto;
-  padding: 0 clamp(1.5rem, 5vw, 80px);
+  max-width: var(--page-max); margin: 0 auto;
+  padding: 0 var(--page-pad);
   display: grid; grid-template-columns: 1fr 1fr;
   gap: 80px; align-items: center;
   position: relative; z-index: 1;
@@ -426,8 +447,8 @@ img { max-width: 100%; display: block; }
   pointer-events: none; user-select: none;
 }
 .s-contacto-inner {
-  max-width: 1320px; margin: 0 auto;
-  padding: 0 clamp(1.5rem, 5vw, 80px);
+  max-width: var(--page-max); margin: 0 auto;
+  padding: 0 var(--page-pad);
   position: relative; z-index: 1;
   display: grid; grid-template-columns: 1fr auto;
   gap: 80px; align-items: center;
@@ -440,7 +461,8 @@ img { max-width: 100%; display: block; }
 .s-label {
   display: inline-flex; align-items: center; gap: 12px;
   font-size: 10px; font-weight: 600;
-  letter-spacing: 0.28em; text-transform: uppercase; color: #1B6CA8;
+  letter-spacing: 0.28em; text-transform: uppercase;
+  color: rgba(255,255,255,0.85);
   margin-bottom: 28px;
 }
 .s-label::before {
@@ -456,20 +478,25 @@ img { max-width: 100%; display: block; }
   color: #fff; letter-spacing: -0.02em; line-height: 1.1;
   margin-bottom: 24px;
 }
+.s-quienes-logo {
+  height: 220px; width: auto;
+  margin-bottom: 24px;
+  opacity: 0.95;
+}
 .s-body {
   font-size: clamp(14px, 1.2vw, 16px); font-weight: 400;
-  color: rgba(178,190,201,0.62); line-height: 1.75;
+  color: rgba(255,255,255,0.85); line-height: 1.75;
   max-width: 48ch; margin-bottom: 36px;
 }
 .s-link {
   display: inline-flex; align-items: center; gap: 10px;
   font-size: 13px; font-weight: 600; letter-spacing: 0.04em;
-  color: rgba(178,190,201,0.62);
-  border-bottom: 1px solid rgba(178,190,201,0.18);
+  color: rgba(255,255,255,0.90);
+  border-bottom: 1px solid rgba(255,255,255,0.45);
   padding-bottom: 4px;
   transition: color 0.2s, border-color 0.2s;
 }
-.s-link:hover { color: #fff; border-color: #1B6CA8; }
+.s-link:hover { color: #fff; border-color: #fff; }
 .s-link svg { transition: transform 0.2s cubic-bezier(0.16,1,0.3,1); }
 .s-link:hover svg { transform: translateX(4px); }
 
@@ -477,12 +504,12 @@ img { max-width: 100%; display: block; }
 .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
 .stat-card {
   padding: 32px 28px;
-  background: rgba(255,255,255,0.025);
-  border: 1px solid rgba(178,190,201,0.07);
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.18);
   position: relative; overflow: hidden;
   transition: background 0.3s, border-color 0.3s;
 }
-.stat-card:hover { background: rgba(27,108,168,0.09); border-color: rgba(27,108,168,0.22); }
+.stat-card:hover { background: rgba(255,255,255,0.10); border-color: rgba(255,255,255,0.30); }
 .stat-card::before {
   content: ''; position: absolute;
   top: 0; left: 0; right: 0; height: 2px;
@@ -497,25 +524,146 @@ img { max-width: 100%; display: block; }
   line-height: 1; letter-spacing: -0.03em;
   text-shadow: 0 0 40px rgba(27,108,168,0.35);
 }
-.stat-unit { font-size: 24px; font-weight: 300; color: rgba(178,190,201,0.52); }
+.stat-unit { font-size: 24px; font-weight: 300; color: rgba(255,255,255,0.75); }
 .stat-label {
   font-size: 11px; font-weight: 600; letter-spacing: 0.12em;
-  text-transform: uppercase; color: rgba(178,190,201,0.38); margin-top: 8px;
+  text-transform: uppercase; color: rgba(255,255,255,0.72); margin-top: 8px;
 }
-.stat-detail { font-size: 12px; color: rgba(178,190,201,0.28); margin-top: 4px; line-height: 1.4; }
+.stat-detail { font-size: 12px; color: rgba(255,255,255,0.62); margin-top: 4px; line-height: 1.4; }
+
+/* Modern editorial stats — vertical list with hairline rules.
+   Each row: large num on the left, label + detail on the right. */
+.stats-mod { display: flex; flex-direction: column; }
+.stat-mod {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: 28px; align-items: center;
+  padding: 18px 0;
+  border-top: 1px solid rgba(255,255,255,0.18);
+  position: relative;
+  transition: padding 0.3s;
+}
+.stat-mod::before {
+  content: ''; position: absolute;
+  top: -1px; left: 0; height: 1px; width: 0;
+  background: #fff;
+  transition: width 0.5s cubic-bezier(0.22,1,0.36,1);
+}
+.stat-mod:hover::before { width: 60px; }
+.stat-mod:last-child { border-bottom: 1px solid rgba(255,255,255,0.18); }
+.stat-mod-num {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 46px; font-weight: 700; line-height: 1;
+  color: #fff; letter-spacing: -0.02em;
+  display: inline-flex; align-items: baseline;
+}
+.stat-mod-num small { font-size: 0.55em; font-weight: 300; margin-left: 2px; opacity: 0.85; }
+.stat-mod-num--word { font-size: 32px; letter-spacing: 0.02em; }
+.stat-mod-info { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.stat-mod-label {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.18em;
+  text-transform: uppercase; color: rgba(255,255,255,0.92);
+}
+.stat-mod-detail {
+  font-size: 13px; line-height: 1.5;
+  color: rgba(255,255,255,0.65);
+}
+
+/* ══════════════════════════════════════
+   QUÉ HACEMOS — service stripes
+   Editorial horizontal rows. Each stripe = a service.
+══════════════════════════════════════ */
+.serv-stripes { display: flex; flex-direction: column; }
+.serv-stripe {
+  display: grid;
+  grid-template-columns: clamp(72px, 8vw, 110px) 1fr 36px;
+  gap: clamp(24px, 3.5vw, 56px); align-items: center;
+  padding: 32px clamp(0px, 1.5vw, 24px) 32px 0;
+  border-top: 1px solid rgba(255,255,255,0.16);
+  position: relative; text-decoration: none; color: inherit;
+  transition: padding-left 0.5s cubic-bezier(0.22,1,0.36,1),
+              background 0.4s ease;
+}
+.serv-stripe::before {
+  content: ''; position: absolute;
+  left: 0; top: -1px; height: 1px; width: 0;
+  background: #fff;
+  transition: width 0.6s cubic-bezier(0.22,1,0.36,1);
+}
+.serv-stripe:hover {
+  padding-left: 24px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.05), transparent 70%);
+}
+.serv-stripe:hover::before { width: 120px; }
+.serv-stripe:last-child { border-bottom: 1px solid rgba(255,255,255,0.16); }
+
+.serv-num {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: clamp(48px, 5.5vw, 84px);
+  font-weight: 700; line-height: 0.9;
+  color: rgba(255,255,255,0.85); letter-spacing: -0.02em;
+  transition: color 0.3s, transform 0.4s cubic-bezier(0.22,1,0.36,1);
+  display: block;
+}
+.serv-stripe:hover .serv-num { color: #fff; transform: translateX(-4px); }
+
+.serv-content {
+  display: flex; flex-direction: column; gap: 10px; min-width: 0;
+}
+.serv-title {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: clamp(22px, 2.4vw, 32px); font-weight: 600;
+  color: #fff; letter-spacing: -0.005em; line-height: 1.05;
+}
+.serv-desc {
+  font-size: 14px; line-height: 1.6;
+  color: rgba(255,255,255,0.78);
+  max-width: 70ch;
+}
+.serv-tags {
+  display: flex; flex-wrap: wrap; align-items: center;
+  margin-top: 4px;
+}
+.serv-tag {
+  font-size: 10px; letter-spacing: 0.18em;
+  text-transform: uppercase; font-weight: 600;
+  color: rgba(255,255,255,0.65);
+  display: inline-flex; align-items: center;
+}
+.serv-tag::before {
+  content: '·'; padding: 0 12px;
+  color: rgba(255,255,255,0.30); font-weight: 400;
+}
+.serv-tag:first-child::before { display: none; }
+
+.serv-arrow {
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.50);
+  transition: color 0.3s, transform 0.4s cubic-bezier(0.22,1,0.36,1);
+}
+.serv-stripe:hover .serv-arrow {
+  color: #fff;
+  transform: translateX(8px);
+}
+
+@media (max-width: 720px) {
+  .serv-stripe { grid-template-columns: 56px 1fr; padding-right: 0; }
+  .serv-arrow { display: none; }
+  .serv-stripe:hover { padding-left: 12px; }
+}
 
 /* Linea cards */
 .lineas-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
 @media (max-width: 900px) { .lineas-grid { grid-template-columns: 1fr; } }
 .linea-card {
   padding: 48px 36px;
-  background: rgba(13,27,46,0.5);
-  border: 1px solid rgba(178,190,201,0.07);
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.18);
   position: relative; overflow: hidden;
   transition: background 0.35s, border-color 0.35s, transform 0.35s;
   cursor: default; will-change: transform;
 }
-.linea-card:hover { background: rgba(27,108,168,0.09); border-color: rgba(27,108,168,0.18); }
+.linea-card:hover { background: rgba(255,255,255,0.10); border-color: rgba(255,255,255,0.32); }
 .linea-card-bar {
   position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: #1B6CA8;
   transition: width 0.5s cubic-bezier(0.22,1,0.36,1);
@@ -532,38 +680,38 @@ img { max-width: 100%; display: block; }
 .linea-num {
   font-family: "Barlow Condensed", sans-serif;
   font-size: 72px; font-weight: 700;
-  color: rgba(27,108,168,0.1); line-height: 1;
+  color: rgba(255,255,255,0.30); line-height: 1;
   letter-spacing: -0.04em; margin-bottom: 20px;
   transition: color 0.35s;
 }
-.linea-card:hover .linea-num { color: rgba(27,108,168,0.22); }
+.linea-card:hover .linea-num { color: rgba(255,255,255,0.50); }
 .linea-title {
   font-family: "Barlow Condensed", sans-serif;
   font-size: 28px; font-weight: 600;
   color: #EDF1F5; letter-spacing: -0.01em;
   margin-bottom: 16px; line-height: 1.1;
 }
-.linea-text { font-size: 13px; color: rgba(178,190,201,0.5); line-height: 1.7; }
+.linea-text { font-size: 13px; color: rgba(255,255,255,0.78); line-height: 1.7; }
 .linea-tag {
   display: inline-block; margin-top: 24px;
   font-size: 9px; font-weight: 600; letter-spacing: 0.2em;
-  text-transform: uppercase; color: #1B6CA8;
+  text-transform: uppercase; color: rgba(255,255,255,0.72);
 }
 .services-strip {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 0; margin-top: 48px;
-  border-top: 1px solid rgba(178,190,201,0.06);
+  border-top: 1px solid rgba(255,255,255,0.18);
 }
 .service-chip {
   padding: 18px 24px;
-  border-right: 1px solid rgba(178,190,201,0.06);
+  border-right: 1px solid rgba(255,255,255,0.18);
   display: flex; align-items: center; gap: 10px;
-  font-size: 12px; font-weight: 500; color: rgba(178,190,201,0.42);
+  font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.72);
   transition: color 0.2s, background 0.2s;
 }
 .service-chip:last-child { border-right: none; }
-.service-chip:hover { color: rgba(178,190,201,0.82); background: rgba(27,108,168,0.05); }
-.service-chip::before { content: '—'; color: #1B6CA8; font-weight: 700; flex-shrink: 0; }
+.service-chip:hover { color: #fff; background: rgba(255,255,255,0.06); }
+.service-chip::before { content: '—'; color: rgba(255,255,255,0.85); font-weight: 700; flex-shrink: 0; }
 
 /* Tech */
 .tech-metric { display: flex; flex-direction: column; gap: 4px; margin-bottom: 40px; }
@@ -573,19 +721,19 @@ img { max-width: 100%; display: block; }
   color: #fff; letter-spacing: -0.04em; line-height: 1;
 }
 .tech-metric-label {
-  font-size: 13px; color: rgba(178,190,201,0.4);
+  font-size: 13px; color: rgba(255,255,255,0.72);
   letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600;
 }
 .tech-caption {
   font-family: "Barlow Condensed", sans-serif;
   font-size: clamp(18px, 2vw, 24px); font-weight: 300;
-  color: rgba(237,241,245,0.68); line-height: 1.45;
+  color: rgba(255,255,255,0.85); line-height: 1.45;
   max-width: 40ch; font-style: italic;
 }
 .tech-highlights { display: flex; flex-direction: column; gap: 0; }
 .tech-hl {
   padding: 24px 0;
-  border-bottom: 1px solid rgba(178,190,201,0.06);
+  border-bottom: 1px solid rgba(255,255,255,0.18);
   display: grid; grid-template-columns: 24px 1fr;
   gap: 20px; align-items: flex-start;
   opacity: 0; transform: translateX(28px);
@@ -600,7 +748,7 @@ img { max-width: 100%; display: block; }
   box-shadow: 0 0 8px rgba(27,108,168,0.55);
 }
 .tech-hl-title { font-size: 14px; font-weight: 600; color: #EDF1F5; margin-bottom: 4px; }
-.tech-hl-text { font-size: 13px; color: rgba(178,190,201,0.48); line-height: 1.6; }
+.tech-hl-text { font-size: 13px; color: rgba(255,255,255,0.78); line-height: 1.6; }
 
 /* Contacto */
 .contacto-headline {
@@ -610,7 +758,7 @@ img { max-width: 100%; display: block; }
   margin-bottom: 20px;
 }
 .contacto-sub {
-  font-size: clamp(14px, 1.2vw, 17px); color: rgba(255,255,255,0.6);
+  font-size: clamp(14px, 1.2vw, 17px); color: rgba(255,255,255,0.85);
   max-width: 52ch; line-height: 1.65; margin-bottom: 40px;
 }
 .contacto-channels { display: flex; flex-direction: column; gap: 12px; }
@@ -621,8 +769,8 @@ img { max-width: 100%; display: block; }
 .contacto-ch:hover { color: #fff; }
 .contacto-ch-icon {
   width: 36px; height: 36px;
-  background: rgba(255,255,255,0.07);
-  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.30);
   display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
 .contacto-ch-icon svg { width: 16px; height: 16px; stroke: rgba(255,255,255,0.75); fill: none; stroke-width: 1.5; }
@@ -642,8 +790,8 @@ img { max-width: 100%; display: block; }
 .btn-agenda svg { transition: transform 0.2s cubic-bezier(0.16,1,0.3,1); }
 .btn-agenda:hover svg { transform: translateX(4px); }
 .btn-agenda-alt {
-  font-size: 12px; color: rgba(255,255,255,0.5);
-  letter-spacing: 0.04em; border-bottom: 1px solid rgba(255,255,255,0.18);
+  font-size: 12px; color: rgba(255,255,255,0.72);
+  letter-spacing: 0.04em; border-bottom: 1px solid rgba(255,255,255,0.40);
   padding-bottom: 2px; transition: color 0.2s, border-color 0.2s;
 }
 .btn-agenda-alt:hover { color: rgba(255,255,255,0.88); border-color: rgba(255,255,255,0.45); }
@@ -732,6 +880,109 @@ img { max-width: 100%; display: block; }
   0%,100%{opacity:0.5;transform:scaleY(1)}
   50%    {opacity:1;transform:scaleY(1.3)}
 }
+
+/* ══════════════════════════════════════
+   FOOTER
+══════════════════════════════════════ */
+.footer {
+  position: relative;
+  background: rgba(0,0,0,0.18);
+  border-top: 1px solid rgba(255,255,255,0.10);
+  padding: 88px 0 32px;
+  z-index: 2;
+}
+.footer-inner {
+  margin: 0 auto;
+  padding: 0 var(--page-pad);
+  display: flex; flex-direction: column; gap: 56px;
+}
+.footer-top {
+  display: grid; grid-template-columns: 1fr auto;
+  gap: 56px; align-items: stretch;
+}
+@media (max-width: 860px) {
+  .footer-top { grid-template-columns: 1fr; }
+}
+
+/* — Brand block — */
+.footer-brand { display: flex; flex-direction: column; gap: 22px; max-width: 48ch; }
+.footer-logo {
+  height: 72px; width: auto; opacity: 0.95; align-self: flex-start;
+}
+.footer-tagline {
+  font-size: 14px; line-height: 1.65;
+  color: rgba(255,255,255,0.78); margin: 0;
+}
+.footer-channels {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  font-size: 13px; letter-spacing: 0.02em;
+}
+.footer-channel {
+  color: rgba(255,255,255,0.85);
+  border-bottom: 1px solid rgba(255,255,255,0.30);
+  padding-bottom: 2px;
+  transition: color 0.2s, border-color 0.2s;
+}
+.footer-channel:hover { color: #fff; border-color: #fff; }
+.footer-sep { color: rgba(255,255,255,0.30); }
+
+/* — Erres link card — */
+.footer-erres {
+  display: grid; grid-template-rows: auto auto auto;
+  align-content: space-between;
+  padding: 28px 32px;
+  min-width: 320px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.20);
+  text-decoration: none;
+  position: relative;
+  transition: background 0.25s, border-color 0.25s, transform 0.25s;
+}
+.footer-erres:hover {
+  background: rgba(255,255,255,0.10);
+  border-color: rgba(255,255,255,0.40);
+  transform: translateY(-3px);
+}
+.footer-erres-kicker {
+  font-size: 10px; font-weight: 600; letter-spacing: 0.22em;
+  text-transform: uppercase; color: rgba(255,255,255,0.65);
+}
+.footer-erres-name {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 44px; font-weight: 700;
+  color: #fff; letter-spacing: 0.04em; line-height: 1;
+  margin-top: 14px;
+}
+.footer-erres-tag {
+  font-size: 12px; line-height: 1.55;
+  color: rgba(255,255,255,0.70); margin-top: 12px;
+  max-width: 26ch;
+}
+.footer-erres-arrow {
+  position: absolute; top: 22px; right: 22px;
+  color: rgba(255,255,255,0.65);
+  transition: color 0.25s, transform 0.25s;
+}
+.footer-erres:hover .footer-erres-arrow {
+  color: #fff;
+  transform: translate(2px, -2px);
+}
+
+/* — Bottom row — */
+.footer-bottom {
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 16px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255,255,255,0.10);
+  font-size: 12px; color: rgba(255,255,255,0.55);
+  letter-spacing: 0.02em;
+}
+.footer-legal { display: flex; align-items: center; gap: 10px; }
+.footer-legal a {
+  color: rgba(255,255,255,0.6);
+  transition: color 0.2s;
+}
+.footer-legal a:hover { color: #fff; }
 </style>
 </head>
 <body>
@@ -739,7 +990,28 @@ img { max-width: 100%; display: block; }
 <!-- ══ GLOBAL ATMOSPHERIC CANVAS ══════════ -->
 <div class="bg-canvas" aria-hidden="true"></div>
 <div class="bg-mesh"   aria-hidden="true"></div>
-<div class="bg-drift"  aria-hidden="true"></div>
+<svg class="bg-waves" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <defs>
+    <!-- Heavy Gaussian blur — turns strokes into soft glass-like reflections -->
+    <filter id="wv-glow-g" x="-15%" y="-40%" width="130%" height="180%">
+      <feGaussianBlur stdDeviation="22"/>
+    </filter>
+    <linearGradient id="wv-fade-g" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0"    stop-color="#fff" stop-opacity="0"/>
+      <stop offset="0.25" stop-color="#fff" stop-opacity="0.6"/>
+      <stop offset="0.50" stop-color="#fff" stop-opacity="1"/>
+      <stop offset="0.75" stop-color="#fff" stop-opacity="0.6"/>
+      <stop offset="1"    stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <!-- Soft glass reflections — wide, very blurred, very low opacity.
+       No crisp core: the curves read as gentle bands of light, not lines. -->
+  <g fill="none" stroke="url(#wv-fade-g)" stroke-linecap="round" filter="url(#wv-glow-g)">
+    <path d="M -120 300 C 480 110, 1140 220, 2040 70"    stroke-width="34" opacity="0.10"/>
+    <path d="M -120 620 C 600 560, 1300 680, 2040 600"   stroke-width="28" opacity="0.06"/>
+    <path d="M -120 920 C 500 820, 1200 870, 2040 770"   stroke-width="40" opacity="0.12"/>
+  </g>
+</svg>
 <div class="bg-grid"   aria-hidden="true"></div>
 <div class="bg-noise"  aria-hidden="true"></div>
 
@@ -751,8 +1023,6 @@ img { max-width: 100%; display: block; }
   <div class="ch-dot" data-ch="0" data-label="Inicio"></div>
   <div class="ch-dot" data-ch="1" data-label="Quiénes Somos"></div>
   <div class="ch-dot" data-ch="2" data-label="Qué Hacemos"></div>
-  <div class="ch-dot" data-ch="3" data-label="Tecnología"></div>
-  <div class="ch-dot" data-ch="4" data-label="Contacto"></div>
 </nav>
 
 <!-- ══ HERO ══════════════════════════════════ -->
@@ -761,6 +1031,25 @@ img { max-width: 100%; display: block; }
   <video class="hero-video" id="heroVideo" autoplay muted loop playsinline>
     <source src="brand_assets/video_3df4ad65-fd77-4de5-b448-83538ec2e73a.mp4" type="video/mp4">
   </video>
+  <svg class="hero-waves" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <filter id="wv-glow-h" x="-15%" y="-40%" width="130%" height="180%">
+        <feGaussianBlur stdDeviation="22"/>
+      </filter>
+      <linearGradient id="wv-fade-h" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0"    stop-color="#fff" stop-opacity="0"/>
+        <stop offset="0.25" stop-color="#fff" stop-opacity="0.6"/>
+        <stop offset="0.50" stop-color="#fff" stop-opacity="1"/>
+        <stop offset="0.75" stop-color="#fff" stop-opacity="0.6"/>
+        <stop offset="1"    stop-color="#fff" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    <g fill="none" stroke="url(#wv-fade-h)" stroke-linecap="round" filter="url(#wv-glow-h)">
+      <path d="M -120 300 C 480 110, 1140 220, 2040 70"    stroke-width="34" opacity="0.18"/>
+      <path d="M -120 620 C 600 560, 1300 680, 2040 600"   stroke-width="28" opacity="0.11"/>
+      <path d="M -120 920 C 500 820, 1200 870, 2040 770"   stroke-width="40" opacity="0.22"/>
+    </g>
+  </svg>
   <div class="hero-fade"></div>
   <div class="hero-beam"></div>
   <div class="hero-beam-2"></div>
@@ -775,8 +1064,8 @@ img { max-width: 100%; display: block; }
       <ul class="nav-links">
         <li><a href="quienes-somos.html">Quiénes Somos</a></li>
         <li><a href="que-hacemos.html">Qué Hacemos</a></li>
-        <li><a href="tecnologia.html">Tecnología & I+D</a></li>
-        <li><a href="contacto.html">Contacto</a></li>
+        <li><span class="nav-static">Innovación</span></li>
+        <li><span class="nav-static">Contacto</span></li>
       </ul>
       <a href="contacto.html" class="nav-cta">
         Agenda una reunión
@@ -789,37 +1078,39 @@ img { max-width: 100%; display: block; }
   </nav>
 
   <div class="hero-content" id="heroContent">
-    <div class="hero-eyebrow">Refinería &nbsp;·&nbsp; Minería &nbsp;·&nbsp; Energía &nbsp;·&nbsp; Oil & Gas</div>
-    <h1 class="hero-h1">Servicios Técnicos<br>Especializados</h1>
+    <h1 class="hero-h1" aria-label="Servicios Especializados, Representación, Comercialización">
+      <span class="h1-cycle h1-cycle--1" aria-hidden="true">Servicios Especializados</span>
+      <span class="h1-cycle h1-cycle--2" aria-hidden="true">Representación</span>
+      <span class="h1-cycle h1-cycle--3" aria-hidden="true">Comercialización</span>
+    </h1>
     <p class="hero-desc">Para la gran industria chilena. Ejecución en terreno<br>cuando la continuidad operacional no admite improvisación.</p>
     <div class="hero-divider"></div>
     <div class="hero-lines">
-      <span class="hero-line-item">Comercialización</span>
+      <span class="hero-line-item">Refinería</span>
       <span class="hero-sep">·</span>
-      <span class="hero-line-item">Representación técnica</span>
+      <span class="hero-line-item">Minería</span>
       <span class="hero-sep">·</span>
-      <span class="hero-line-item">Servicios en terreno</span>
+      <span class="hero-line-item">Energía</span>
+      <span class="hero-sep">·</span>
+      <span class="hero-line-item">Oil &amp; Gas</span>
     </div>
   </div>
 
-  <div class="scroll-cue" id="scrollCue">
-    <span>Scroll</span>
-    <div class="scroll-line"></div>
-  </div>
 </section>
 
 <!-- ══ QUIÉNES SOMOS ═══════════════════════ -->
 <section class="s-quienes" id="ch1">
+  <svg class="sq-curve" viewBox="0 0 1440 1500" preserveAspectRatio="none" aria-hidden="true">
+    <!-- Panel fill below the convex curve — solid uniform tone.
+         The curve at top is the only visible division (no stroke). -->
+    <path d="M 0 220 Q 720 220 1440 0 L 1440 1500 L 0 1500 Z" fill="rgba(255,255,255,0.07)"/>
+  </svg>
   <div class="s-quienes-glow"></div>
   <div class="s-quienes-inner">
 
     <div>
-      <div class="s-label reveal">Quiénes Somos</div>
-      <div class="line-wrap">
-        <h2 class="line-reveal s-h2" data-delay="100">
-          Más de una década construyendo confianza en los sectores más exigentes de Chile.
-        </h2>
-      </div>
+      <div class="s-label">Quiénes Somos</div>
+      <img src="deliverables/logos/SVG/Logo MTEC_final-blanco.svg" alt="MTEC" class="s-quienes-logo">
       <p class="s-body blur-reveal" data-delay="200">
         Nacidos en 2014 como spin-off del ecosistema ERRES SpA, MTEC fue creado para operar donde la continuidad operacional no admite improvisación. Combinamos experiencia real de terreno con tecnología de proceso para responder rápido, ejecutar bien, y construir relaciones que duran más que un contrato.
       </p>
@@ -831,26 +1122,34 @@ img { max-width: 100%; display: block; }
       </a>
     </div>
 
-    <div class="stats-grid reveal-x-r" data-delay="150">
-      <div class="stat-card">
-        <div class="stat-num" data-count="2014">2014</div>
-        <div class="stat-label">Fundación</div>
-        <div class="stat-detail">Más de una década en terreno industrial</div>
+    <div class="stats-mod reveal-x-r" data-delay="150">
+      <div class="stat-mod">
+        <span class="stat-mod-num" data-count="2014">2014</span>
+        <span class="stat-mod-info">
+          <span class="stat-mod-label">Fundación</span>
+          <span class="stat-mod-detail">Más de una década en terreno industrial</span>
+        </span>
       </div>
-      <div class="stat-card">
-        <div class="stat-num"><span data-count="12">0</span><span class="stat-unit">+</span></div>
-        <div class="stat-label">Años de experiencia</div>
-        <div class="stat-detail">En refinería, minería, energía y oil & gas</div>
+      <div class="stat-mod">
+        <span class="stat-mod-num"><span data-count="12">12</span><small>+</small></span>
+        <span class="stat-mod-info">
+          <span class="stat-mod-label">Años de experiencia</span>
+          <span class="stat-mod-detail">En refinería, minería, energía y oil & gas</span>
+        </span>
       </div>
-      <div class="stat-card">
-        <div class="stat-num"><span data-count="4">0</span></div>
-        <div class="stat-label">Sectores críticos</div>
-        <div class="stat-detail">Donde la continuidad operacional es vital</div>
+      <div class="stat-mod">
+        <span class="stat-mod-num" data-count="4">4</span>
+        <span class="stat-mod-info">
+          <span class="stat-mod-label">Sectores críticos</span>
+          <span class="stat-mod-detail">Donde la continuidad operacional es vital</span>
+        </span>
       </div>
-      <div class="stat-card">
-        <div class="stat-num" style="font-size:38px;padding-top:6px;">ERRES</div>
-        <div class="stat-label">Ecosistema de respaldo</div>
-        <div class="stat-detail">Trayectoria comprobada, agilidad especializada</div>
+      <div class="stat-mod">
+        <span class="stat-mod-num stat-mod-num--word">ERRES</span>
+        <span class="stat-mod-info">
+          <span class="stat-mod-label">Ecosistema de respaldo</span>
+          <span class="stat-mod-detail">Trayectoria comprobada, agilidad especializada</span>
+        </span>
       </div>
     </div>
 
@@ -881,142 +1180,104 @@ img { max-width: 100%; display: block; }
       </div>
     </div>
 
-    <div class="lineas-grid">
-      <div class="linea-card reveal" data-delay="0">
-        <div class="linea-card-bar"></div>
-        <div class="linea-num">01</div>
-        <div class="linea-title">Comercialización</div>
-        <div class="linea-text">Provisión de productos, equipos y consumibles especializados. Catálogo técnico con trazabilidad y certificación para operaciones críticas.</div>
-        <div class="linea-tag">Equipos & Productos</div>
-      </div>
-      <div class="linea-card reveal" data-delay="150">
-        <div class="linea-card-bar"></div>
-        <div class="linea-num">02</div>
-        <div class="linea-title">Representación</div>
-        <div class="linea-text">Representación técnica de marcas líderes en soluciones de proceso, mantenimiento y seguridad industrial. Soporte técnico local con respaldo del fabricante.</div>
-        <div class="linea-tag">Marcas Líderes</div>
-      </div>
-      <div class="linea-card reveal" data-delay="300">
-        <div class="linea-card-bar"></div>
-        <div class="linea-num">03</div>
-        <div class="linea-title">Servicios Especializados</div>
-        <div class="linea-text">Ejecución técnica directa en planta. Encapsulados, reparaciones bajo presión, intervenciones sin detención de proceso. Tiempo de respuesta medido en horas.</div>
-        <div class="linea-tag">Ejecución en Terreno</div>
-      </div>
-    </div>
-
-    <div class="services-strip reveal" data-delay="400">
-      <div class="service-chip">Encapsulado de fugas bajo presión</div>
-      <div class="service-chip">Tapones Pop-a-Plug certificados</div>
-      <div class="service-chip">Inspección y diagnóstico técnico</div>
-      <div class="service-chip">Mantenimiento predictivo</div>
-      <div class="service-chip">Suministro de repuestos críticos</div>
-    </div>
-
-  </div>
-</section>
-
-<!-- ══ TECNOLOGÍA ══════════════════════════ -->
-<section class="s-tech" id="ch3">
-  <div class="tech-watermark" id="techWatermark">I+D</div>
-  <div class="s-tech-inner">
-
-    <div>
-      <div class="s-label reveal">Tecnología & I+D</div>
-      <div class="tech-metric reveal" data-delay="100">
-        <div class="tech-metric-value">20<span style="font-size:0.55em;color:rgba(178,190,201,0.42);font-weight:300;">min</span></div>
-        <div class="tech-metric-label">De 2 horas · a 20 minutos. Sin soldadura. Con certificación.</div>
-      </div>
-      <p class="tech-caption blur-reveal" data-delay="200">
-        "La precisión no se improvisa.<br>Se demuestra con datos."
-      </p>
-      <div style="margin-top:32px;" class="reveal" data-delay="300">
-        <a href="tecnologia.html" class="s-link">
-          Nuestra capacidad técnica
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+    <div class="serv-stripes">
+      <a href="que-hacemos.html#especializados" class="serv-stripe reveal" data-delay="0">
+        <span class="serv-num">01</span>
+        <span class="serv-content">
+          <span class="serv-title">Servicios Especializados</span>
+          <span class="serv-desc">Ejecución técnica directa en planta. Encapsulados, reparaciones bajo presión e intervenciones sin detener el proceso. Tiempo de respuesta medido en horas.</span>
+          <span class="serv-tags">
+            <span class="serv-tag">Encapsulado</span>
+            <span class="serv-tag">Pop-a-Plug</span>
+            <span class="serv-tag">Inspección</span>
+            <span class="serv-tag">Mantenimiento predictivo</span>
+          </span>
+        </span>
+        <span class="serv-arrow" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
             <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
-        </a>
-      </div>
-    </div>
-
-    <div class="tech-highlights">
-      <div class="tech-hl" data-delay="0">
-        <div class="tech-hl-dot"></div>
-        <div>
-          <div class="tech-hl-title">Reducción de tiempos de intervención</div>
-          <div class="tech-hl-text">Métodos y equipos que reducen dramáticamente el tiempo de parada. De horas a minutos en intervenciones críticas de planta.</div>
-        </div>
-      </div>
-      <div class="tech-hl" data-delay="100">
-        <div class="tech-hl-dot"></div>
-        <div>
-          <div class="tech-hl-title">Seguridad en proceso activo</div>
-          <div class="tech-hl-text">Técnicas de intervención que eliminan la necesidad de detener el proceso. Menor riesgo. Mayor continuidad operacional.</div>
-        </div>
-      </div>
-      <div class="tech-hl" data-delay="200">
-        <div class="tech-hl-dot"></div>
-        <div>
-          <div class="tech-hl-title">I+D aplicada en terreno</div>
-          <div class="tech-hl-text">No investigamos en laboratorio. Desarrollamos soluciones desde el problema real, validadas en planta y con impacto medible.</div>
-        </div>
-      </div>
-      <div class="tech-hl" data-delay="300">
-        <div class="tech-hl-dot"></div>
-        <div>
-          <div class="tech-hl-title">Estándares internacionales</div>
-          <div class="tech-hl-text">Procedimientos certificados bajo normas ASME, API y NORSOK. Trazabilidad completa en cada intervención.</div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<!-- ══ CONTACTO ════════════════════════════ -->
-<section class="s-contacto" id="ch4">
-  <div class="s-contacto-quote">"</div>
-  <div class="s-contacto-inner">
-
-    <div>
-      <div class="s-label s-label-light reveal">Iniciemos una conversación</div>
-      <div class="line-wrap">
-        <h2 class="line-reveal contacto-headline" data-delay="100">
-          Su operación no puede esperar.<br>Nosotros tampoco.
-        </h2>
-      </div>
-      <p class="contacto-sub blur-reveal" data-delay="200">
-        No un pitch. Una conversación técnica real sobre su desafío operacional. Cuéntenos qué necesita resolver — llegamos preparados.
-      </p>
-      <div class="contacto-channels reveal" data-delay="300">
-        <a href="tel:+56900000000" class="contacto-ch">
-          <div class="contacto-ch-icon">
-            <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 8.63 19.79 19.79 0 01.12 2.18 2 2 0 012.11 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-          </div>
-          +56 9 0000 0000
-        </a>
-        <a href="mailto:contacto@mtec.cl" class="contacto-ch">
-          <div class="contacto-ch-icon">
-            <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-          </div>
-          contacto@mtec.cl
-        </a>
-      </div>
-    </div>
-
-    <div class="contacto-right reveal-scale" data-delay="300">
-      <a href="contacto.html" class="btn-agenda" id="btnAgenda">
-        Agenda una reunión
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+        </span>
       </a>
-      <a href="contacto.html" class="btn-agenda-alt">O escríbenos directamente</a>
+      <a href="que-hacemos.html#representacion" class="serv-stripe reveal" data-delay="120">
+        <span class="serv-num">02</span>
+        <span class="serv-content">
+          <span class="serv-title">Representación</span>
+          <span class="serv-desc">Representación técnica de marcas líderes en soluciones de proceso, mantenimiento y seguridad industrial. Soporte técnico local con respaldo del fabricante.</span>
+          <span class="serv-tags">
+            <span class="serv-tag">Marcas líderes</span>
+            <span class="serv-tag">Soporte técnico</span>
+            <span class="serv-tag">Repuestos críticos</span>
+          </span>
+        </span>
+        <span class="serv-arrow" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
+            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+      </a>
+      <a href="que-hacemos.html#comercializacion" class="serv-stripe reveal" data-delay="240">
+        <span class="serv-num">03</span>
+        <span class="serv-content">
+          <span class="serv-title">Comercialización</span>
+          <span class="serv-desc">Provisión de productos, equipos y consumibles especializados. Catálogo técnico con trazabilidad y certificación para operaciones críticas.</span>
+          <span class="serv-tags">
+            <span class="serv-tag">Equipos certificados</span>
+            <span class="serv-tag">Trazabilidad</span>
+            <span class="serv-tag">Catálogo técnico</span>
+          </span>
+        </span>
+        <span class="serv-arrow" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
+            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+      </a>
     </div>
 
   </div>
 </section>
+
+<!-- ══ FOOTER ══════════════════════════════ -->
+<footer class="footer">
+  <div class="footer-inner">
+
+    <div class="footer-top">
+      <div class="footer-brand">
+        <img src="deliverables/logos/PNG/Logo MTEC_final_Blanco.png" alt="MTEC" class="footer-logo">
+        <p class="footer-tagline">
+          Servicios técnicos especializados para la gran industria chilena. Donde la falla no es una opción.
+        </p>
+        <div class="footer-channels">
+          <a href="mailto:contacto@mtec.cl" class="footer-channel">contacto@mtec.cl</a>
+          <span class="footer-sep">·</span>
+          <a href="tel:+56900000000" class="footer-channel">+56 9 0000 0000</a>
+        </div>
+      </div>
+
+      <a href="https://erres.cl" target="_blank" rel="noopener" class="footer-erres">
+        <span class="footer-erres-kicker">Parte del ecosistema</span>
+        <span class="footer-erres-name">ERRES</span>
+        <span class="footer-erres-tag">Trayectoria comprobada en la industria nacional</span>
+        <span class="footer-erres-arrow">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path d="M3 11l8-8M5 3h6v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+      </a>
+    </div>
+
+    <div class="footer-bottom">
+      <span class="footer-copy">© <span id="footerYear">2026</span> MTEC. Todos los derechos reservados.</span>
+      <div class="footer-legal">
+        <a href="#">Términos</a>
+        <span class="footer-sep">·</span>
+        <a href="#">Privacidad</a>
+      </div>
+    </div>
+
+  </div>
+</footer>
 
 <script>
 /* ════════════════════════
@@ -1025,12 +1286,14 @@ img { max-width: 100%; display: block; }
 const heroVideo   = document.getElementById('heroVideo');
 const heroContent = document.getElementById('heroContent');
 const mainNav     = document.getElementById('mainNav');
-const scrollCue   = document.getElementById('scrollCue');
+const scrollCue   = document.getElementById('scrollCue'); // may be null after redesign
 const progressBar = document.getElementById('pageProgress');
 const chapterNav  = document.getElementById('chapterNav');
 const techWM      = document.getElementById('techWatermark');
 const chDots      = Array.from(document.querySelectorAll('.ch-dot'));
-const sections    = ['ch0','ch1','ch2','ch3','ch4'].map(id => document.getElementById(id));
+const sections    = ['ch0','ch1','ch2'].map(id => document.getElementById(id));
+const footerYear  = document.getElementById('footerYear');
+if (footerYear) footerYear.textContent = new Date().getFullYear();
 
 let heroH    = sections[0].offsetHeight;
 let isMobile = window.innerWidth < 860;
@@ -1061,7 +1324,7 @@ function runFrame() {
   /* Hide scroll cue */
   if (!scrolledOnce && sy > 60) {
     scrolledOnce = true;
-    scrollCue.classList.add('hidden');
+    scrollCue?.classList.add('hidden');
   }
 
   /* Hero parallax — desktop only */
@@ -1079,14 +1342,14 @@ function runFrame() {
     }
   }
 
-  /* Sticky nav */
+  /* Sticky nav — acero-tinted glass instead of solid dark */
   if (sy > heroH * 0.8) {
     mainNav.style.cssText = `
       position:fixed;top:0;left:0;right:0;
-      background:rgba(6,12,20,0.94);
-      backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-      border-bottom:1px solid rgba(178,190,201,0.08);
-      animation:none;opacity:1;z-index:50;
+      background:rgba(13,42,72,0.55);
+      backdrop-filter:blur(24px) saturate(1.3);-webkit-backdrop-filter:blur(24px) saturate(1.3);
+      border-bottom:1px solid rgba(255,255,255,0.12);
+      animation:none;opacity:1;z-index:50;transition:background 0.3s;
     `;
   } else {
     mainNav.style.cssText = `position:absolute;background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;border-bottom:none;opacity:1;z-index:50;`;
