@@ -227,7 +227,7 @@
   }
   .page-hero-inner {
     margin: 0 auto;
-    padding: 80px var(--page-pad) 96px;
+    padding: 80px var(--page-pad) 24px;
     position: relative; z-index: 1;
   }
   .page-breadcrumb {
@@ -291,7 +291,22 @@
     font-size: clamp(15px, 1.3vw, 17px);
     font-weight: 400; color: rgba(255,255,255,0.85);
     max-width: 60ch; line-height: 1.7;
-    margin-bottom: 40px;
+    margin-bottom: 28px;
+  }
+  .section-body {
+    font-size: clamp(14px, 1.15vw, 16px);
+    font-weight: 400; color: rgba(255,255,255,0.72);
+    max-width: 60ch; line-height: 1.75;
+    margin-bottom: 22px;
+  }
+  .section-body:last-child { margin-bottom: 0; }
+  .section-photo {
+    display: block;
+    width: 100%;
+    max-width: 560px;
+    height: auto;
+    margin-top: 8px;
+    filter: drop-shadow(0 24px 40px rgba(6,12,24,0.45)) drop-shadow(0 4px 8px rgba(6,12,24,0.25));
   }
 
   /* Two-column layout */
@@ -432,6 +447,11 @@
     letter-spacing: 0.22em; text-transform: uppercase;
     color: rgba(255,255,255,0.85); margin-bottom: 16px;
   }
+  .erres-logo-img {
+    height: 44px; width: auto; display: block;
+    margin-bottom: 28px; opacity: 0.95;
+    position: relative; z-index: 1;
+  }
   .erres-quote {
     font-family: "Barlow Condensed", sans-serif;
     font-size: clamp(22px, 2.5vw, 30px); font-weight: 300;
@@ -447,22 +467,52 @@
   .footer {
     position: relative;
     background: transparent;
-    padding: 64px 0 32px;
+    padding: 96px 0 32px;
     z-index: 2;
+  }
+  .footer::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      rgba(255,255,255,0) 0%,
+      rgba(255,255,255,0.14) 18%,
+      rgba(255,255,255,0.14) 82%,
+      rgba(255,255,255,0) 100%
+    );
+    pointer-events: none;
   }
   .footer-inner {
     margin: 0 auto;
     padding: 0 var(--page-pad);
-    display: flex; flex-direction: column; gap: 56px;
+    display: flex; flex-direction: column;
   }
-  .footer-top {
-    display: grid; grid-template-columns: 1fr auto;
-    gap: 56px; align-items: stretch;
+  .footer-grid {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    gap: 64px;
+    padding-bottom: 56px;
+    border-bottom: 1px solid rgba(255,255,255,0.10);
   }
-  @media (max-width: 860px) { .footer-top { grid-template-columns: 1fr; } }
-  .footer-brand { display: flex; flex-direction: column; gap: 22px; max-width: 48ch; }
-  .footer-logo { height: 128px; width: auto; opacity: 0.95; align-self: flex-start; }
-  .footer-tagline { font-size: 14px; line-height: 1.65; color: rgba(255,255,255,0.78); margin: 0; }
+  .footer-cluster {
+    display: flex;
+    gap: 56px;
+    flex: 0 1 auto;
+  }
+  @media (max-width: 960px) {
+    .footer-grid { flex-direction: column; gap: 40px; }
+    .footer-cluster { flex-wrap: wrap; gap: 36px 48px; }
+  }
+  @media (max-width: 600px) {
+    .footer-grid { padding-bottom: 40px; }
+    .footer-cluster { flex-direction: column; gap: 32px; }
+  }
+  .footer-brand { display: flex; flex-direction: column; gap: 22px; max-width: 42ch; }
+  .footer-logo { height: 144px; width: auto; opacity: 0.95; align-self: flex-start; }
+  .footer-tagline { font-size: 14px; line-height: 1.65; color: rgba(255,255,255,0.75); margin: 0; }
   .footer-channels {
     display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
     font-size: 13px; letter-spacing: 0.02em;
@@ -474,41 +524,49 @@
   }
   .footer-channel:hover { color: #fff; border-color: #fff; }
   .footer-sep { color: rgba(255,255,255,0.30); }
-  .footer-erres {
-    display: grid; align-content: space-between;
-    padding: 28px 32px; min-width: 320px;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.20);
-    text-decoration: none; position: relative;
-    transition: background 0.25s, border-color 0.25s, transform 0.25s;
-  }
-  .footer-erres:hover { background: rgba(255,255,255,0.10); border-color: rgba(255,255,255,0.40); transform: translateY(-3px); }
-  .footer-erres-kicker {
+  .footer-col { display: flex; flex-direction: column; gap: 18px; }
+  .footer-col-kicker {
     font-size: 10px; font-weight: 600; letter-spacing: 0.22em;
-    text-transform: uppercase; color: rgba(255,255,255,0.65);
+    text-transform: uppercase; color: rgba(255,255,255,0.55);
   }
-  .footer-erres-name {
-    font-family: "Barlow Condensed", sans-serif;
-    font-size: 44px; font-weight: 700;
-    color: #fff; letter-spacing: 0.04em; line-height: 1;
-    margin-top: 14px;
+  .footer-links {
+    list-style: none; padding: 0; margin: 0;
+    display: flex; flex-direction: column; gap: 12px;
+    font-size: 14px;
   }
-  .footer-erres-tag {
-    font-size: 12px; line-height: 1.55;
-    color: rgba(255,255,255,0.70); margin-top: 12px;
-    max-width: 26ch;
+  .footer-links a {
+    color: rgba(255,255,255,0.78);
+    transition: color 0.2s ease, transform 0.2s ease;
+    display: inline-block;
   }
-  .footer-erres-arrow {
-    position: absolute; top: 22px; right: 22px;
-    color: rgba(255,255,255,0.65);
-    transition: color 0.25s, transform 0.25s;
+  .footer-links a:hover { color: #fff; transform: translateX(3px); }
+  .footer-link-static { color: rgba(255,255,255,0.40); cursor: default; }
+  .footer-erres {
+    display: flex; flex-direction: column; align-items: flex-end;
+    justify-content: flex-start;
+    gap: 18px;
+    text-decoration: none;
   }
-  .footer-erres:hover .footer-erres-arrow { color: #fff; transform: translate(2px, -2px); }
+  .footer-erres-kicker {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 10px; font-weight: 600; letter-spacing: 0.22em;
+    text-transform: uppercase; color: rgba(255,255,255,0.55);
+    transition: color 0.25s ease;
+  }
+  .footer-erres-logo {
+    height: 38px; width: auto; display: block;
+    opacity: 0.85;
+    transition: opacity 0.25s ease;
+  }
+  .footer-erres:hover .footer-erres-kicker { color: rgba(255,255,255,0.9); }
+  .footer-erres:hover .footer-erres-logo { opacity: 1; }
+  .footer-erres-arrow { display: inline-flex; transition: transform 0.25s ease; }
+  .footer-erres:hover .footer-erres-arrow { transform: translate(2px, -2px); }
+  @media (max-width: 960px) { .footer-erres { align-items: flex-start; } }
   .footer-bottom {
     display: flex; justify-content: space-between; align-items: center;
     flex-wrap: wrap; gap: 16px;
     padding-top: 24px;
-    border-top: 1px solid rgba(255,255,255,0.10);
     font-size: 12px; color: rgba(255,255,255,0.55);
     letter-spacing: 0.02em;
   }
@@ -528,9 +586,9 @@
     :root { --page-pad: 22px; }
     body { overflow-wrap: break-word; word-wrap: break-word; }
 
-    /* Nav — bigger logo + hamburger */
+    /* Nav — compact mobile logo + hamburger */
     .nav-inner { height: 68px; gap: 12px; }
-    .logo-img { height: 168px; }
+    .logo-img { height: 110px; }
     .nav-toggle { display: flex; }
 
     /* Convert nav-menu into a full-screen solid overlay */
@@ -627,14 +685,13 @@
     }
 
     /* Page hero */
-    .page-hero-inner { padding: 56px var(--page-pad) 56px; }
-    .page-title { font-size: clamp(36px, 9vw, 56px); }
-    .page-subtitle { font-size: 14px; line-height: 1.6; }
+    .page-hero-inner { padding: 56px var(--page-pad) 20px; }
 
     /* Sections */
     .section-block { padding: 48px 0; }
     .section-h2 { font-size: clamp(24px, 6.5vw, 34px); }
-    .section-lead { font-size: 14px; line-height: 1.65; margin-bottom: 28px; }
+    .section-lead { font-size: 14px; line-height: 1.65; margin-bottom: 20px; }
+    .section-body { font-size: 13.5px; line-height: 1.7; margin-bottom: 16px; }
     .two-col { gap: 32px; }
 
     /* Timeline */
@@ -660,18 +717,15 @@
     /* ERRES block */
     .erres-block { padding: 28px 24px; }
     .erres-block::before { font-size: 80px; right: -10px; }
+    .erres-logo-img { height: 36px; margin-bottom: 22px; }
     .erres-quote { font-size: 20px; margin-bottom: 18px; }
     .erres-detail { font-size: 12.5px; }
 
     /* Footer */
-    .footer { padding: 48px 0 24px; }
-    .footer-inner { gap: 36px; }
-    .footer-top { gap: 32px; }
-    .footer-logo { height: 96px; }
+    .footer { padding: 64px 0 24px; }
+    .footer-logo { height: 110px; }
     .footer-tagline { font-size: 13px; }
-    .footer-erres { padding: 22px 24px; min-width: 0; }
-    .footer-erres-name { font-size: 36px; }
-    .footer-erres-tag { font-size: 11.5px; max-width: none; }
+    .footer-erres-logo { height: 32px; }
     .footer-bottom {
       flex-direction: column; align-items: flex-start; gap: 12px;
     }
@@ -680,7 +734,6 @@
   /* Tablet (721–960px) */
   @media (min-width: 721px) and (max-width: 960px) {
     :root { --page-pad: clamp(2rem, 6vw, 80px); }
-    .footer-erres { min-width: 280px; }
   }
 </style>
 </head>
@@ -791,8 +844,6 @@
       Quiénes Somos
     </div>
     <div class="page-accent-line"></div>
-    <h1 class="page-title">Quiénes Somos</h1>
-    <p class="page-subtitle">Empresa de servicios técnicos especializados para la gran industria chilena. Nacidos del ecosistema ERRES para operar donde la continuidad operacional no admite improvisación.</p>
   </div>
 </header>
 
@@ -804,9 +855,9 @@
     <div class="content-wrap">
       <div class="two-col">
         <div>
-          <div class="section-tag">Nuestra Historia</div>
-          <h2 class="section-h2">Más de una década construyendo confianza en terreno</h2>
-          <p class="section-lead">MTEC nació en 2014 como spin-off de ERRES SpA, con el propósito de llevar soluciones técnicas especializadas directamente a la operación de la gran industria chilena. Reactivada en 2026, hoy concentra su foco en servicios de alto valor para los sectores más exigentes del país.</p>
+          <h1 class="section-h2">Más de una década de experiencia en mantenimiento industrial</h1>
+          <img src="brand_assets/site_pictures/mtec_workers.png" alt="Equipo MTEC en terreno" class="section-photo">
+
         </div>
         <div class="timeline">
           <div class="timeline-item">
@@ -832,22 +883,23 @@
   <!-- PROPÓSITO & VISIÓN -->
   <section class="section-block section-tinted">
     <div class="content-wrap">
-      <div class="section-tag">Propósito & Visión</div>
+      <div class="section-tag">Mirada Estratégica</div>
       <div class="two-col">
         <div>
           <h2 class="section-h2">Misión</h2>
-          <p class="section-lead">Proveer a la gran industria soluciones especializadas en servicios, productos y tecnología, aportando conocimiento técnico, alta capacidad de respuesta y estándares de excelencia que garanticen la continuidad operacional y la creación de valor para nuestros clientes.</p>
+          <p class="section-lead">Desarrollar y ejecutar soluciones tecnológicas y servicios especializados para la gran industria, aportando conocimiento técnico, alta capacidad de respuesta y estándares de excelencia que garanticen la continuidad operacional y la creación de valor para nuestros clientes.</p>
         </div>
         <div>
           <h2 class="section-h2">Visión</h2>
-          <p class="section-lead">Consolidarnos como empresa líder en el país en soluciones tecnológicas, productos y servicios especializados para los sectores petroquímico, energético, minero e industrial.</p>
+          <p class="section-lead">Ser un referente nacional en soluciones tecnológicas, productos y servicios especializados, aportando valor a los sectores Oil & gas, energía, minería e industria.</p>
         </div>
       </div>
-      <div class="values-list" style="margin-top: 56px;">
+      <div class="section-tag" style="margin-top: 64px;">Valores</div>
+      <div class="values-list" style="margin-top: 24px;">
         <div class="value-row">
           <div class="value-num">01</div>
           <div class="value-content">
-            <div class="value-name">Especialización técnica</div>
+            <div class="value-name">Especialización</div>
             <div class="value-desc">Cada servicio está respaldado por formación, certificación y experiencia real en terreno.</div>
           </div>
         </div>
@@ -876,7 +928,7 @@
           <div class="value-num">05</div>
           <div class="value-content">
             <div class="value-name">Integridad</div>
-            <div class="value-desc">Hablamos desde la experiencia real. Sin genericidades, sin hipérbole. La confianza se construye siendo específicos.</div>
+            <div class="value-desc">Garantizamos transparencia en nuestras operaciones y asumimos la responsabilidad de nuestros actos.</div>
           </div>
         </div>
       </div>
@@ -921,7 +973,7 @@
       <div class="section-tag">Vínculo con ERRES</div>
       <h2 class="section-h2">El respaldo de un grupo industrial consolidado</h2>
       <div class="erres-block">
-        <div class="erres-logo-label">Ecosistema ERRES SpA</div>
+        <img src="brand_assets/logo_erres.png" alt="Ecosistema ERRES SpA" class="erres-logo-img">
         <p class="erres-quote">"El peso de una empresa con trayectoria comprobada, con la agilidad de una organización especializada."</p>
         <p class="erres-detail">MTEC opera como empresa autónoma dentro del ecosistema ERRES SpA, heredando décadas de experiencia en la industria chilena. Esta relación nos otorga acceso a redes técnicas, capacidades ampliadas y el respaldo institucional que los grandes operadores exigen de sus socios estratégicos.</p>
       </div>
@@ -933,27 +985,57 @@
 <!-- FOOTER -->
 <footer class="footer">
   <div class="footer-inner">
-    <div class="footer-top">
+
+    <!-- Column grid -->
+    <div class="footer-grid">
+
       <div class="footer-brand">
         <img src="deliverables/logos/PNG/Logo MTEC_final_Blanco.png" alt="MTEC" class="footer-logo">
-        <p class="footer-tagline">Servicios técnicos especializados para la gran industria chilena. Donde la falla no es una opción.</p>
+        <p class="footer-tagline">Más de una década de experiencia en mantenimiento industrial.</p>
         <div class="footer-channels">
           <a href="mailto:contacto@mtec.cl" class="footer-channel">contacto@mtec.cl</a>
           <span class="footer-sep">·</span>
           <a href="tel:+56900000000" class="footer-channel">+56 9 0000 0000</a>
         </div>
       </div>
-      <a href="https://erres.cl" target="_blank" rel="noopener" class="footer-erres">
-        <span class="footer-erres-kicker">Parte del ecosistema</span>
-        <span class="footer-erres-name">ERRES</span>
-        <span class="footer-erres-tag">Trayectoria comprobada en la industria nacional</span>
-        <span class="footer-erres-arrow">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-            <path d="M3 11l8-8M5 3h6v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </span>
-      </a>
+
+      <div class="footer-cluster">
+        <nav class="footer-col" aria-label="Navegación">
+          <span class="footer-col-kicker">Navegación</span>
+          <ul class="footer-links">
+            <li><a href="index.html">Inicio</a></li>
+            <li><a href="quienes-somos.html">Quiénes Somos</a></li>
+            <li><a href="que-hacemos.html">Qué Hacemos</a></li>
+            <li><span class="footer-link-static">Innovación</span></li>
+            <li><a href="contacto.html">Contacto</a></li>
+          </ul>
+        </nav>
+
+        <nav class="footer-col" aria-label="Servicios">
+          <span class="footer-col-kicker">Servicios</span>
+          <ul class="footer-links">
+            <li><a href="que-hacemos.html#especializados">Servicios Especializados</a></li>
+            <li><a href="que-hacemos.html#representacion">Representación</a></li>
+            <li><a href="que-hacemos.html#comercializacion">Comercialización</a></li>
+          </ul>
+        </nav>
+
+        <a href="https://erres.cl" target="_blank" rel="noopener" class="footer-erres">
+          <span class="footer-erres-kicker">
+            Parte del ecosistema
+            <span class="footer-erres-arrow" aria-hidden="true">
+              <svg width="12" height="12" viewBox="0 0 14 14" fill="none">
+                <path d="M3 11l8-8M5 3h6v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          </span>
+          <img src="brand_assets/logo_erres.png" alt="ERRES" class="footer-erres-logo">
+        </a>
+      </div>
+
     </div>
+
+    <!-- Bottom row -->
     <div class="footer-bottom">
       <span class="footer-copy">© <span id="footerYear">2026</span> MTEC. Todos los derechos reservados.</span>
       <div class="footer-legal">
@@ -962,6 +1044,7 @@
         <a href="#">Privacidad</a>
       </div>
     </div>
+
   </div>
 </footer>
 
