@@ -1226,15 +1226,36 @@ img { max-width: 100%; display: block; }
   }
   .nav-cta svg { width: 14px; height: 14px; }
 
-  /* Hero */
+  /* Hero — centered on mobile */
   .hero { min-height: 88svh; }
-  .hero-content { padding-bottom: 90px; }
-  .hero-h1 { font-size: clamp(38px, 11vw, 60px); line-height: 1.0; margin-bottom: 18px; }
+  .hero-content {
+    padding-bottom: 90px;
+    align-items: center;
+    text-align: center;
+  }
+  .hero-h1 {
+    font-size: clamp(38px, 11vw, 60px);
+    line-height: 1.0;
+    margin-bottom: 18px;
+    justify-items: center;
+  }
   .hero-h1 .h1-cycle { white-space: normal; }
-  .hero-desc { font-size: 14px; margin-bottom: 22px; }
+  .hero-desc {
+    font-size: 14px;
+    margin: 0 auto 22px;
+    max-width: 36ch;
+  }
   .hero-desc br { display: none; }
-  .hero-divider { margin-bottom: 16px; }
-  .hero-lines { gap: 0; flex-wrap: wrap; row-gap: 6px; }
+  .hero-divider {
+    margin: 0 auto 16px;
+    max-width: 200px;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.55) 50%, transparent 100%);
+    transform-origin: center;
+  }
+  .hero-lines {
+    gap: 0; flex-wrap: wrap; row-gap: 6px;
+    justify-content: center;
+  }
   .hero-line-item { font-size: 10px; }
   .hero-sep { padding: 0 8px; }
 
