@@ -1,0 +1,379 @@
+/* ══════════════════════════════════════
+   MTEC — Shared Navbar Styles
+   Loaded by every page. Single source of truth.
+   Depends on CSS vars: --acero, --platino, --page-pad
+   (with sensible fallbacks if a page doesn't define them).
+══════════════════════════════════════ */
+
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+  background: rgba(13,30,55,0.72);
+  backdrop-filter: blur(20px) saturate(1.2);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  opacity: 0;
+  animation: navFadeDown 0.6s cubic-bezier(0.22,1,0.36,1) 0.1s forwards;
+}
+@keyframes navFadeDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.nav-inner {
+  margin: 0 auto;
+  padding: 0 var(--page-pad, clamp(2rem, 10vw, 200px));
+  display: flex; align-items: center; justify-content: space-between;
+  height: clamp(80px, 9vh, 100px); gap: 2rem;
+}
+.logo-block { display: flex; align-items: center; }
+.logo-img { height: 144px; width: auto; opacity: 0.95; transition: opacity 0.2s; }
+.logo-block:hover .logo-img { opacity: 1; }
+
+.nav-links { display: flex; align-items: center; gap: 2.25rem; list-style: none; }
+@media (max-width: 860px) { .nav-links { display: none; } }
+.nav-links a {
+  font-family: "Inter", sans-serif;
+  font-size: 0.875rem; font-weight: 500;
+  color: rgba(255,255,255,0.82); letter-spacing: 0.02em;
+  position: relative; transition: color 0.2s;
+  text-decoration: none;
+}
+.nav-links a::after {
+  content: ''; position: absolute; bottom: -3px; left: 0;
+  width: 0; height: 1px; background: var(--platino, #B2BEC9);
+  transition: width 0.25s cubic-bezier(0.16,1,0.3,1);
+}
+.nav-links a:hover, .nav-links a.active { color: #fff; }
+.nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+.nav-links a.active::after { background: #fff; }
+
+.nav-static {
+  font-family: "Inter", sans-serif;
+  font-size: 0.875rem; font-weight: 500;
+  color: rgba(255,255,255,0.55); letter-spacing: 0.02em;
+  cursor: default;
+}
+
+/* ── Dropdown ── */
+.nav-dropdown { position: relative; }
+.nav-dropdown::before {
+  content: ''; position: absolute;
+  top: 100%; left: -40px; right: -40px;
+  height: 30px;
+}
+.nav-dropdown-trigger {
+  background: none; border: none; padding: 0;
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: "Inter", sans-serif;
+  font-size: 0.875rem; font-weight: 500;
+  color: rgba(255,255,255,0.82);
+  letter-spacing: 0.02em; cursor: pointer;
+  transition: color 0.2s;
+  position: relative;
+}
+.nav-dropdown-trigger::after {
+  content: ''; position: absolute;
+  bottom: -3px; left: 0;
+  width: 0; height: 1px; background: var(--platino, #B2BEC9);
+  transition: width 0.25s cubic-bezier(0.16,1,0.3,1);
+}
+.nav-dropdown:hover .nav-dropdown-trigger,
+.nav-dropdown-trigger[aria-expanded="true"] { color: #fff; }
+.nav-dropdown:hover .nav-dropdown-trigger::after,
+.nav-dropdown-trigger[aria-expanded="true"]::after { width: 100%; }
+.nav-chev {
+  width: 12px; height: 12px;
+  transition: transform 0.35s cubic-bezier(0.22,1,0.36,1);
+}
+.nav-dropdown:hover .nav-chev,
+.nav-dropdown-trigger[aria-expanded="true"] .nav-chev { transform: rotate(180deg); }
+
+.nav-dropdown-panel {
+  position: absolute; top: calc(100% + 18px); left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  min-width: 380px;
+  background: rgba(8,24,46,0.96);
+  backdrop-filter: blur(28px) saturate(1.3);
+  -webkit-backdrop-filter: blur(28px) saturate(1.3);
+  border: 1px solid rgba(255,255,255,0.10);
+  padding: 10px;
+  display: flex; flex-direction: column;
+  opacity: 0; visibility: hidden; pointer-events: none;
+  transition: opacity 0.25s ease 0.15s,
+              transform 0.3s cubic-bezier(0.22,1,0.36,1) 0.15s,
+              visibility 0s 0.4s;
+  z-index: 60;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.45), 0 1px 0 rgba(255,255,255,0.06) inset;
+}
+.nav-dropdown-panel::before {
+  content: ''; position: absolute;
+  top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(27,108,168,0.6) 50%, transparent 100%);
+}
+.nav-dropdown:hover .nav-dropdown-panel,
+.nav-dropdown.open .nav-dropdown-panel,
+.nav-dropdown-trigger[aria-expanded="true"] + .nav-dropdown-panel {
+  opacity: 1; visibility: visible; pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+  transition: opacity 0.25s ease,
+              transform 0.3s cubic-bezier(0.22,1,0.36,1),
+              visibility 0s;
+}
+.nav-dd-item {
+  display: grid;
+  grid-template-columns: 32px 1fr 16px;
+  gap: 14px; align-items: center;
+  padding: 14px 16px;
+  text-decoration: none; color: inherit;
+  position: relative;
+  transition: background 0.25s ease;
+}
+.nav-dd-item:hover { background: rgba(255,255,255,0.06); }
+.nav-dd-item + .nav-dd-item { border-top: 1px solid rgba(255,255,255,0.06); }
+.nav-dd-num {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 22px; font-weight: 500;
+  color: rgba(255,255,255,0.55);
+  line-height: 1; letter-spacing: 0.04em;
+  transition: color 0.25s;
+}
+.nav-dd-item:hover .nav-dd-num { color: #fff; }
+.nav-dd-content { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.nav-dd-name {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 17px; font-weight: 600;
+  color: #fff; letter-spacing: 0.005em; line-height: 1.1;
+}
+.nav-dd-desc {
+  font-size: 11.5px; line-height: 1.45;
+  color: rgba(255,255,255,0.65); letter-spacing: 0.005em;
+}
+.nav-dd-arrow {
+  color: rgba(255,255,255,0.40);
+  display: flex; align-items: center; justify-content: center;
+  transform: translateX(-4px); opacity: 0;
+  transition: transform 0.3s cubic-bezier(0.22,1,0.36,1), opacity 0.25s, color 0.25s;
+}
+.nav-dd-item:hover .nav-dd-arrow {
+  color: #fff; opacity: 1; transform: translateX(0);
+}
+
+/* ── Nested sub-dropdown (Servicios Especializados → service list) ── */
+.nav-dd-has-sub { position: relative; }
+.nav-dd-sub-trigger {
+  background: none; border: none; cursor: pointer;
+  width: 100%; font: inherit; color: inherit; text-align: left;
+}
+/* The right-pointing chevron on the sub-trigger stays visible (vs hover-only on plain items). */
+.nav-dd-has-sub .nav-dd-arrow-sub {
+  opacity: 0.55; transform: translateX(0);
+}
+.nav-dd-has-sub:hover .nav-dd-arrow-sub,
+.nav-dd-has-sub.open .nav-dd-arrow-sub {
+  opacity: 1; color: #fff;
+}
+.nav-dd-subpanel {
+  position: absolute;
+  top: -10px; left: calc(100% + 12px);
+  min-width: 280px;
+  background: rgba(8,24,46,0.96);
+  backdrop-filter: blur(28px) saturate(1.3);
+  -webkit-backdrop-filter: blur(28px) saturate(1.3);
+  border: 1px solid rgba(255,255,255,0.10);
+  padding: 8px;
+  display: flex; flex-direction: column;
+  opacity: 0; visibility: hidden; pointer-events: none;
+  transform: translateX(-6px);
+  transition: opacity 0.22s ease 0.10s,
+              transform 0.28s cubic-bezier(0.22,1,0.36,1) 0.10s,
+              visibility 0s 0.35s;
+  z-index: 61;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.45), 0 1px 0 rgba(255,255,255,0.06) inset;
+}
+.nav-dd-subpanel::before {
+  content: ''; position: absolute;
+  top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(27,108,168,0.6) 50%, transparent 100%);
+}
+/* Bridge gap so cursor can travel from parent item to sub-panel without closing. */
+.nav-dd-has-sub::after {
+  content: ''; position: absolute;
+  top: 0; right: -12px; width: 12px; height: 100%;
+}
+.nav-dd-has-sub:hover .nav-dd-subpanel,
+.nav-dd-has-sub.open .nav-dd-subpanel,
+.nav-dd-sub-trigger[aria-expanded="true"] + .nav-dd-subpanel {
+  opacity: 1; visibility: visible; pointer-events: auto;
+  transform: translateX(0);
+  transition: opacity 0.22s ease,
+              transform 0.28s cubic-bezier(0.22,1,0.36,1),
+              visibility 0s;
+}
+.nav-dd-subitem {
+  display: grid;
+  grid-template-columns: 1fr 14px;
+  gap: 12px; align-items: center;
+  padding: 12px 14px;
+  text-decoration: none; color: rgba(255,255,255,0.85);
+  font-family: "Inter", sans-serif;
+  font-size: 0.875rem; font-weight: 500;
+  letter-spacing: 0.005em;
+  transition: background 0.2s ease, color 0.2s;
+  position: relative;
+}
+.nav-dd-subitem:hover { background: rgba(255,255,255,0.06); color: #fff; }
+.nav-dd-subitem + .nav-dd-subitem { border-top: 1px solid rgba(255,255,255,0.06); }
+.nav-dd-sub-name {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 16px; font-weight: 600;
+  letter-spacing: 0.005em; line-height: 1.1;
+}
+.nav-dd-sub-arrow {
+  color: rgba(255,255,255,0.40);
+  display: flex; align-items: center; justify-content: center;
+  transform: translateX(-4px); opacity: 0;
+  transition: transform 0.3s cubic-bezier(0.22,1,0.36,1), opacity 0.25s, color 0.25s;
+}
+.nav-dd-subitem:hover .nav-dd-sub-arrow {
+  color: #fff; opacity: 1; transform: translateX(0);
+}
+
+/* ── CTA ── */
+.nav-cta {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 20px; background: var(--acero, #1B6CA8); color: #fff;
+  font-family: "Inter", sans-serif;
+  font-size: 0.84rem; font-weight: 600; letter-spacing: 0.01em;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
+  transition: transform 0.22s cubic-bezier(0.16,1,0.3,1), box-shadow 0.22s;
+  box-shadow: 0 4px 20px rgba(27,108,168,0.35), 0 1px 5px rgba(0,0,0,0.25);
+  text-decoration: none;
+}
+.nav-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(27,108,168,0.5); }
+.nav-cta:active { transform: translateY(0); }
+.nav-cta svg { transition: transform 0.2s cubic-bezier(0.16,1,0.3,1); }
+.nav-cta:hover svg { transform: translateX(3px); }
+
+/* ── Hamburger ── */
+.nav-menu { display: contents; }
+.nav-toggle {
+  display: none;
+  background: none; border: none; padding: 0;
+  width: 44px; height: 44px;
+  flex-direction: column; align-items: center; justify-content: center;
+  gap: 6px; cursor: pointer; position: relative; z-index: 52;
+}
+.nav-toggle span {
+  display: block; width: 26px; height: 2px;
+  background: #fff;
+  transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), opacity 0.25s;
+  transform-origin: center;
+}
+.nav-toggle.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+.nav-toggle.open span:nth-child(2) { opacity: 0; }
+.nav-toggle.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+/* ══ Mobile ≤720px ══ */
+@media (max-width: 720px) {
+  .nav-inner { height: 68px; gap: 12px; }
+  .logo-img { height: 110px; }
+  .nav-toggle { display: flex; }
+
+  .nav-menu {
+    display: flex;
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: #0D1B2E;
+    flex-direction: column;
+    padding: 96px var(--page-pad, 22px) 40px;
+    align-items: stretch;
+    z-index: 51;
+    transform: translateY(-100%);
+    transition: transform 0.45s cubic-bezier(0.22,1,0.36,1);
+    visibility: hidden;
+  }
+  .nav-menu::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, #1B6CA8 0%, rgba(27,108,168,0.6) 35%, rgba(27,108,168,0.0) 100%);
+  }
+  .nav-menu.open { transform: translateY(0); visibility: visible; }
+
+  .nav-links {
+    display: flex !important;
+    flex-direction: column;
+    gap: 0; margin-bottom: 36px;
+  }
+  .nav-links li {
+    width: 100%;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+  }
+  .nav-links a, .nav-links .nav-static, .nav-links .nav-dropdown-trigger {
+    display: flex; width: 100%;
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 28px; font-weight: 500;
+    padding: 18px 0; color: #fff;
+    letter-spacing: 0.02em;
+    text-align: left; justify-content: space-between; align-items: center;
+  }
+  .nav-links .nav-static { color: rgba(255,255,255,0.55); }
+  .nav-links a::after, .nav-dropdown-trigger::after { display: none; }
+
+  .nav-dropdown:hover .nav-dropdown-panel,
+  .nav-dropdown.open .nav-dropdown-panel,
+  .nav-dropdown-trigger[aria-expanded="true"] + .nav-dropdown-panel { transform: none; }
+  .nav-dropdown { width: 100%; }
+  .nav-chev { width: 16px; height: 16px; }
+  .nav-links .nav-dropdown-panel {
+    position: static; transform: none;
+    background: none; border: none; box-shadow: none; padding: 0 0 8px;
+    min-width: 0; opacity: 1; visibility: visible; pointer-events: auto;
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.45s cubic-bezier(0.22,1,0.36,1);
+    backdrop-filter: none; -webkit-backdrop-filter: none;
+  }
+  .nav-links .nav-dropdown-panel::before { display: none; }
+  .nav-dropdown.open .nav-dropdown-panel { max-height: 420px; }
+  .nav-links .nav-dd-item {
+    display: grid; grid-template-columns: 32px 1fr 16px;
+    gap: 12px; align-items: center;
+    width: 100%; padding: 14px 0 14px 22px;
+    font-family: "Inter", sans-serif;
+    font-size: 14px; font-weight: 400;
+    border-top: 1px solid rgba(255,255,255,0.10);
+    color: inherit;
+    text-align: left; justify-content: initial;
+  }
+  .nav-links .nav-dd-num { font-family: "Barlow Condensed", sans-serif; font-size: 18px; font-weight: 500; }
+  .nav-links .nav-dd-name { font-family: "Barlow Condensed", sans-serif; font-size: 17px; font-weight: 600; padding: 0; }
+  .nav-links .nav-dd-desc { font-size: 12px; padding: 0; }
+  .nav-links .nav-dd-arrow { opacity: 0.5; transform: none; color: rgba(255,255,255,0.65); }
+
+  /* Mobile: nested sub-dropdown collapses inline below its parent. */
+  .nav-links .nav-dd-has-sub { width: 100%; }
+  .nav-links .nav-dd-subpanel {
+    position: static; transform: none;
+    background: none; border: none; box-shadow: none; padding: 0 0 0 44px;
+    min-width: 0; opacity: 1; visibility: visible; pointer-events: auto;
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.22,1,0.36,1);
+    backdrop-filter: none; -webkit-backdrop-filter: none;
+  }
+  .nav-links .nav-dd-subpanel::before { display: none; }
+  .nav-links .nav-dd-has-sub.open > .nav-dd-subpanel { max-height: 600px; }
+  .nav-links .nav-dd-subitem {
+    grid-template-columns: 1fr 14px;
+    width: 100%; padding: 14px 0;
+    font-size: 14px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+  .nav-links .nav-dd-sub-arrow { opacity: 0.5; transform: none; color: rgba(255,255,255,0.65); }
+  /* Sub-trigger gets a small rotation on the arrow when open to indicate expand state. */
+  .nav-links .nav-dd-arrow-sub svg { transition: transform 0.3s cubic-bezier(0.22,1,0.36,1); }
+  .nav-links .nav-dd-has-sub.open .nav-dd-arrow-sub svg { transform: rotate(90deg); }
+
+  .nav-cta {
+    margin-top: auto; width: 100%;
+    justify-content: center;
+    padding: 18px 24px; font-size: 0.95rem;
+  }
+  .nav-cta svg { width: 14px; height: 14px; }
+}
