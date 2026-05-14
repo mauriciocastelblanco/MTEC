@@ -317,13 +317,16 @@ img { max-width: 100%; display: block; }
   background: linear-gradient(90deg, rgba(255,255,255,0.55) 0%, transparent 70%);
   transform-origin: left; transform: scaleX(0);
   margin-bottom: 20px;
-  animation: drawLine 0.7s cubic-bezier(0.22,1,0.36,1) 0.45s forwards;
+  transition: transform 0.9s cubic-bezier(0.22,1,0.36,1);
 }
+.hero-divider.visible { transform: scaleX(1); transition-delay: 0.35s; }
 .hero-lines {
   display: flex; align-items: center; flex-wrap: wrap; gap: 0;
   opacity: 0; transform: translateY(6px);
-  animation: fadeUp 0.5s ease 0.52s forwards;
+  transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1),
+              transform 0.7s cubic-bezier(0.22,1,0.36,1);
 }
+.hero-lines.visible { opacity: 1; transform: translateY(0); transition-delay: 0.5s; }
 .hero-line-item {
   font-size: 12px; font-weight: 600; letter-spacing: 0.1em;
   text-transform: uppercase; color: rgba(255,255,255,0.75);
@@ -952,17 +955,42 @@ img { max-width: 100%; display: block; }
 }
 .clip-reveal.visible { clip-path: inset(0 0% 0 0); }
 
-/* Stagger delays */
-[data-delay="50"]  { transition-delay: 0.05s; }
-[data-delay="100"] { transition-delay: 0.1s; }
-[data-delay="150"] { transition-delay: 0.15s; }
-[data-delay="200"] { transition-delay: 0.2s; }
-[data-delay="250"] { transition-delay: 0.25s; }
-[data-delay="300"] { transition-delay: 0.3s; }
-[data-delay="400"] { transition-delay: 0.4s; }
-[data-delay="500"] { transition-delay: 0.5s; }
-[data-delay="600"] { transition-delay: 0.6s; }
-[data-delay="700"] { transition-delay: 0.7s; }
+/* Stagger delays — applied only on entry so exits snap together
+   when scrolling back up (no awkward delayed fade-outs). */
+[data-delay="50"].visible  { transition-delay: 0.05s; }
+[data-delay="100"].visible { transition-delay: 0.1s; }
+[data-delay="150"].visible { transition-delay: 0.15s; }
+[data-delay="200"].visible { transition-delay: 0.2s; }
+[data-delay="250"].visible { transition-delay: 0.25s; }
+[data-delay="300"].visible { transition-delay: 0.3s; }
+[data-delay="400"].visible { transition-delay: 0.4s; }
+[data-delay="500"].visible { transition-delay: 0.5s; }
+[data-delay="600"].visible { transition-delay: 0.6s; }
+[data-delay="700"].visible { transition-delay: 0.7s; }
+
+/* Section labels — fade the actual text along with the underline
+   so the "appears on scroll-down, disappears on scroll-up" effect
+   covers labels too, not just decorative bars. */
+.s-label {
+  opacity: 0; transform: translateY(6px);
+  transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1),
+              transform 0.7s cubic-bezier(0.22,1,0.36,1);
+}
+.s-label.visible { opacity: 1; transform: translateY(0); }
+
+/* Respect reduced motion — show everything statically, no transitions. */
+@media (prefers-reduced-motion: reduce) {
+  .reveal,.reveal-x,.reveal-x-r,.reveal-scale,
+  .line-reveal,.blur-reveal,.clip-reveal,
+  .tech-hl,.s-label,.stat-card::before,
+  .hero-divider,.hero-lines {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    clip-path: none !important;
+    transition: none !important;
+  }
+}
 
 /* ── KEYFRAMES ── */
 @keyframes fadeUp   { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
@@ -1617,19 +1645,32 @@ window.addEventListener('scroll', () => {
 runFrame();
 
 /* ════════════════════════
-   INTERSECTION OBSERVER
+   INTERSECTION OBSERVER — bidirectional
+   Toggles `visible` on enter AND removes on exit, so text appears
+   when scrolling down and disappears when scrolling back up.
+   rootMargin shrinks the trigger zone slightly so reveals don't
+   flicker on small scroll jitters near the viewport edge.
 ════════════════════════ */
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
 const io = new IntersectionObserver((entries) => {
   entries.forEach(({ isIntersecting, target }) => {
-    if (!isIntersecting) return;
-    target.classList.add('visible');
-    io.unobserve(target);
+    target.classList.toggle('visible', isIntersecting);
   });
-}, { threshold: 0.1, rootMargin: '0px 0px -44px 0px' });
+}, { threshold: 0, rootMargin: '0px 0px -8% 0px' });
 
-document.querySelectorAll(
-  '.reveal,.reveal-x,.reveal-x-r,.reveal-scale,.line-reveal,.blur-reveal,.clip-reveal,.tech-hl,.s-label,.stat-card'
-).forEach(el => io.observe(el));
+const revealSelector =
+  '.reveal,.reveal-x,.reveal-x-r,.reveal-scale,' +
+  '.line-reveal,.blur-reveal,.clip-reveal,' +
+  '.tech-hl,.s-label,.stat-card,' +
+  '.hero-divider,.hero-lines';
+
+if (prefersReducedMotion) {
+  // No animation — show everything in the final state immediately.
+  document.querySelectorAll(revealSelector).forEach(el => el.classList.add('visible'));
+} else {
+  document.querySelectorAll(revealSelector).forEach(el => io.observe(el));
+}
 
 /* ════════════════════════
    COUNT-UP
@@ -1646,13 +1687,20 @@ function countUp(el, target, ms) {
 
 const cio = new IntersectionObserver((entries) => {
   entries.forEach(({ isIntersecting, target }) => {
-    if (!isIntersecting) return;
     const el = target.querySelector('[data-count]');
-    if (el) countUp(el, +el.dataset.count, 1500);
-    cio.unobserve(target);
+    if (!el) return;
+    if (isIntersecting) {
+      // Re-trigger the count-up each time the row enters the viewport.
+      countUp(el, +el.dataset.count, 1500);
+    } else {
+      // Reset to 0 once it's out of view so the next entry feels fresh.
+      el.textContent = '0';
+    }
   });
-}, { threshold: 0.3 });
-document.querySelectorAll('.stat-card').forEach(el => cio.observe(el));
+}, { threshold: 0.4 });
+
+// Animate the editorial stat rows AND the legacy stat-card grid.
+document.querySelectorAll('.stat-mod, .stat-card').forEach(el => cio.observe(el));
 
 /* ════════════════════════
    CHAPTER DOT CLICK

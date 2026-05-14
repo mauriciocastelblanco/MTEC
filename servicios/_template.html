@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<!--
+═══════════════════════════════════════════════════════════════════════
+  MTEC — SERVICE PAGE TEMPLATE
+═══════════════════════════════════════════════════════════════════════
+  Copy this file to servicios/<slug>.html and replace each SLOT block.
+  SLOTs are wrapped in <!-- SLOT: name --> ... <!-- /SLOT: name -->
+  comments so they're grep-able and (future-proof) easy to inject from
+  a CMS/DB:  string.replace(/<!-- SLOT: hero[\s\S]*?\/SLOT: hero -->/,…)
+
+  ═══ CHECKLIST POST-COPY ════════════════════════════════════════════
+  [ ] Rename this file to servicios/<slug-en-kebab-case>.html
+  [ ] Replace each <!-- SLOT: ... --> block with the real content
+  [ ] Update <title> and <meta name="description"> (SLOT: meta)
+  [ ] Verify image paths use ../brand_assets/... or full URLs
+  [ ] Add the new service to partials/nav.html → #ddServiciosEspecializados
+  [ ] Add the new service to partials/footer.html → Servicios column
+  ═══════════════════════════════════════════════════════════════════
+-->
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- SLOT: meta -->
+<title>NOMBRE DEL SERVICIO — MTEC</title>
+<meta name="description" content="DESCRIPCIÓN BREVE DEL SERVICIO (max ~150 chars).">
+<!-- /SLOT: meta -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/nav.css">
+<link rel="stylesheet" href="../assets/css/page-chrome.css">
+<link rel="stylesheet" href="../assets/css/service-page.css">
+</head>
+<body>
+
+<!-- Background gear — mounted async from partials/bg-gear.html -->
+<div id="bg-gear-mount"></div>
+
+<!-- Shared nav -->
+<div id="nav-mount"></div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     HERO — breadcrumb / accent line / eyebrow / title / lead /
+     product-callout (optional) / hero-image (optional)
+═══════════════════════════════════════════════════════════════════════ -->
+<header class="page-hero">
+  <div class="page-hero-inner service-hero-grid">
+    <div>
+      <!-- SLOT: breadcrumb -->
+      <div class="page-breadcrumb reveal">
+        <a href="../index.html">Inicio</a>
+        <span class="sep">›</span>
+        <a href="../que-hacemos.html">Qué Hacemos</a>
+        <span class="sep">›</span>
+        NOMBRE DEL SERVICIO
+      </div>
+      <!-- /SLOT: breadcrumb -->
+
+      <div class="page-accent-line reveal-x" data-delay="50"></div>
+
+      <!-- SLOT: hero-eyebrow -->
+      <div class="page-eyebrow blur-reveal" data-delay="100">CATEGORÍA · TIPO DE SERVICIO</div>
+      <!-- /SLOT: hero-eyebrow -->
+
+      <!-- SLOT: hero-title -->
+      <div class="line-wrap"><h1 class="page-title page-title--service line-reveal" data-delay="150">Nombre del Servicio</h1></div>
+      <!-- /SLOT: hero-title -->
+
+      <!-- SLOT: hero-lead -->
+      <p class="page-subtitle page-subtitle--service blur-reveal" data-delay="300">
+        Resumen breve del servicio: qué problema resuelve, qué tecnología utiliza, en qué condiciones se aplica. Usa <strong style="color:#fff;font-weight:600;">acentos</strong> para destacar términos clave.
+      </p>
+      <!-- /SLOT: hero-lead -->
+
+      <!-- SLOT: product-callout (opcional — borrar bloque si no aplica) -->
+      <div class="product-callout reveal-scale" data-delay="350">
+        <span class="product-callout-kicker">Tecnología Aplicada</span>
+        <span class="product-callout-name">Nombre del Producto</span>
+        <span class="product-callout-partner">
+          En alianza con <strong>Nombre del Partner</strong>
+        </span>
+      </div>
+      <!-- /SLOT: product-callout -->
+    </div>
+
+    <!-- SLOT: hero-image -->
+    <div class="reveal-x-r" data-delay="200">
+      <div class="hero-image-card">
+        <img src="../brand_assets/site_pictures/servicios_especializados.png" alt="Descripción de la imagen del servicio">
+        <div class="hero-image-stamp">Etiqueta</div>
+      </div>
+    </div>
+    <!-- /SLOT: hero-image -->
+  </div>
+</header>
+
+<main>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       SOLUCIÓN — descripción larga / key-metric / benefit-list
+  ═══════════════════════════════════════════════════════════════════════ -->
+  <section class="section-block">
+    <div class="content-wrap">
+      <div class="section-tag">La Solución</div>
+      <div class="two-col two-col--service">
+        <div>
+          <!-- SLOT: solucion-titulo -->
+          <div class="line-wrap"><h2 class="section-h2 section-h2--service line-reveal">Titular en una sola línea editorial</h2></div>
+          <!-- /SLOT: solucion-titulo -->
+
+          <!-- SLOT: solucion-descripcion -->
+          <p class="section-body blur-reveal" data-delay="150">
+            Primer párrafo de descripción técnica del servicio. Explica el sistema, su ejecución y por qué reduce el riesgo operacional.
+          </p>
+          <p class="section-body blur-reveal" data-delay="220">
+            Segundo párrafo — respaldo normativo, ejecutores certificados, trazabilidad, etc.
+          </p>
+          <!-- /SLOT: solucion-descripcion -->
+
+          <!-- SLOT: key-metric (opcional) -->
+          <div class="key-metric reveal" data-delay="300">
+            <span class="key-metric-value">Métrica clave</span>
+            <span class="key-metric-label">Etiqueta corta de la métrica</span>
+          </div>
+          <!-- /SLOT: key-metric -->
+        </div>
+
+        <!-- SLOT: beneficios — 6 filas (ícono + texto + chip) -->
+        <div class="reveal-x-r" data-delay="200">
+          <div class="benefit-list">
+            <div class="benefit-row">
+              <span class="benefit-icon"><svg viewBox="0 0 24 24"><path d="M3 12h12M3 6h12M3 18h12"/><path d="M19 8l2 4-2 4"/></svg></span>
+              <span class="benefit-label">Beneficio 1 — frase corta y clara</span>
+              <span class="benefit-chip">Tag</span>
+            </div>
+            <div class="benefit-row">
+              <span class="benefit-icon"><svg viewBox="0 0 24 24"><path d="M12 2v6M12 16v6M2 12h6M16 12h6"/><circle cx="12" cy="12" r="3"/></svg></span>
+              <span class="benefit-label">Beneficio 2</span>
+              <span class="benefit-chip">Tag</span>
+            </div>
+            <div class="benefit-row">
+              <span class="benefit-icon"><svg viewBox="0 0 24 24"><path d="M3 12l3 3 5-5"/><path d="M13 7l5 5-5 5"/><path d="M3 7v10"/></svg></span>
+              <span class="benefit-label">Beneficio 3</span>
+              <span class="benefit-chip">Tag</span>
+            </div>
+            <div class="benefit-row">
+              <span class="benefit-icon"><svg viewBox="0 0 24 24"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
+              <span class="benefit-label">Beneficio 4</span>
+              <span class="benefit-chip">Tag</span>
+            </div>
+            <div class="benefit-row">
+              <span class="benefit-icon"><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><path d="M21 12c0 5-4 9-9 9s-9-4-9-9 4-9 9-9 9 4 9 9z"/></svg></span>
+              <span class="benefit-label">Beneficio 5</span>
+              <span class="benefit-chip">Tag</span>
+            </div>
+            <div class="benefit-row">
+              <span class="benefit-icon"><svg viewBox="0 0 24 24"><path d="M12 2L4 6v6c0 5 3.5 9.5 8 10 4.5-.5 8-5 8-10V6l-8-4z"/></svg></span>
+              <span class="benefit-label">Beneficio 6</span>
+              <span class="benefit-chip">Tag</span>
+            </div>
+          </div>
+        </div>
+        <!-- /SLOT: beneficios -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       CONSIDERACIONES TÉCNICAS — grid numerada (1..N)
+  ═══════════════════════════════════════════════════════════════════════ -->
+  <section class="section-block section-tinted">
+    <div class="content-wrap">
+      <div class="section-tag">Consideraciones Técnicas</div>
+      <!-- SLOT: consid-titulo -->
+      <div class="line-wrap"><h2 class="section-h2 section-h2--service line-reveal">Por qué funciona</h2></div>
+      <!-- /SLOT: consid-titulo -->
+      <!-- SLOT: consid-lead -->
+      <p class="section-lead blur-reveal" data-delay="150">
+        Resumen corto que contextualiza las consideraciones técnicas siguientes.
+      </p>
+      <!-- /SLOT: consid-lead -->
+
+      <!-- SLOT: consideraciones — agregar/quitar items según necesidad -->
+      <div class="consid-grid">
+        <div class="consid-item reveal" data-delay="0"><span class="consid-num">01</span><span class="consid-text">Consideración técnica 1.</span></div>
+        <div class="consid-item reveal" data-delay="60"><span class="consid-num">02</span><span class="consid-text">Consideración técnica 2.</span></div>
+        <div class="consid-item reveal" data-delay="120"><span class="consid-num">03</span><span class="consid-text">Consideración técnica 3.</span></div>
+        <div class="consid-item reveal" data-delay="180"><span class="consid-num">04</span><span class="consid-text">Consideración técnica 4.</span></div>
+        <div class="consid-item reveal" data-delay="240"><span class="consid-num">05</span><span class="consid-text">Consideración técnica 5.</span></div>
+        <div class="consid-item reveal" data-delay="300"><span class="consid-num">06</span><span class="consid-text">Consideración técnica 6.</span></div>
+      </div>
+      <!-- /SLOT: consideraciones -->
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       GEOMETRÍAS / TIPOS DE APLICACIÓN — grid de cards con icon
+  ═══════════════════════════════════════════════════════════════════════ -->
+  <section class="section-block">
+    <div class="content-wrap">
+      <div class="section-tag">Geometrías Aplicables</div>
+      <div class="two-col two-col--service">
+        <div>
+          <!-- SLOT: geo-titulo -->
+          <div class="line-wrap"><h2 class="section-h2 section-h2--service line-reveal">Aplicable en distintas configuraciones</h2></div>
+          <!-- /SLOT: geo-titulo -->
+          <!-- SLOT: geo-descripcion -->
+          <p class="section-body blur-reveal" data-delay="150">
+            Descripción de los tipos de superficie/geometría/configuración donde el servicio se aplica.
+          </p>
+          <!-- /SLOT: geo-descripcion -->
+        </div>
+        <div>
+          <!-- SLOT: geometrias — 6-8 cards. Reemplazar SVG por íconos propios. -->
+          <div class="geo-grid">
+            <div class="geo-card reveal-scale" data-delay="0">
+              <span class="geo-svg"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="22"/></svg></span>
+              <span class="geo-name">Tipo 1</span>
+            </div>
+            <div class="geo-card reveal-scale" data-delay="60">
+              <span class="geo-svg"><svg viewBox="0 0 64 64"><rect x="12" y="12" width="40" height="40"/></svg></span>
+              <span class="geo-name">Tipo 2</span>
+            </div>
+            <div class="geo-card reveal-scale" data-delay="120">
+              <span class="geo-svg"><svg viewBox="0 0 64 64"><path d="M4 32 L 32 8 L 60 32 L 32 56 Z"/></svg></span>
+              <span class="geo-name">Tipo 3</span>
+            </div>
+            <div class="geo-card reveal-scale" data-delay="180">
+              <span class="geo-svg"><svg viewBox="0 0 64 64"><path d="M8 32 Q 8 8 32 8 L 56 8"/></svg></span>
+              <span class="geo-name">Tipo 4</span>
+            </div>
+          </div>
+          <!-- /SLOT: geometrias -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       CERTIFICACIÓN — badges + chips de normas + doc-links
+  ═══════════════════════════════════════════════════════════════════════ -->
+  <section class="section-block section-tinted">
+    <div class="content-wrap">
+      <div class="section-tag">Certificación &amp; Normativa</div>
+      <div class="cert-grid">
+        <div>
+          <!-- SLOT: cert-titulo -->
+          <div class="line-wrap"><h2 class="section-h2 section-h2--service line-reveal" style="max-width:18ch;">Cumple con los estándares aplicables</h2></div>
+          <!-- /SLOT: cert-titulo -->
+          <!-- SLOT: cert-descripcion -->
+          <p class="section-body blur-reveal" data-delay="150">
+            Descripción breve sobre los marcos normativos que respaldan el servicio.
+          </p>
+          <!-- /SLOT: cert-descripcion -->
+        </div>
+
+        <div>
+          <!-- SLOT: cert-badges — 2-4 organismos -->
+          <div class="cert-badges">
+            <div class="cert-badge reveal-scale" data-delay="0">
+              <span class="cert-badge-name">API</span>
+              <span class="cert-badge-sub">Standards</span>
+            </div>
+            <div class="cert-badge reveal-scale" data-delay="100">
+              <span class="cert-badge-name">ASME</span>
+              <span class="cert-badge-sub">Sub-norm</span>
+            </div>
+            <div class="cert-badge reveal-scale" data-delay="200">
+              <span class="cert-badge-name">ISO</span>
+              <span class="cert-badge-sub">Sub-norm</span>
+            </div>
+          </div>
+          <!-- /SLOT: cert-badges -->
+
+          <!-- SLOT: cert-norms — chips con códigos normativos exactos -->
+          <div class="cert-norms reveal" data-delay="250">
+            <span class="cert-norm">Norma específica 1</span>
+            <span class="cert-norm">Norma específica 2</span>
+            <span class="cert-norm">Norma específica 3</span>
+          </div>
+          <!-- /SLOT: cert-norms -->
+
+          <!-- SLOT: cert-doc-links — quitar la clase cert-doc--pending cuando exista el link real -->
+          <div class="cert-doc-links reveal" data-delay="350">
+            <a href="#" class="cert-doc cert-doc--pending" aria-disabled="true">
+              Ver ficha técnica
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <a href="#" class="cert-doc cert-doc--pending" aria-disabled="true">
+              Ver certificados
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+          </div>
+          <!-- /SLOT: cert-doc-links -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       GALERÍA — bento grid de 5 imágenes (a, b, c, d, e)
+       Reemplaza los src= por imágenes reales en ../brand_assets/...
+  ═══════════════════════════════════════════════════════════════════════ -->
+  <section class="section-block">
+    <div class="content-wrap">
+      <div class="section-tag">Aplicaciones</div>
+      <!-- SLOT: galeria-titulo -->
+      <div class="line-wrap"><h2 class="section-h2 section-h2--service line-reveal">Casos en terreno</h2></div>
+      <!-- /SLOT: galeria-titulo -->
+      <!-- SLOT: galeria-lead -->
+      <p class="section-lead blur-reveal" data-delay="150">
+        Breve descripción de las aplicaciones reales que muestra la galería.
+      </p>
+      <!-- /SLOT: galeria-lead -->
+
+      <!-- SLOT: galeria — 5 items (a, b, c, d, e) -->
+      <div class="gallery-grid">
+        <div class="gallery-item gallery-item--a reveal-scale" data-delay="0">
+          <img src="https://placehold.co/720x720/0B3554/EDF1F5?text=Foto+1" alt="Aplicación 1">
+          <span class="gallery-caption">Caption 1</span>
+        </div>
+        <div class="gallery-item gallery-item--b reveal-scale" data-delay="100">
+          <img src="https://placehold.co/900x520/155A88/EDF1F5?text=Foto+2" alt="Aplicación 2">
+          <span class="gallery-caption">Caption 2</span>
+        </div>
+        <div class="gallery-item gallery-item--c reveal-scale" data-delay="200">
+          <img src="https://placehold.co/520x520/1B6CA8/EDF1F5?text=Foto+3" alt="Aplicación 3">
+          <span class="gallery-caption">Caption 3</span>
+        </div>
+        <div class="gallery-item gallery-item--d reveal-scale" data-delay="300">
+          <img src="https://placehold.co/720x520/0E4E78/EDF1F5?text=Foto+4" alt="Aplicación 4">
+          <span class="gallery-caption">Caption 4</span>
+        </div>
+        <div class="gallery-item gallery-item--e reveal-scale" data-delay="400">
+          <img src="https://placehold.co/720x520/2B82B9/EDF1F5?text=Foto+5" alt="Aplicación 5">
+          <span class="gallery-caption">Caption 5</span>
+        </div>
+      </div>
+      <!-- /SLOT: galeria -->
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       CTA FINAL — headline + botón Agenda
+  ═══════════════════════════════════════════════════════════════════════ -->
+  <section class="cta-final">
+    <div class="cta-final-inner">
+      <!-- SLOT: cta-headline -->
+      <div class="line-wrap"><h2 class="cta-headline line-reveal">¿Llamado a la acción contundente que resume el servicio?</h2></div>
+      <!-- /SLOT: cta-headline -->
+      <a href="../contacto.html" class="btn-agenda reveal-scale" data-delay="150">
+        Agenda una reunión
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+  </section>
+
+</main>
+
+<!-- Footer — mounted async from partials/footer.html -->
+<div id="footer-mount"></div>
+
+<!-- Shared assets — order matters: partials loader first, then helpers -->
+<script src="../assets/js/partials.js" defer></script>
+<script src="../assets/js/bg-gear.js" defer></script>
+<script src="../assets/js/reveals.js" defer></script>
+<script src="../assets/js/nav.js" defer></script>
+<script defer>
+  document.addEventListener('DOMContentLoaded', () => {
+    Promise.all([
+      MTEC.loadPartial('#bg-gear-mount', 'partials/bg-gear.html'),
+      MTEC.loadPartial('#footer-mount',  'partials/footer.html'),
+    ]).then(() => {
+      MTEC.initBgGear();
+      MTEC.initReveals();
+      const fy = document.getElementById('footerYear');
+      if (fy) fy.textContent = new Date().getFullYear();
+    });
+  });
+</script>
+</body>
+</html>

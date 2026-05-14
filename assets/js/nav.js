@@ -7,13 +7,29 @@
   const mount = document.getElementById('nav-mount');
   if (!mount) return;
 
-  fetch('partials/nav.html', { cache: 'no-cache' })
+  /* Subdirectory awareness — pages under /servicios/, /etc/ load the
+     nav partial from one level up and need relative hrefs/srcs in the
+     injected HTML rewritten with the same prefix. */
+  const path = location.pathname;
+  const segments = path.split('/').filter(Boolean);
+  // If pathname ends in "/" the last segment is implicit index.html → file count = 0
+  const fileCount = path.endsWith('/') ? 0 : 1;
+  const depth = Math.max(0, segments.length - fileCount);
+  const prefix = '../'.repeat(depth);
+
+  fetch(prefix + 'partials/nav.html', { cache: 'no-cache' })
     .then(r => {
       if (!r.ok) throw new Error('nav.html ' + r.status);
       return r.text();
     })
     .then(html => {
-      mount.outerHTML = html;
+      // Rewrite relative href/src so links resolve from subdirectory pages.
+      // Skip absolute (http, /, #), protocol-relative (//), and mailto/tel.
+      const rewritten = prefix
+        ? html.replace(/\b(href|src)="(?!https?:|\/|#|mailto:|tel:|\.\.\/)([^"]+)"/g,
+                       (_, attr, url) => `${attr}="${prefix}${url}"`)
+        : html;
+      mount.outerHTML = rewritten;
       initNav();
     })
     .catch(err => console.error('[nav] failed to load:', err));
@@ -25,14 +41,31 @@
     setupSubDropdowns();
   }
 
-  /* Active state — only "Quiénes Somos" highlights.
-     Other pages (que-hacemos, tecnologia, contacto, index) have no
-     active link by design. */
+  /* Active state — highlights the relevant nav entry for the current page.
+     - quienes-somos.html → top-level "Quiénes Somos" link
+     - any page under /servicios/ → the "Qué Hacemos" dropdown trigger
+       and the nested "Servicios Especializados" sub-trigger */
   function applyActiveState() {
-    const file = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
+    const path = location.pathname;
+    const file = (path.split('/').pop() || 'index.html').toLowerCase();
+
     if (file === 'quienes-somos.html') {
       const link = document.querySelector('.nav-links a[data-nav="quienes-somos"]');
       if (link) link.classList.add('active');
+    }
+
+    if (path.includes('/servicios/')) {
+      const ddTrigger = document.querySelector('.nav-dropdown-trigger[aria-controls="ddQueHacemos"]');
+      const subTrigger = document.querySelector('.nav-dd-sub-trigger[aria-controls="ddServiciosEspecializados"]');
+      if (ddTrigger)  ddTrigger.classList.add('active');
+      if (subTrigger) subTrigger.classList.add('active');
+      // Also highlight the specific service sub-link if present.
+      const subLinks = document.querySelectorAll('#ddServiciosEspecializados a.nav-dd-subitem');
+      subLinks.forEach(a => {
+        if (a.getAttribute('href') && path.endsWith(a.getAttribute('href').replace(/^\.\.\//, '/'))) {
+          a.classList.add('active');
+        }
+      });
     }
   }
 

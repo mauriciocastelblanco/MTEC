@@ -75,9 +75,11 @@
   transition: width 0.25s cubic-bezier(0.16,1,0.3,1);
 }
 .nav-dropdown:hover .nav-dropdown-trigger,
-.nav-dropdown-trigger[aria-expanded="true"] { color: #0D1B2E; }
+.nav-dropdown-trigger[aria-expanded="true"],
+.nav-dropdown-trigger.active { color: #0D1B2E; }
 .nav-dropdown:hover .nav-dropdown-trigger::after,
-.nav-dropdown-trigger[aria-expanded="true"]::after { width: 100%; }
+.nav-dropdown-trigger[aria-expanded="true"]::after,
+.nav-dropdown-trigger.active::after { width: 100%; }
 .nav-chev {
   width: 12px; height: 12px;
   transition: transform 0.35s cubic-bezier(0.22,1,0.36,1);
@@ -166,6 +168,14 @@
 .nav-dd-has-sub:hover .nav-dd-arrow-sub,
 .nav-dd-has-sub.open .nav-dd-arrow-sub {
   opacity: 1; color: #0D1B2E;
+}
+/* Active state — page under that sub-trigger's category */
+.nav-dd-sub-trigger.active { color: #0D1B2E; }
+.nav-dd-sub-trigger.active .nav-dd-num,
+.nav-dd-sub-trigger.active .nav-dd-arrow-sub { opacity: 1; color: #0D1B2E; }
+.nav-dd-subitem.active {
+  background: rgba(13,27,46,0.10);
+  color: #0D1B2E;
 }
 .nav-dd-subpanel {
   position: absolute;
