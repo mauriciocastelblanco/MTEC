@@ -13,7 +13,7 @@
 html { line-height: 1.15; -webkit-text-size-adjust: 100%; overflow-x: hidden; }
 body {
   font-family: "Inter", sans-serif;
-  background: #06101C;
+  background: #1B6CA8;
   color: #EDF1F5;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
@@ -38,19 +38,30 @@ img { max-width: 100%; display: block; }
   --page-max: none;
 }
 
-/* ══════════════════════════════════════
-   GLOBAL ATMOSPHERIC BACKGROUND — Brushed Steel
-   Tonal base + anisotropic grain + specular streak + fine grain.
-   One dominant material idea: real brushed metal panel.
-══════════════════════════════════════ */
+/* ═══════════════════════════════════════════
+   UNIFORM SOLID BACKGROUND — hide every overlay/atmospheric
+   layer so only the body's #1B6CA8 shows through.
+═══════════════════════════════════════════ */
 .bg-canvas,
 .bg-brushed,
 .bg-specular,
-.bg-noise {
-  position: fixed; inset: 0;
-  pointer-events: none;
-  will-change: transform;
-}
+.bg-noise,
+.hero-bg,
+.hero-brushed,
+.hero-specular,
+.hero-beam,
+.hero-beam-2,
+.hero-glow,
+.hero-bar,
+.s-quienes-glow,
+.s-hacemos-top-glow,
+.tech-watermark,
+.s-contacto-quote { display: none !important; }
+
+.s-quienes::before,
+.s-tech::before,
+.s-contacto::before,
+.s-contacto::after { content: none !important; background: none !important; }
 
 /* Layer 1 — Tonal panel base.
    Acero Activo with light fall-off from upper-left, simulating
@@ -278,16 +289,17 @@ img { max-width: 100%; display: block; }
 .hero-h1 .h1-cycle {
   grid-column: 1; grid-row: 1;
   opacity: 0; transform: translateY(16px);
-  animation: heroCycle 6s cubic-bezier(0.22,1,0.36,1) infinite;
+  animation: heroCycle 9s cubic-bezier(0.22,1,0.36,1) infinite;
   white-space: nowrap;
 }
 .hero-h1 .h1-cycle--1 { animation-delay: 0.6s; }
-.hero-h1 .h1-cycle--3 { animation-delay: 3.6s; }
+.hero-h1 .h1-cycle--2 { animation-delay: 3.6s; }
+.hero-h1 .h1-cycle--3 { animation-delay: 6.6s; }
 @keyframes heroCycle {
   0%      { opacity: 0; transform: translateY(16px); }
-  8%      { opacity: 1; transform: translateY(0); }
-  50%     { opacity: 1; transform: translateY(0); }
-  58%     { opacity: 0; transform: translateY(-16px); }
+  5%      { opacity: 1; transform: translateY(0); }
+  30%     { opacity: 1; transform: translateY(0); }
+  35%     { opacity: 0; transform: translateY(-16px); }
   100%    { opacity: 0; transform: translateY(-16px); }
 }
 @media (max-width: 720px) {
@@ -501,6 +513,9 @@ img { max-width: 100%; display: block; }
   margin-bottom: 24px;
   opacity: 0.95;
 }
+/* Extra breathing room between the section label and the first paragraph
+   in the Quiénes Somos block (was provided by the now-removed logo). */
+.s-quienes-inner .s-label { margin-bottom: 56px; }
 .s-body {
   font-size: clamp(14px, 1.2vw, 16px); font-weight: 400;
   color: rgba(255,255,255,0.85); line-height: 1.75;
@@ -645,7 +660,7 @@ img { max-width: 100%; display: block; }
   border-radius: 24px;
   background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(178,190,201,0.08) 100%);
   border: 1px solid rgba(255,255,255,0.20);
-  display: flex; align-items: flex-end; justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   overflow: hidden;
   margin-bottom: 32px;
   position: relative;
@@ -680,6 +695,14 @@ img { max-width: 100%; display: block; }
   transition: transform 0.5s cubic-bezier(0.22,1,0.36,1);
 }
 .serv-card:hover .serv-photo { transform: scale(1.04); }
+
+/* Service icon — replaces the photos with line-art SVG inside the circle. */
+.serv-icon {
+  width: 48%; height: auto;
+  color: rgba(255,255,255,0.92);
+  transition: transform 0.5s cubic-bezier(0.22,1,0.36,1), color 0.3s;
+}
+.serv-card:hover .serv-icon { transform: scale(1.06); color: #fff; }
 
 .serv-card-title {
   font-family: "Barlow Condensed", sans-serif;
@@ -1029,9 +1052,9 @@ img { max-width: 100%; display: block; }
 
   /* Footer */
   .footer { padding: 64px 0 24px; }
-  .footer-logo { height: 110px; }
+  .footer-logo { height: 160px; }
   .footer-tagline { font-size: 13px; }
-  .footer-erres-logo { height: 32px; }
+  .footer-erres-logo { height: 50px; }
   .footer-bottom {
     flex-direction: column;
     align-items: flex-start;
@@ -1054,7 +1077,7 @@ img { max-width: 100%; display: block; }
 .footer {
   position: relative;
   background: transparent;
-  padding: 96px 0 32px;
+  padding: 28px 0 24px;
   z-index: 2;
 }
 .footer::before {
@@ -1083,13 +1106,16 @@ img { max-width: 100%; display: block; }
   justify-content: space-between;
   align-items: stretch;
   gap: 64px;
-  padding-bottom: 56px;
+  padding-bottom: 24px;
   border-bottom: 1px solid rgba(255,255,255,0.10);
 }
 .footer-cluster {
   display: flex;
   gap: 56px;
   flex: 0 1 auto;
+  /* Pushes the kickers down so they align with where the MTEC logo's
+     visible artwork begins (the PNG has transparent padding at top). */
+  padding-top: 70px;
 }
 @media (max-width: 960px) {
   .footer-grid { flex-direction: column; gap: 40px; }
@@ -1102,7 +1128,7 @@ img { max-width: 100%; display: block; }
 
 /* — Brand column — */
 .footer-brand { display: flex; flex-direction: column; gap: 22px; max-width: 42ch; }
-.footer-logo { height: 144px; width: auto; opacity: 0.95; align-self: flex-start; }
+.footer-logo { height: 210px; width: auto; opacity: 0.95; align-self: flex-start; }
 .footer-tagline {
   font-size: 14px; line-height: 1.65;
   color: rgba(255,255,255,0.75); margin: 0;
@@ -1110,6 +1136,7 @@ img { max-width: 100%; display: block; }
 .footer-channels {
   display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
   font-size: 13px; letter-spacing: 0.02em;
+  margin-top: auto;
 }
 .footer-channel {
   color: rgba(255,255,255,0.85);
@@ -1118,11 +1145,18 @@ img { max-width: 100%; display: block; }
   transition: color 0.2s, border-color 0.2s;
 }
 .footer-channel:hover { color: #fff; border-color: #fff; }
+.footer-channel--icon {
+  border-bottom: none;
+  padding: 0;
+  display: inline-flex; align-items: center;
+  line-height: 0;
+}
+.footer-channel--icon:hover { border-color: transparent; }
 .footer-sep { color: rgba(255,255,255,0.30); }
 
 /* — Sitemap columns — */
 .footer-col {
-  display: flex; flex-direction: column; gap: 18px;
+  display: flex; flex-direction: column; gap: 14px;
 }
 .footer-col-kicker {
   font-size: 10px; font-weight: 600; letter-spacing: 0.22em;
@@ -1151,8 +1185,11 @@ img { max-width: 100%; display: block; }
 .footer-erres {
   display: flex; flex-direction: column; align-items: flex-end;
   justify-content: flex-start;
-  gap: 18px;
+  gap: 14px;
   text-decoration: none;
+  /* Kicker stays at the top with NAVEGACIÓN; the natural 14px gap then
+     places the ERRES logo at the same y-position as the first link
+     of the Navegación column ("Inicio"). */
 }
 .footer-erres-kicker {
   display: inline-flex; align-items: center; gap: 8px;
@@ -1161,7 +1198,7 @@ img { max-width: 100%; display: block; }
   transition: color 0.25s ease;
 }
 .footer-erres-logo {
-  height: 38px; width: auto; display: block;
+  height: 64px; width: auto; display: block;
   opacity: 0.85;
   transition: opacity 0.25s ease;
 }
@@ -1182,7 +1219,7 @@ img { max-width: 100%; display: block; }
 .footer-bottom {
   display: flex; justify-content: space-between; align-items: center;
   flex-wrap: wrap; gap: 16px;
-  padding-top: 24px;
+  padding-top: 14px;
   font-size: 12px; color: rgba(255,255,255,0.55);
   letter-spacing: 0.02em;
 }
@@ -1230,8 +1267,9 @@ img { max-width: 100%; display: block; }
   <div class="hero-bar"></div>
 
   <div class="hero-content" id="heroContent">
-    <h1 class="hero-h1" aria-label="Servicios Especializados, Comercialización">
+    <h1 class="hero-h1" aria-label="Servicios Especializados, Representación, Comercialización">
       <span class="h1-cycle h1-cycle--1" aria-hidden="true">Servicios Especializados</span>
+      <span class="h1-cycle h1-cycle--2" aria-hidden="true">Representación</span>
       <span class="h1-cycle h1-cycle--3" aria-hidden="true">Comercialización</span>
     </h1>
     <div class="hero-divider"></div>
@@ -1251,16 +1289,20 @@ img { max-width: 100%; display: block; }
 <!-- ══ QUIÉNES SOMOS ═══════════════════════ -->
 <section class="s-quienes" id="ch1">
   <svg class="sq-curve" viewBox="0 0 1440 1500" preserveAspectRatio="none" aria-hidden="true">
-    <!-- Panel fill below the convex curve — solid uniform tone.
-         The curve at top is the only visible division (no stroke). -->
-    <path d="M 0 220 Q 720 220 1440 0 L 1440 1500 L 0 1500 Z" fill="rgba(255,255,255,0.07)"/>
+    <!-- Curve cuts solid #1B6CA8 into the hero (occluding the video below the
+         curve line), so the transition is the visible change — not a tint
+         difference between sections. Quiénes Somos panel reads identical to
+         the rest of the page. Thin Platino stroke marks the curve edge. -->
+    <path d="M 0 220 Q 720 220 1440 0 L 1440 1500 L 0 1500 Z" fill="#1B6CA8"/>
+    <path d="M 0 220 Q 720 220 1440 0" fill="none"
+          stroke="rgba(255,255,255,0.18)" stroke-width="1.5"
+          vector-effect="non-scaling-stroke"/>
   </svg>
   <div class="s-quienes-glow"></div>
   <div class="s-quienes-inner">
 
     <div>
       <div class="s-label">Quiénes Somos</div>
-      <img src="deliverables/logos/SVG/Logo MTEC_final-blanco.svg" alt="MTEC" class="s-quienes-logo">
       <p class="s-body s-body--justify blur-reveal" data-delay="200">
         Empresa fundada en el año 2014, con sólida experiencia en el desarrollo de diversas líneas de negocio dentro del ámbito del mantenimiento industrial.
       </p>
@@ -1344,7 +1386,11 @@ img { max-width: 100%; display: block; }
     <div class="serv-cards">
       <a href="que-hacemos.html#especializados" class="serv-card reveal" data-delay="0">
         <div class="serv-circle">
-          <img src="brand_assets/site_pictures/servicios_especializados.png" alt="Especialista MTEC en terreno con equipamiento técnico" class="serv-photo">
+          <!-- Wrench — represents hands-on technical intervention -->
+          <svg class="serv-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M48 8 a10 10 0 0 0 -13 13 L13 43 a4 4 0 0 0 0 5.6 l2.4 2.4 a4 4 0 0 0 5.6 0 L43 29 a10 10 0 0 0 13 -13 L46 26 L38 24 L36 16 z"/>
+            <circle cx="42" cy="22" r="2.5"/>
+          </svg>
         </div>
         <h3 class="serv-card-title">Servicios Especializados</h3>
         <p class="serv-card-desc">Ejecución técnica directa en planta. Encapsulados, reparaciones bajo presión e intervenciones sin detener el proceso.</p>
@@ -1363,7 +1409,12 @@ img { max-width: 100%; display: block; }
 
       <a href="que-hacemos.html#representacion" class="serv-card reveal" data-delay="120">
         <div class="serv-circle">
-          <img src="brand_assets/site_pictures/Representación.png" alt="Ejecutiva MTEC con catálogo de representación" class="serv-photo">
+          <!-- Award / badge — represents the standing for leading brands -->
+          <svg class="serv-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="32" cy="24" r="16"/>
+            <circle cx="32" cy="24" r="9"/>
+            <path d="M22 36 L18 58 L32 50 L46 58 L42 36"/>
+          </svg>
         </div>
         <h3 class="serv-card-title">Representación</h3>
         <p class="serv-card-desc">Representación técnica de marcas líderes en soluciones de proceso, mantenimiento y seguridad industrial.</p>
@@ -1382,7 +1433,13 @@ img { max-width: 100%; display: block; }
 
       <a href="que-hacemos.html#comercializacion" class="serv-card reveal" data-delay="240">
         <div class="serv-circle">
-          <img src="brand_assets/site_pictures/comercializacion.png" alt="Ejecutivo MTEC con catálogo de comercialización" class="serv-photo">
+          <!-- Package — represents commercialization / catalog / traceable goods -->
+          <svg class="serv-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M56 44 V20 a2 2 0 0 0 -1 -1.7 l-21 -12 a2 2 0 0 0 -2 0 l-21 12 A2 2 0 0 0 10 20 v24 a2 2 0 0 0 1 1.7 l21 12 a2 2 0 0 0 2 0 l21 -12 A2 2 0 0 0 56 44 z"/>
+            <polyline points="11 21 33 33 55 21"/>
+            <line x1="33" y1="33" x2="33" y2="58"/>
+            <line x1="22" y1="13" x2="44" y2="25"/>
+          </svg>
         </div>
         <h3 class="serv-card-title">Comercialización</h3>
         <p class="serv-card-desc">Provisión de productos, equipos y consumibles especializados. Catálogo técnico con trazabilidad y certificación.</p>
@@ -1417,6 +1474,14 @@ img { max-width: 100%; display: block; }
           <a href="mailto:contacto@mtec.cl" class="footer-channel">contacto@mtec.cl</a>
           <span class="footer-sep">·</span>
           <a href="tel:+56900000000" class="footer-channel">+56 9 0000 0000</a>
+          <span class="footer-sep">·</span>
+          <a href="https://instagram.com/mtec" target="_blank" rel="noopener" class="footer-channel footer-channel--icon" aria-label="Instagram MTEC">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+            </svg>
+          </a>
         </div>
       </div>
 
