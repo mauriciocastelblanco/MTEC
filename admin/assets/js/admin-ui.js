@@ -1,4 +1,4 @@
-import { getServicios, deleteServicio, slugify } from './admin-data.js';
+import { getServicios, getServicio, saveServicio, deleteServicio, slugify } from './admin-data.js';
 
 function fmtTime(iso) {
   const d = new Date(iso);
@@ -440,3 +440,253 @@ function initGalleryUploads() {
 }
 
 initGalleryUploads();
+
+// ══════════════════════════════════════════════════════
+// SAVE FLOW
+// ══════════════════════════════════════════════════════
+function readVal(id) {
+  const el = document.getElementById(id);
+  return el ? el.value.trim() : '';
+}
+
+function readRepeater(containerId, fields) {
+  const container = document.getElementById(containerId);
+  if (!container) return [];
+  return Array.from(container.querySelectorAll('.repeater-item')).map(item => {
+    const obj = {};
+    fields.forEach(f => {
+      if (f === 'icono') {
+        const cur = item.querySelector('[data-current]');
+        obj.icono = cur?.textContent ?? 'shield';
+      } else {
+        const input = item.querySelector(`[data-rk="${f}"]`);
+        obj[f] = input ? input.value.trim() : '';
+      }
+    });
+    return obj;
+  });
+}
+
+function readGaleriaRepeater() {
+  const container = document.getElementById('repeaterGaleria');
+  if (!container) return [];
+  return Array.from(container.querySelectorAll('.repeater-item')).map(item => {
+    const img = item.querySelector('[data-gallery-preview] img');
+    return {
+      dataUrl: img ? img.src : '',
+      caption: item.querySelector('[data-rk="caption"]')?.value.trim() ?? '',
+      tamano: item.querySelector('[data-rk="tamano"]')?.value ?? 'M'
+    };
+  });
+}
+
+function readImagePreview(key) {
+  const img = document.querySelector(`[data-preview="${key}"] img`);
+  return img ? img.src : '';
+}
+
+function readPdf(key) {
+  const nameEl = document.querySelector(`[data-name="${key}"]`);
+  const name = nameEl?.textContent.trim();
+  if (!name || name === 'Sin archivo') return null;
+  // For maqueta: store the filename but not the actual file bytes (would blow up localStorage).
+  // When BBDD exists, this goes to a file upload endpoint.
+  return { nombre: name, dataUrl: '' };
+}
+
+function collectForm() {
+  return {
+    slug: readVal('f-slug'),
+    titulo: readVal('f-titulo'),
+    eyebrow: readVal('f-eyebrow'),
+    lead: readVal('f-lead'),
+    hero: {
+      imagen: readImagePreview('heroImagen'),
+      productCallout: {
+        textoSuperior: readVal('f-callout-top'),
+        nombreProducto: readVal('f-callout-name'),
+        textoInferior: readVal('f-callout-bottom'),
+        imagen: readImagePreview('calloutImagen')
+      }
+    },
+    solucion: {
+      titulo: readVal('f-sol-titulo'),
+      descripcion: readVal('f-sol-desc'),
+      metricaClave: {
+        valor: readVal('f-sol-metricaValor'),
+        label: readVal('f-sol-metricaLabel')
+      },
+      beneficios: readRepeater('repeaterBeneficios', ['icono', 'label', 'chip'])
+    },
+    consideraciones: {
+      titulo: readVal('f-cons-titulo'),
+      lead: readVal('f-cons-lead'),
+      items: readRepeater('repeaterConsideraciones', ['titulo', 'descripcion'])
+    },
+    geometrias: {
+      titulo: readVal('f-geo-titulo'),
+      descripcion: readVal('f-geo-desc'),
+      items: readRepeater('repeaterGeometrias', ['nombre', 'icono'])
+    },
+    certificacion: {
+      badges: readRepeater('repeaterBadges', ['nombre']),
+      normas: readRepeater('repeaterNormas', ['texto']),
+      fichaTecnicaPdf: readPdf('fichaTecnicaPdf'),
+      certificadosPdf: readPdf('certificadosPdf')
+    },
+    galeria: readGaleriaRepeater(),
+    cta: {
+      headline: readVal('f-cta-head'),
+      botonTexto: readVal('f-cta-btn')
+    }
+  };
+}
+
+function setFieldError(fieldKey, message) {
+  const field = document.querySelector(`[data-field="${fieldKey}"]`);
+  if (!field) return;
+  field.classList.add('has-error');
+  const errorEl = field.querySelector('.field-error');
+  if (errorEl && message) errorEl.textContent = message;
+}
+
+function clearFieldErrors() {
+  document.querySelectorAll('.field.has-error').forEach(f => f.classList.remove('has-error'));
+}
+
+async function validate(data, originalSlug) {
+  clearFieldErrors();
+  const errors = [];
+  if (!data.titulo) { errors.push('titulo'); setFieldError('titulo', 'El título es obligatorio.'); }
+  if (!data.slug) { errors.push('slug'); setFieldError('slug', 'Slug obligatorio.'); }
+  else {
+    const all = await getServicios();
+    if (all.some(s => s.slug === data.slug && s.slug !== originalSlug)) {
+      errors.push('slug');
+      setFieldError('slug', 'Ya existe un servicio con ese slug.');
+    }
+  }
+  return errors.length === 0;
+}
+
+function showToast(message, kind = 'success') {
+  const root = document.getElementById('toastRoot');
+  if (!root) return;
+  const el = document.createElement('div');
+  el.className = `toast toast-${kind}`;
+  el.textContent = message;
+  root.appendChild(el);
+  setTimeout(() => el.remove(), 4500);
+}
+
+let originalSlug = null;
+
+async function handleSave(estado) {
+  const data = collectForm();
+  data.estado = estado;
+  const ok = await validate(data, originalSlug);
+  if (!ok) {
+    showToast('Revisa los campos marcados.', 'error');
+    return;
+  }
+  if (originalSlug && originalSlug !== data.slug) {
+    await deleteServicio(originalSlug);
+  }
+  await saveServicio(data);
+  isDirty = false;
+  originalSlug = data.slug;
+  if (estado === 'publicado') {
+    showToast('Publicado. Cuando conectemos la base de datos, aparecerá en la navbar bajo Servicios > Servicios Especializados.');
+    setTimeout(() => { window.location.href = 'index.html'; }, 2000);
+  } else {
+    showToast('Borrador guardado.');
+  }
+}
+
+function initSaveButtons() {
+  document.querySelectorAll('#btnDraftTop, #btnDraftBottom').forEach(b => b.addEventListener('click', () => handleSave('borrador')));
+  document.querySelectorAll('#btnPublishTop, #btnPublishBottom').forEach(b => b.addEventListener('click', () => handleSave('publicado')));
+}
+
+initSaveButtons();
+
+// ══════════════════════════════════════════════════════
+// LOAD EXISTING SERVICIO ON ?slug=
+// ══════════════════════════════════════════════════════
+function setVal(id, v) { const el = document.getElementById(id); if (el) el.value = v ?? ''; }
+function setImage(key, src) {
+  if (!src) return;
+  const preview = document.querySelector(`[data-preview="${key}"]`);
+  if (preview) preview.innerHTML = `<img src="${src}" alt="">`;
+}
+function setPdf(key, pdf) {
+  if (!pdf) return;
+  const nameEl = document.querySelector(`[data-name="${key}"]`);
+  const sizeEl = document.querySelector(`[data-size="${key}"]`);
+  if (nameEl) nameEl.textContent = pdf.nombre;
+  if (sizeEl) sizeEl.textContent = 'Existente';
+}
+function populateRepeater(containerId, key, items) {
+  const container = document.getElementById(containerId);
+  if (!container || !items) return;
+  container.innerHTML = items.map(it => repeaterRenderers[key](it)).join('');
+}
+
+async function loadExistingIfAny() {
+  const params = new URLSearchParams(window.location.search);
+  const slug = params.get('slug');
+  if (!slug) return;
+  const s = await getServicio(slug);
+  if (!s) { showToast(`No se encontró el servicio "${slug}".`, 'error'); return; }
+  originalSlug = s.slug;
+
+  setVal('f-titulo', s.titulo);
+  setVal('f-slug', s.slug);
+  setVal('f-eyebrow', s.eyebrow);
+  setVal('f-lead', s.lead);
+  setImage('heroImagen', s.hero?.imagen);
+
+  setVal('f-callout-top', s.hero?.productCallout?.textoSuperior);
+  setVal('f-callout-name', s.hero?.productCallout?.nombreProducto);
+  setVal('f-callout-bottom', s.hero?.productCallout?.textoInferior);
+  setImage('calloutImagen', s.hero?.productCallout?.imagen);
+
+  setVal('f-sol-titulo', s.solucion?.titulo);
+  setVal('f-sol-desc', s.solucion?.descripcion);
+  setVal('f-sol-metricaValor', s.solucion?.metricaClave?.valor);
+  setVal('f-sol-metricaLabel', s.solucion?.metricaClave?.label);
+  populateRepeater('repeaterBeneficios', 'beneficios', s.solucion?.beneficios);
+
+  setVal('f-cons-titulo', s.consideraciones?.titulo);
+  setVal('f-cons-lead', s.consideraciones?.lead);
+  populateRepeater('repeaterConsideraciones', 'consideraciones', s.consideraciones?.items);
+
+  setVal('f-geo-titulo', s.geometrias?.titulo);
+  setVal('f-geo-desc', s.geometrias?.descripcion);
+  populateRepeater('repeaterGeometrias', 'geometrias', s.geometrias?.items);
+
+  populateRepeater('repeaterBadges', 'badges', s.certificacion?.badges);
+  populateRepeater('repeaterNormas', 'normas', s.certificacion?.normas);
+  setPdf('fichaTecnicaPdf', s.certificacion?.fichaTecnicaPdf);
+  setPdf('certificadosPdf', s.certificacion?.certificadosPdf);
+
+  populateRepeater('repeaterGaleria', 'galeria', s.galeria);
+
+  setVal('f-cta-head', s.cta?.headline);
+  setVal('f-cta-btn', s.cta?.botonTexto);
+
+  const crumb = document.getElementById('crumbCurrent');
+  if (crumb) crumb.textContent = `Editar: ${s.titulo}`;
+
+  // Live-update breadcrumb on title input
+  const tituloEl = document.getElementById('f-titulo');
+  if (tituloEl && crumb) {
+    tituloEl.addEventListener('input', () => {
+      crumb.textContent = `Editar: ${tituloEl.value || '…'}`;
+    });
+  }
+
+  isDirty = false;
+}
+
+loadExistingIfAny();

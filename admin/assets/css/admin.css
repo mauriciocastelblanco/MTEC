@@ -370,3 +370,21 @@ table.admin-table { width: 100%; border-collapse: collapse; }
 .pdf-upload .pdf-meta span { color: var(--plomo); font-size: 12px; }
 .pdf-upload input[type="file"] { font-size: 12px; }
 .pdf-upload-actions { display: flex; gap: 6px; align-items: center; }
+
+/* ── TOAST ────────────────────────────────────────── */
+#toastRoot { position: fixed; bottom: 92px; right: 32px; display: flex; flex-direction: column; gap: 8px; z-index: 100; pointer-events: none; }
+.toast {
+  background: rgba(11,53,84,0.96);
+  border: 1px solid var(--acero-light);
+  color: var(--vapor);
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  max-width: 380px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+  pointer-events: auto;
+  animation: toastIn 200ms ease;
+}
+.toast.toast-success { border-color: rgba(34,197,94,0.50); }
+.toast.toast-error { background: rgba(127,29,29,0.95); border-color: rgba(239,68,68,0.50); }
+@keyframes toastIn { from { transform: translateY(8px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
