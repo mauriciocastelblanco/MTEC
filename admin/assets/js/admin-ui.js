@@ -309,6 +309,41 @@ const repeaterRenderers = {
       </div>
     `;
   },
+  galeria(item = { dataUrl: '', caption: '', tamano: 'M' }) {
+    return `
+      <div class="repeater-item">
+        <div class="repeater-drag" aria-hidden="true">⋮⋮</div>
+        <div class="repeater-fields">
+          <div class="field">
+            <label>Imagen</label>
+            <div class="img-upload">
+              <div class="img-preview" data-gallery-preview>${item.dataUrl ? `<img src="${item.dataUrl}" alt="">` : '<span class="img-placeholder">Sin imagen</span>'}</div>
+              <div class="img-upload-actions">
+                <input type="file" accept="image/*" data-gallery-input>
+              </div>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Caption (opcional)</label>
+              <input type="text" data-rk="caption" value="${escapeAttr(item.caption)}" placeholder="Aplicación en planta">
+            </div>
+            <div class="field">
+              <label>Tamaño en grid</label>
+              <select data-rk="tamano">
+                <option value="S" ${item.tamano === 'S' ? 'selected' : ''}>Pequeño</option>
+                <option value="M" ${item.tamano === 'M' ? 'selected' : ''}>Mediano</option>
+                <option value="L" ${item.tamano === 'L' ? 'selected' : ''}>Grande</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <button type="button" class="repeater-remove" aria-label="Eliminar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+        </button>
+      </div>
+    `;
+  },
 };
 
 function initRepeater(containerId, key) {
@@ -368,6 +403,7 @@ initRepeater('repeaterConsideraciones', 'consideraciones');
 initRepeater('repeaterGeometrias', 'geometrias');
 initRepeater('repeaterBadges', 'badges');
 initRepeater('repeaterNormas', 'normas');
+initRepeater('repeaterGaleria', 'galeria');
 initRepeaterAddButtons();
 
 function initPdfUploads() {
@@ -386,3 +422,21 @@ function initPdfUploads() {
 }
 
 initPdfUploads();
+
+function initGalleryUploads() {
+  document.body.addEventListener('change', e => {
+    const input = e.target.closest('input[type="file"][data-gallery-input]');
+    if (!input) return;
+    const file = input.files[0];
+    if (!file) return;
+    const preview = input.closest('.img-upload').querySelector('[data-gallery-preview]');
+    const reader = new FileReader();
+    reader.onload = ev => {
+      preview.innerHTML = `<img src="${ev.target.result}" alt="">`;
+      markDirty();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+initGalleryUploads();
