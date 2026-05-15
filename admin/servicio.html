@@ -154,7 +154,40 @@
         </div>
 
       </div>
-      <div class="tab-pane" data-pane="solucion"><p>Solución — Task 6</p></div>
+      <div class="tab-pane" data-pane="solucion">
+
+        <div class="form-section">
+          <div class="form-section-title">Solución — encabezado</div>
+          <div class="field">
+            <label for="f-sol-titulo">Título</label>
+            <input type="text" id="f-sol-titulo" name="sol-titulo" placeholder="La solución">
+          </div>
+          <div class="field">
+            <label for="f-sol-desc">Descripción</label>
+            <textarea id="f-sol-desc" name="sol-desc" placeholder="Explica brevemente cómo funciona."></textarea>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="f-sol-metricaValor">Métrica clave — valor</label>
+              <input type="text" id="f-sol-metricaValor" name="sol-metricaValor" placeholder="MAOP">
+            </div>
+            <div class="field">
+              <label for="f-sol-metricaLabel">Métrica clave — etiqueta</label>
+              <input type="text" id="f-sol-metricaLabel" name="sol-metricaLabel" placeholder="original">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="repeater-head">
+            <label>Beneficios</label>
+            <span class="hint">6 beneficios funciona mejor visualmente.</span>
+          </div>
+          <div class="repeater" id="repeaterBeneficios"></div>
+          <button type="button" class="repeater-add" data-add="beneficios">+ Agregar beneficio</button>
+        </div>
+
+      </div>
       <div class="tab-pane" data-pane="consideraciones"><p>Consideraciones — Task 7</p></div>
       <div class="tab-pane" data-pane="geometrias"><p>Geometrías — Task 8</p></div>
       <div class="tab-pane" data-pane="certificacion"><p>Certificación — Task 9</p></div>
