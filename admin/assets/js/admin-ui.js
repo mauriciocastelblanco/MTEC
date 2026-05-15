@@ -82,3 +82,22 @@ async function init() {
 }
 
 init();
+
+// ── FORM PAGE ─────────────────────────────────────────
+function initFormPage() {
+  const tabsBar = document.getElementById('tabsBar');
+  if (!tabsBar) return;
+
+  const panes = document.querySelectorAll('.tab-pane');
+
+  tabsBar.addEventListener('click', e => {
+    const btn = e.target.closest('.tab-btn');
+    if (!btn) return;
+    const tab = btn.dataset.tab;
+
+    tabsBar.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('is-active', b === btn));
+    panes.forEach(p => p.classList.toggle('is-active', p.dataset.pane === tab));
+  });
+}
+
+initFormPage();

@@ -163,3 +163,41 @@ table.admin-table { width: 100%; border-collapse: collapse; }
 .empty-state svg { width: 48px; height: 48px; color: var(--plomo); margin-bottom: 16px; }
 .empty-state h2 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
 .empty-state p { color: var(--plomo); font-size: 13.5px; margin-bottom: 20px; }
+
+/* ── FORM SHELL ───────────────────────────────────── */
+.form-actions { display: flex; align-items: center; gap: 8px; }
+
+.tabs-bar {
+  display: flex; gap: 4px;
+  padding: 12px 32px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 5;
+  overflow-x: auto;
+}
+.tab-btn {
+  padding: 8px 14px; border-radius: 999px;
+  font-size: 13px; font-weight: 500;
+  color: var(--plomo);
+  transition: background var(--transition), color var(--transition);
+  white-space: nowrap;
+}
+.tab-btn:hover { color: var(--vapor); background: var(--surface); }
+.tab-btn:focus-visible { outline: 2px solid var(--acero-light); outline-offset: 2px; }
+.tab-btn.is-active { background: var(--vapor); color: var(--acero-deep); }
+
+.tab-pane { display: none; }
+.tab-pane.is-active { display: block; }
+
+.form-content { padding: 32px; max-width: 960px; padding-bottom: 120px; }
+
+/* Sticky save bar */
+.save-bar {
+  position: fixed; left: 240px; right: 0; bottom: 0;
+  padding: 16px 32px;
+  background: rgba(15,27,42,0.92);
+  backdrop-filter: blur(8px);
+  border-top: 1px solid var(--border);
+  display: flex; justify-content: flex-end; gap: 8px;
+  z-index: 10;
+}
