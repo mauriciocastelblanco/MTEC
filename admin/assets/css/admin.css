@@ -354,3 +354,4 @@ table.admin-table { width: 100%; border-collapse: collapse; }
 .icon-picker-opt:focus-visible { outline: 2px solid var(--acero-light); outline-offset: 2px; }
 .icon-picker-opt.is-selected { border-color: var(--acero-light); color: var(--vapor); background: rgba(43,130,185,0.15); }
 .icon-picker-opt svg { width: 18px; height: 18px; }
+.icon-picker-trigger .icon-slot { display: inline-flex; }

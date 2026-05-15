@@ -194,14 +194,14 @@ const ICONS = {
 function escapeAttr(s) { return String(s ?? '').replace(/"/g, '&quot;'); }
 
 function iconPickerHtml(name, selected) {
-  const sel = selected || 'shield';
+  const sel = (selected && ICONS[selected]) ? selected : 'shield';
   const opts = Object.keys(ICONS).map(k => `
     <button type="button" class="icon-picker-opt ${k === sel ? 'is-selected' : ''}" data-icon="${k}" data-field="${name}" title="${k}" aria-label="${k}">${ICONS[k]}</button>
   `).join('');
   return `
     <div class="icon-picker is-collapsed" data-picker="${name}">
       <button type="button" class="icon-picker-trigger" data-trigger="${name}" aria-expanded="false">
-        ${ICONS[sel]}
+        <span class="icon-slot" data-icon-slot>${ICONS[sel]}</span>
         <span data-current="${name}">${sel}</span>
       </button>
       <div class="icon-picker-grid">${opts}</div>
@@ -262,8 +262,8 @@ function initRepeater(containerId, key) {
       const picker = opt.closest('.icon-picker');
       picker.querySelectorAll('.icon-picker-opt').forEach(o => o.classList.toggle('is-selected', o === opt));
       const trig = picker.querySelector('.icon-picker-trigger');
-      trig.querySelector('svg')?.remove();
-      trig.insertAdjacentHTML('afterbegin', ICONS[opt.dataset.icon]);
+      const slot = trig.querySelector('[data-icon-slot]');
+      if (slot) slot.innerHTML = ICONS[opt.dataset.icon] || '';
       trig.querySelector('[data-current]').textContent = opt.dataset.icon;
       picker.classList.add('is-collapsed');
       trig.setAttribute('aria-expanded', 'false');
