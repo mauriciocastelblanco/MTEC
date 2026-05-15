@@ -121,3 +121,45 @@ img { max-width: 100%; display: block; }
   outline-offset: 2px;
   color: var(--vapor);
 }
+
+/* ── BUTTONS ───────────────────────────────────────── */
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: var(--radius); font-size: 13px; font-weight: 500; transition: background var(--transition), border-color var(--transition), transform var(--transition); white-space: nowrap; }
+.btn svg { width: 14px; height: 14px; }
+.btn-primary { background: var(--vapor); color: var(--acero-deep); }
+.btn-primary:hover { background: #fff; transform: translateY(-1px); }
+.btn-ghost { background: var(--surface); border: 1px solid var(--border); color: var(--vapor); }
+.btn-ghost:hover { background: var(--surface-hover); border-color: var(--border-strong); }
+.btn-danger { background: rgba(239,68,68,0.10); border: 1px solid rgba(239,68,68,0.40); color: #FCA5A5; }
+.btn-danger:hover { background: rgba(239,68,68,0.20); }
+.btn:focus-visible { outline: 2px solid var(--acero-light); outline-offset: 2px; }
+
+/* ── PAGE HEADER ──────────────────────────────────── */
+.page-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 28px; }
+.page-head h1 { margin-bottom: 4px; }
+.page-head .page-description { margin-bottom: 0; }
+
+/* ── TABLE ────────────────────────────────────────── */
+.table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+table.admin-table { width: 100%; border-collapse: collapse; }
+.admin-table th { text-align: left; padding: 14px 16px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--plomo); background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border); }
+.admin-table td { padding: 14px 16px; font-size: 13.5px; border-bottom: 1px solid var(--border); }
+.admin-table tr:last-child td { border-bottom: none; }
+.admin-table tr.row-clickable { cursor: pointer; transition: background var(--transition); }
+.admin-table tr.row-clickable:hover { background: rgba(255,255,255,0.03); }
+.admin-table tr.row-clickable:focus-visible { background: rgba(255,255,255,0.03); outline: 2px solid var(--acero-light); outline-offset: -2px; }
+.admin-table .col-slug { font-family: ui-monospace, "JetBrains Mono", monospace; font-size: 12px; color: var(--platino); }
+.admin-table .col-title { font-weight: 500; }
+.admin-table .col-edited { color: var(--plomo); font-size: 12.5px; }
+.admin-table .col-actions { text-align: right; width: 1%; white-space: nowrap; }
+.admin-table .col-actions .btn { padding: 6px 10px; font-size: 12px; }
+.admin-table .col-actions .btn + .btn { margin-left: 4px; }
+
+.chip-estado { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; }
+.chip-publicado { background: var(--green); border: 1px solid var(--green-border); color: #86EFAC; }
+.chip-borrador { background: var(--surface); border: 1px solid var(--border); color: var(--plomo); }
+
+/* ── EMPTY STATE ──────────────────────────────────── */
+.empty-state { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 64px 32px; text-align: center; }
+.empty-state svg { width: 48px; height: 48px; color: var(--plomo); margin-bottom: 16px; }
+.empty-state h2 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+.empty-state p { color: var(--plomo); font-size: 13.5px; margin-bottom: 20px; }
