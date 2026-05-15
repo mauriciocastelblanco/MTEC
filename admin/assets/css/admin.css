@@ -252,12 +252,19 @@ table.admin-table { width: 100%; border-collapse: collapse; }
 /* Collapsible */
 .collapsible-head {
   display: flex; align-items: center; justify-content: space-between;
+  width: 100%;
   padding: 12px 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
   cursor: pointer;
+  border: none;
   border-top: 1px solid var(--border);
   margin-top: 16px;
 }
 .collapsible-head:hover { color: var(--vapor); }
+.collapsible-head:focus-visible { outline: 2px solid var(--acero-light); outline-offset: 2px; }
 .collapsible-head .chevron { transition: transform var(--transition); }
 .collapsible.is-open .collapsible-head .chevron { transform: rotate(90deg); }
 .collapsible-body { display: none; padding-top: 8px; }

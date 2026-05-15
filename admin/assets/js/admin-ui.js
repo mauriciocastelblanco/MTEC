@@ -155,7 +155,9 @@ function initHeroTab() {
   document.querySelectorAll('[data-toggle]').forEach(head => {
     head.addEventListener('click', () => {
       const target = document.getElementById(head.dataset.toggle);
-      if (target) target.classList.toggle('is-open');
+      if (!target) return;
+      const open = target.classList.toggle('is-open');
+      head.setAttribute('aria-expanded', open ? 'true' : 'false');
     });
   });
 }
