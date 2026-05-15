@@ -69,7 +69,91 @@
     </nav>
 
     <div class="form-content" id="formRoot">
-      <div class="tab-pane is-active" data-pane="hero"><p>Hero fields — Task 5</p></div>
+      <div class="tab-pane is-active" data-pane="hero">
+
+        <div class="form-section">
+          <div class="form-section-title">Identificación</div>
+          <p class="form-section-desc">Lo que identifica al servicio en la URL y en la navbar.</p>
+
+          <div class="field-row">
+            <div class="field" data-field="titulo">
+              <label for="f-titulo">Título</label>
+              <input type="text" id="f-titulo" name="titulo" placeholder="Ej. Encintado de Líneas" required>
+              <div class="field-error">El título es obligatorio.</div>
+            </div>
+            <div class="field" data-field="slug">
+              <label for="f-slug">Slug (URL)</label>
+              <input type="text" id="f-slug" name="slug" placeholder="encintado-de-lineas" required>
+              <span class="hint">Se autogenera desde el título. Solo minúsculas, números y guiones.</span>
+              <div class="field-error">Slug obligatorio y único.</div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="f-eyebrow">Eyebrow / categoría</label>
+            <input type="text" id="f-eyebrow" name="eyebrow" placeholder="Servicio Especializado · Operación">
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title">Hero</div>
+          <p class="form-section-desc">El primer bloque visual de la página del servicio.</p>
+
+          <div class="field">
+            <label for="f-lead">Descripción corta</label>
+            <textarea id="f-lead" name="lead" maxlength="280" placeholder="Resumen de qué es y para qué sirve este servicio."></textarea>
+            <span class="hint">Máximo 280 caracteres.</span>
+          </div>
+
+          <div class="field">
+            <label>Imagen principal</label>
+            <div class="img-upload">
+              <div class="img-preview" data-preview="heroImagen">
+                <span class="img-placeholder">Sin imagen</span>
+              </div>
+              <div class="img-upload-actions">
+                <input type="file" accept="image/*" data-upload="heroImagen">
+                <span class="hint">Recomendado: JPG/PNG, mínimo 1200×800. Se ajusta automáticamente.</span>
+                <span class="img-warn" data-warn="heroImagen" hidden></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="collapsible" id="calloutGroup">
+            <div class="collapsible-head" data-toggle="calloutGroup">
+              <span><strong>Product callout</strong> · opcional</span>
+              <svg class="chevron" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg>
+            </div>
+            <div class="collapsible-body">
+              <div class="field-row">
+                <div class="field">
+                  <label for="f-callout-top">Texto superior</label>
+                  <input type="text" id="f-callout-top" name="callout-textoSuperior" placeholder="Tecnología aplicada">
+                </div>
+                <div class="field">
+                  <label for="f-callout-bottom">Texto inferior</label>
+                  <input type="text" id="f-callout-bottom" name="callout-textoInferior" placeholder="AKKAIM INTEGRITY">
+                </div>
+              </div>
+              <div class="field">
+                <label for="f-callout-name">Nombre del producto</label>
+                <input type="text" id="f-callout-name" name="callout-nombreProducto" placeholder="Iridium Wrap">
+              </div>
+              <div class="field">
+                <label>Imagen del producto</label>
+                <div class="img-upload">
+                  <div class="img-preview" data-preview="calloutImagen"><span class="img-placeholder">Sin imagen</span></div>
+                  <div class="img-upload-actions">
+                    <input type="file" accept="image/*" data-upload="calloutImagen">
+                    <span class="img-warn" data-warn="calloutImagen" hidden></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
       <div class="tab-pane" data-pane="solucion"><p>Solución — Task 6</p></div>
       <div class="tab-pane" data-pane="consideraciones"><p>Consideraciones — Task 7</p></div>
       <div class="tab-pane" data-pane="geometrias"><p>Geometrías — Task 8</p></div>

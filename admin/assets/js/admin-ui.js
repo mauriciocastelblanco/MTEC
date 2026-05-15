@@ -1,4 +1,4 @@
-import { getServicios, deleteServicio } from './admin-data.js';
+import { getServicios, deleteServicio, slugify } from './admin-data.js';
 
 function fmtTime(iso) {
   const d = new Date(iso);
@@ -101,3 +101,70 @@ function initFormPage() {
 }
 
 initFormPage();
+
+// ══════════════════════════════════════════════════════
+// FORM STATE + INTERACTIONS
+// ══════════════════════════════════════════════════════
+let isDirty = false;
+function markDirty() { isDirty = true; }
+
+function initHeroTab() {
+  const titulo = document.getElementById('f-titulo');
+  const slug = document.getElementById('f-slug');
+  if (!titulo || !slug) return;
+
+  // Auto-slug from title when slug is empty
+  titulo.addEventListener('blur', () => {
+    if (!slug.value && titulo.value) slug.value = slugify(titulo.value);
+  });
+  // Force slug formatting when user types in it
+  slug.addEventListener('input', () => {
+    slug.value = slug.value.toLowerCase().replace(/[^a-z0-9-]/g, '');
+  });
+
+  // All text inputs / textareas in form mark dirty
+  document.querySelectorAll('#formRoot input, #formRoot textarea, #formRoot select').forEach(el => {
+    el.addEventListener('input', markDirty);
+  });
+
+  // Image upload preview
+  document.querySelectorAll('input[type="file"][data-upload]').forEach(input => {
+    input.addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const key = input.dataset.upload;
+      const preview = document.querySelector(`[data-preview="${key}"]`);
+      const warn = document.querySelector(`[data-warn="${key}"]`);
+
+      const reader = new FileReader();
+      reader.onload = ev => {
+        preview.innerHTML = `<img src="${ev.target.result}" alt="">`;
+        if (ev.target.result.length > 2_000_000) {
+          warn.hidden = false;
+          warn.textContent = `Imagen pesada (${Math.round(ev.target.result.length / 1024)} KB en base64). Considera optimizarla.`;
+        } else {
+          warn.hidden = true;
+        }
+      };
+      reader.readAsDataURL(file);
+      markDirty();
+    });
+  });
+
+  // Collapsible callout
+  document.querySelectorAll('[data-toggle]').forEach(head => {
+    head.addEventListener('click', () => {
+      const target = document.getElementById(head.dataset.toggle);
+      if (target) target.classList.toggle('is-open');
+    });
+  });
+}
+
+initHeroTab();
+
+// Warn on unsaved changes
+window.addEventListener('beforeunload', e => {
+  if (!isDirty) return;
+  e.preventDefault();
+  e.returnValue = '';
+});
