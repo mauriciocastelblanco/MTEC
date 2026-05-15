@@ -18,6 +18,7 @@
   "homepage": "https://github.com/mauriciocastelblanco/Isallabs#readme",
   "description": "",
   "dependencies": {
+    "@supabase/supabase-js": "^2.100.0",
     "puppeteer-core": "^24.40.0"
   },
   "devDependencies": {

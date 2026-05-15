@@ -16,10 +16,13 @@ desktop.ini
 *.swp
 *.swo
 
-# Environment
+# Local env files (never commit secrets)
 .env
 .env.local
 .env.*.local
+
+# Allow the example file
+!.env.example
 
 # Build output
 dist/
