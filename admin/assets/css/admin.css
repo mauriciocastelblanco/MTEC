@@ -155,6 +155,11 @@ table.admin-table { width: 100%; border-collapse: collapse; }
 .chip-publicado { background: var(--green); border: 1px solid var(--green-border); color: #86EFAC; }
 .chip-borrador { background: var(--surface); border: 1px solid var(--border); color: var(--plomo); }
 
+.chip-categoria { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; white-space: nowrap; }
+.chip-servicios-especializados { background: rgba(43,130,185,0.18); border: 1px solid rgba(43,130,185,0.45); color: #7DD3FC; }
+.chip-representacion { background: rgba(168,85,247,0.15); border: 1px solid rgba(168,85,247,0.40); color: #D8B4FE; }
+.chip-comercializacion { background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.40); color: #FCD34D; }
+
 /* ── EMPTY STATE ──────────────────────────────────── */
 .empty-state { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 64px 32px; text-align: center; }
 .empty-state svg { width: 48px; height: 48px; color: var(--plomo); margin-bottom: 16px; }

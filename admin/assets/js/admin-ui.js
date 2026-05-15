@@ -17,6 +17,15 @@ function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
+const CATEGORIA_LABELS = {
+  'servicios-especializados': 'Servicios Especializados',
+  'representacion': 'Representación',
+  'comercializacion': 'Comercialización'
+};
+function categoriaLabel(cat) {
+  return CATEGORIA_LABELS[cat] || CATEGORIA_LABELS['servicios-especializados'];
+}
+
 function renderDashboard(root, servicios) {
   if (servicios.length === 0) {
     root.innerHTML = `
@@ -34,6 +43,7 @@ function renderDashboard(root, servicios) {
     <tr data-slug="${escapeHtml(s.slug)}">
       <td class="col-slug">${escapeHtml(s.slug)}</td>
       <td class="col-title">${escapeHtml(s.titulo)}</td>
+      <td><span class="chip-categoria chip-${escapeHtml(s.categoria || 'servicios-especializados')}">${categoriaLabel(s.categoria)}</span></td>
       <td><span class="chip-estado chip-${s.estado}">${s.estado === 'publicado' ? 'Publicado' : 'Borrador'}</span></td>
       <td class="col-edited">${fmtTime(s.fechaEdicion)}</td>
       <td class="col-actions">
@@ -48,7 +58,7 @@ function renderDashboard(root, servicios) {
     <div class="table-wrap">
       <table class="admin-table">
         <thead><tr>
-          <th>Slug</th><th>Título</th><th>Estado</th><th>Última edición</th><th></th>
+          <th>Slug</th><th>Título</th><th>Categoría</th><th>Estado</th><th>Última edición</th><th></th>
         </tr></thead>
         <tbody>${rows}</tbody>
       </table>
@@ -491,6 +501,7 @@ function collectForm() {
   return {
     slug: readVal('f-slug'),
     titulo: readVal('f-titulo'),
+    categoria: readVal('f-categoria') || 'servicios-especializados',
     eyebrow: readVal('f-eyebrow'),
     lead: readVal('f-lead'),
     hero: {
@@ -635,6 +646,7 @@ async function loadExistingIfAny() {
 
   setVal('f-titulo', s.titulo);
   setVal('f-slug', s.slug);
+  setVal('f-categoria', s.categoria || 'servicios-especializados');
   setVal('f-eyebrow', s.eyebrow);
   setVal('f-lead', s.lead);
   setImage('heroImagen', s.hero?.imagen);

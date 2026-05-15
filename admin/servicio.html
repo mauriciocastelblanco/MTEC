@@ -89,9 +89,21 @@
             </div>
           </div>
 
-          <div class="field">
-            <label for="f-eyebrow">Eyebrow / categoría</label>
-            <input type="text" id="f-eyebrow" name="eyebrow" placeholder="Servicio Especializado · Operación">
+          <div class="field-row">
+            <div class="field">
+              <label for="f-categoria">Categoría</label>
+              <select id="f-categoria" name="categoria">
+                <option value="servicios-especializados">Servicios Especializados</option>
+                <option value="representacion">Representación</option>
+                <option value="comercializacion">Comercialización</option>
+              </select>
+              <span class="hint">Determina en qué submenú de la navbar aparecerá el servicio.</span>
+            </div>
+            <div class="field">
+              <label for="f-eyebrow">Eyebrow (subtítulo)</label>
+              <input type="text" id="f-eyebrow" name="eyebrow" placeholder="Servicio Especializado · Operación">
+              <span class="hint">Texto pequeño sobre el título del hero. Opcional.</span>
+            </div>
           </div>
         </div>
 

@@ -8,6 +8,7 @@ const STORAGE_KEY = 'mtec_admin_servicios';
 const SEED = [{
   slug: 'encintado-de-lineas',
   titulo: 'Encintado de Líneas',
+  categoria: 'servicios-especializados',
   eyebrow: 'Servicio Especializado · Operación',
   lead: 'Sistema de matriz compuesta basado en fibra de carbono que rehabilita y restablece la capacidad MAOP original de tubos y tuberías con daños, corrosión o erosión — sin necesidad de detener el flujo.',
   estado: 'publicado',
