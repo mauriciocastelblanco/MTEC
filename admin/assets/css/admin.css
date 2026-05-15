@@ -144,9 +144,6 @@ table.admin-table { width: 100%; border-collapse: collapse; }
 .admin-table th { text-align: left; padding: 14px 16px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--plomo); background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border); }
 .admin-table td { padding: 14px 16px; font-size: 13.5px; border-bottom: 1px solid var(--border); }
 .admin-table tr:last-child td { border-bottom: none; }
-.admin-table tr.row-clickable { cursor: pointer; transition: background var(--transition); }
-.admin-table tr.row-clickable:hover { background: rgba(255,255,255,0.03); }
-.admin-table tr.row-clickable:focus-visible { background: rgba(255,255,255,0.03); outline: 2px solid var(--acero-light); outline-offset: -2px; }
 .admin-table .col-slug { font-family: ui-monospace, "JetBrains Mono", monospace; font-size: 12px; color: var(--platino); }
 .admin-table .col-title { font-weight: 500; }
 .admin-table .col-edited { color: var(--plomo); font-size: 12.5px; }

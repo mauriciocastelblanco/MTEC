@@ -31,7 +31,7 @@ function renderDashboard(root, servicios) {
   }
 
   const rows = servicios.map(s => `
-    <tr class="row-clickable" data-slug="${escapeHtml(s.slug)}">
+    <tr data-slug="${escapeHtml(s.slug)}">
       <td class="col-slug">${escapeHtml(s.slug)}</td>
       <td class="col-title">${escapeHtml(s.titulo)}</td>
       <td><span class="chip-estado chip-${s.estado}">${s.estado === 'publicado' ? 'Publicado' : 'Borrador'}</span></td>
@@ -54,13 +54,6 @@ function renderDashboard(root, servicios) {
       </table>
     </div>
   `;
-
-  root.querySelectorAll('tr.row-clickable').forEach(tr => {
-    tr.addEventListener('click', e => {
-      if (e.target.closest('a, button')) return;
-      window.location.href = `servicio.html?slug=${tr.dataset.slug}`;
-    });
-  });
 
   root.querySelectorAll('button[data-action="delete"]').forEach(btn => {
     btn.addEventListener('click', async e => {
@@ -415,7 +408,7 @@ function initPdfUploads() {
       const nameEl = document.querySelector(`[data-name="${key}"]`);
       const sizeEl = document.querySelector(`[data-size="${key}"]`);
       if (nameEl) nameEl.textContent = file.name;
-      if (sizeEl) sizeEl.textContent = `${Math.round(file.size / 1024)} KB · listo para guardar`;
+      if (sizeEl) sizeEl.textContent = `${Math.round(file.size / 1024)} KB · se guardará cuando conectemos la base de datos`;
       markDirty();
     });
   });
