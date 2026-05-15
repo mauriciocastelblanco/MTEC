@@ -81,7 +81,7 @@ img { max-width: 100%; display: block; }
 .page-breadcrumb > span:not([class]) { opacity: 0.5; }
 .page-accent-line {
   width: 48px; height: 3px;
-  background: #fff; margin-bottom: 24px;
+  background: var(--platino); margin-bottom: 24px;
 }
 .page-title {
   font-family: "Barlow Condensed", sans-serif;
@@ -100,7 +100,7 @@ img { max-width: 100%; display: block; }
 .content-wrap { margin: 0 auto; padding: 0 var(--page-pad); }
 .section-block {
   padding: 72px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.12);
+  border-bottom: 1px solid rgba(178,190,201,0.20);
   position: relative;
 }
 .section-block:last-of-type { border-bottom: none; }
@@ -141,7 +141,7 @@ img { max-width: 100%; display: block; }
 }
 .section-tag::before {
   content: ''; display: block;
-  width: 24px; height: 2px; background: #fff;
+  width: 24px; height: 2px; background: var(--platino);
 }
 
 /* ══ REVEAL SYSTEM — bidirectional ════════════════
