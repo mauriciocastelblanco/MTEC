@@ -257,6 +257,26 @@ const repeaterRenderers = {
       </div>
     `;
   },
+  geometrias(item = { nombre: '', icono: 'pipe' }) {
+    return `
+      <div class="repeater-item">
+        <div class="repeater-drag" aria-hidden="true">⋮⋮</div>
+        <div class="repeater-fields">
+          <div class="field">
+            <label>Nombre</label>
+            <input type="text" data-rk="nombre" value="${escapeAttr(item.nombre)}" placeholder="Codos">
+          </div>
+          <div class="field">
+            <label>Icono</label>
+            ${iconPickerHtml('geometria-icono', item.icono)}
+          </div>
+        </div>
+        <button type="button" class="repeater-remove" aria-label="Eliminar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+        </button>
+      </div>
+    `;
+  },
 };
 
 function initRepeater(containerId, key) {
@@ -313,4 +333,5 @@ function initRepeaterAddButtons() {
 
 initRepeater('repeaterBeneficios', 'beneficios');
 initRepeater('repeaterConsideraciones', 'consideraciones');
+initRepeater('repeaterGeometrias', 'geometrias');
 initRepeaterAddButtons();

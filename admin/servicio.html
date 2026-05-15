@@ -212,7 +212,30 @@
         </div>
 
       </div>
-      <div class="tab-pane" data-pane="geometrias"><p>Geometrías — Task 8</p></div>
+      <div class="tab-pane" data-pane="geometrias">
+
+        <div class="form-section">
+          <div class="form-section-title">Geometrías — encabezado</div>
+          <div class="field">
+            <label for="f-geo-titulo">Título</label>
+            <input type="text" id="f-geo-titulo" name="geo-titulo" placeholder="Geometrías aplicables">
+          </div>
+          <div class="field">
+            <label for="f-geo-desc">Descripción</label>
+            <textarea id="f-geo-desc" name="geo-desc" placeholder="El sistema se adapta a múltiples configuraciones."></textarea>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="repeater-head">
+            <label>Geometrías</label>
+            <span class="hint">8 items recomendado para llenar el grid.</span>
+          </div>
+          <div class="repeater" id="repeaterGeometrias"></div>
+          <button type="button" class="repeater-add" data-add="geometrias">+ Agregar geometría</button>
+        </div>
+
+      </div>
       <div class="tab-pane" data-pane="certificacion"><p>Certificación — Task 9</p></div>
       <div class="tab-pane" data-pane="galeria"><p>Galería — Task 10</p></div>
       <div class="tab-pane" data-pane="cta"><p>CTA — Task 11</p></div>
