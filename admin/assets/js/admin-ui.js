@@ -277,6 +277,38 @@ const repeaterRenderers = {
       </div>
     `;
   },
+  badges(item = { nombre: '' }) {
+    return `
+      <div class="repeater-item">
+        <div class="repeater-drag" aria-hidden="true">⋮⋮</div>
+        <div class="repeater-fields">
+          <div class="field">
+            <label>Nombre</label>
+            <input type="text" data-rk="nombre" value="${escapeAttr(item.nombre)}" placeholder="API">
+          </div>
+        </div>
+        <button type="button" class="repeater-remove" aria-label="Eliminar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+        </button>
+      </div>
+    `;
+  },
+  normas(item = { texto: '' }) {
+    return `
+      <div class="repeater-item">
+        <div class="repeater-drag" aria-hidden="true">⋮⋮</div>
+        <div class="repeater-fields">
+          <div class="field">
+            <label>Norma</label>
+            <input type="text" data-rk="texto" value="${escapeAttr(item.texto)}" placeholder="ASME PCC-2 Art. 4.1">
+          </div>
+        </div>
+        <button type="button" class="repeater-remove" aria-label="Eliminar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+        </button>
+      </div>
+    `;
+  },
 };
 
 function initRepeater(containerId, key) {
@@ -334,4 +366,23 @@ function initRepeaterAddButtons() {
 initRepeater('repeaterBeneficios', 'beneficios');
 initRepeater('repeaterConsideraciones', 'consideraciones');
 initRepeater('repeaterGeometrias', 'geometrias');
+initRepeater('repeaterBadges', 'badges');
+initRepeater('repeaterNormas', 'normas');
 initRepeaterAddButtons();
+
+function initPdfUploads() {
+  document.querySelectorAll('input[type="file"][data-pdf-input]').forEach(input => {
+    input.addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const key = input.dataset.pdfInput;
+      const nameEl = document.querySelector(`[data-name="${key}"]`);
+      const sizeEl = document.querySelector(`[data-size="${key}"]`);
+      if (nameEl) nameEl.textContent = file.name;
+      if (sizeEl) sizeEl.textContent = `${Math.round(file.size / 1024)} KB · listo para guardar`;
+      markDirty();
+    });
+  });
+}
+
+initPdfUploads();

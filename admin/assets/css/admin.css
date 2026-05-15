@@ -355,3 +355,18 @@ table.admin-table { width: 100%; border-collapse: collapse; }
 .icon-picker-opt.is-selected { border-color: var(--acero-light); color: var(--vapor); background: rgba(43,130,185,0.15); }
 .icon-picker-opt svg { width: 18px; height: 18px; }
 .icon-picker-trigger .icon-slot { display: inline-flex; }
+
+/* ── PDF UPLOAD ──────────────────────────────────── */
+.pdf-upload {
+  background: rgba(0,0,0,0.20);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius);
+  padding: 14px;
+  display: flex; align-items: center; gap: 14px;
+}
+.pdf-upload svg { width: 22px; height: 22px; color: var(--platino); flex-shrink: 0; }
+.pdf-upload .pdf-meta { flex: 1; font-size: 13px; }
+.pdf-upload .pdf-meta strong { display: block; color: var(--vapor); margin-bottom: 2px; word-break: break-all; }
+.pdf-upload .pdf-meta span { color: var(--plomo); font-size: 12px; }
+.pdf-upload input[type="file"] { font-size: 12px; }
+.pdf-upload-actions { display: flex; gap: 6px; align-items: center; }

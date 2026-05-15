@@ -236,7 +236,59 @@
         </div>
 
       </div>
-      <div class="tab-pane" data-pane="certificacion"><p>Certificación — Task 9</p></div>
+      <div class="tab-pane" data-pane="certificacion">
+
+        <div class="form-section">
+          <div class="repeater-head">
+            <label>Badges (estándares)</label>
+            <span class="hint">API, ASME, ISO — los que apliquen.</span>
+          </div>
+          <div class="repeater" id="repeaterBadges"></div>
+          <button type="button" class="repeater-add" data-add="badges">+ Agregar badge</button>
+        </div>
+
+        <div class="form-section">
+          <div class="repeater-head">
+            <label>Normas específicas</label>
+            <span class="hint">Una norma por línea (ASME PCC-2 Art. 4.1, ISO 24817, etc.).</span>
+          </div>
+          <div class="repeater" id="repeaterNormas"></div>
+          <button type="button" class="repeater-add" data-add="normas">+ Agregar norma</button>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title">Documentos</div>
+
+          <div class="field">
+            <label>Ficha técnica (PDF)</label>
+            <div class="pdf-upload" data-pdf="fichaTecnicaPdf">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <div class="pdf-meta">
+                <strong data-name="fichaTecnicaPdf">Sin archivo</strong>
+                <span data-size="fichaTecnicaPdf">Sube un PDF de la ficha técnica del producto.</span>
+              </div>
+              <div class="pdf-upload-actions">
+                <input type="file" accept="application/pdf" data-pdf-input="fichaTecnicaPdf">
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Certificados (PDF)</label>
+            <div class="pdf-upload" data-pdf="certificadosPdf">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <div class="pdf-meta">
+                <strong data-name="certificadosPdf">Sin archivo</strong>
+                <span data-size="certificadosPdf">Sube un PDF con los certificados aplicables.</span>
+              </div>
+              <div class="pdf-upload-actions">
+                <input type="file" accept="application/pdf" data-pdf-input="certificadosPdf">
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
       <div class="tab-pane" data-pane="galeria"><p>Galería — Task 10</p></div>
       <div class="tab-pane" data-pane="cta"><p>CTA — Task 11</p></div>
     </div>
