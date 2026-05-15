@@ -11,7 +11,7 @@ html { line-height: 1.15; -webkit-text-size-adjust: 100%; scroll-behavior: smoot
 body {
   font-family: "Inter", sans-serif; font-weight: 400;
   color: #EDF1F5;
-  background: #1B6CA8 url('../../brand_assets/backgroud_test_4.png') center top / cover no-repeat fixed;
+  background: #1B6CA8 url('../../brand_assets/background%202.0.png') center top / cover no-repeat fixed;
   -webkit-font-smoothing: antialiased; overflow-x: hidden;
   position: relative;
 }
@@ -92,7 +92,7 @@ img { max-width: 100%; display: block; }
 }
 .page-subtitle {
   font-size: clamp(14px, 1.4vw, 17px);
-  font-weight: 400; color: rgba(255,255,255,0.85);
+  font-weight: 400; color: var(--platino);
   max-width: 58ch; line-height: 1.65;
 }
 
@@ -114,13 +114,13 @@ img { max-width: 100%; display: block; }
 }
 .section-lead {
   font-size: clamp(15px, 1.3vw, 17px);
-  font-weight: 400; color: rgba(255,255,255,0.85);
+  font-weight: 400; color: var(--platino);
   max-width: 60ch; line-height: 1.7;
   margin-bottom: 28px;
 }
 .section-body {
   font-size: clamp(14px, 1.15vw, 16px);
-  font-weight: 400; color: rgba(255,255,255,0.78);
+  font-weight: 400; color: rgba(178,190,201,0.88);
   max-width: 60ch; line-height: 1.75;
   margin-bottom: 22px;
 }
@@ -136,7 +136,7 @@ img { max-width: 100%; display: block; }
   display: inline-flex; align-items: center; gap: 10px;
   font-size: 10px; font-weight: 600;
   letter-spacing: 0.25em; text-transform: uppercase;
-  color: rgba(255,255,255,0.85);
+  color: var(--platino);
   margin-bottom: 24px;
 }
 .section-tag::before {

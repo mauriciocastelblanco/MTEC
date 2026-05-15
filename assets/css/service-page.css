@@ -25,7 +25,7 @@
 .page-eyebrow {
   font-size: 11px; font-weight: 600;
   letter-spacing: 0.28em; text-transform: uppercase;
-  color: rgba(255,255,255,0.55);
+  color: var(--platino);
   margin-bottom: 14px;
 }
 .page-title--service {
@@ -61,7 +61,7 @@
 .product-callout-kicker {
   font-size: 10px; font-weight: 600;
   letter-spacing: 0.28em; text-transform: uppercase;
-  color: rgba(178,215,255,0.78);
+  color: var(--platino);
   position: relative; z-index: 1;
 }
 .product-callout-name {
@@ -74,12 +74,12 @@
 .product-callout-partner {
   display: inline-flex; align-items: center; gap: 8px;
   font-size: 11px; font-weight: 500;
-  color: rgba(255,255,255,0.62);
+  color: rgba(178,190,201,0.78);
   letter-spacing: 0.05em;
   position: relative; z-index: 1;
 }
 .product-callout-partner strong {
-  color: rgba(255,255,255,0.92);
+  color: var(--platino);
   font-weight: 600; letter-spacing: 0.12em;
   text-transform: uppercase;
   font-size: 11px;
@@ -130,7 +130,7 @@
   border: 1px solid rgba(255,255,255,0.25);
   font-size: 10px; font-weight: 600;
   letter-spacing: 0.18em; text-transform: uppercase;
-  color: rgba(255,255,255,0.88);
+  color: var(--platino);
   backdrop-filter: blur(4px);
 }
 .hero-image-stamp::before {
@@ -192,8 +192,8 @@
 .benefit-chip {
   font-size: 10px; font-weight: 600;
   letter-spacing: 0.18em; text-transform: uppercase;
-  color: rgba(255,255,255,0.55);
-  border: 1px solid rgba(255,255,255,0.18);
+  color: rgba(178,190,201,0.85);
+  border: 1px solid rgba(178,190,201,0.25);
   padding: 5px 10px;
   white-space: nowrap;
 }
@@ -215,7 +215,7 @@
 .key-metric-label {
   font-size: 11px; font-weight: 600;
   letter-spacing: 0.16em; text-transform: uppercase;
-  color: rgba(178,215,255,0.85);
+  color: var(--platino);
   margin-top: 6px;
 }
 
@@ -248,12 +248,12 @@
 .consid-num {
   font-family: "Barlow Condensed", sans-serif;
   font-size: 22px; font-weight: 600;
-  color: rgba(178,215,255,0.65);
+  color: rgba(178,190,201,0.75);
   line-height: 1; letter-spacing: -0.01em;
 }
 .consid-text {
   font-size: 14px; line-height: 1.6;
-  color: rgba(255,255,255,0.85);
+  color: var(--platino);
 }
 
 /* ── GEOMETRY CARDS ──────────────────────────────── */
@@ -287,7 +287,7 @@
 .geo-card:hover::before { transform: scaleX(1); }
 .geo-svg {
   width: 56px; height: 56px;
-  color: rgba(255,255,255,0.85);
+  color: rgba(178,190,201,0.92);
   transition: color 0.3s, transform 0.5s cubic-bezier(.22,1,.36,1);
 }
 .geo-card:hover .geo-svg { color: #fff; transform: scale(1.06); }
@@ -300,7 +300,7 @@
 .geo-name {
   font-size: 12px; font-weight: 600;
   letter-spacing: 0.08em; text-transform: uppercase;
-  color: rgba(255,255,255,0.78);
+  color: var(--platino);
 }
 .geo-card:hover .geo-name { color: #fff; }
 
@@ -337,7 +337,7 @@
 .cert-badge-sub {
   font-size: 9px; font-weight: 600;
   letter-spacing: 0.22em; text-transform: uppercase;
-  color: rgba(178,215,255,0.80);
+  color: var(--platino);
 }
 .cert-norms {
   display: flex; flex-wrap: wrap; gap: 8px;
@@ -346,10 +346,10 @@
 .cert-norm {
   font-size: 11px; font-weight: 600;
   letter-spacing: 0.05em;
-  color: rgba(255,255,255,0.85);
+  color: var(--platino);
   padding: 6px 12px;
-  border: 1px solid rgba(255,255,255,0.18);
-  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(178,190,201,0.22);
+  background: rgba(178,190,201,0.06);
 }
 .cert-doc-links {
   display: flex; flex-wrap: wrap; gap: 14px;
@@ -358,22 +358,23 @@
 .cert-doc {
   display: inline-flex; align-items: center; gap: 10px;
   padding: 13px 22px;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.22);
+  background: rgba(178,190,201,0.06);
+  border: 1px solid rgba(178,190,201,0.28);
   font-size: 12px; font-weight: 600;
   letter-spacing: 0.08em; text-transform: uppercase;
-  color: rgba(255,255,255,0.92);
-  transition: background 0.3s, border-color 0.3s, transform 0.3s;
+  color: var(--platino);
+  transition: background 0.3s, border-color 0.3s, color 0.3s, transform 0.3s;
 }
 .cert-doc:hover {
-  background: rgba(255,255,255,0.12);
-  border-color: rgba(255,255,255,0.50);
+  background: rgba(255,255,255,0.10);
+  border-color: rgba(255,255,255,0.55);
+  color: #fff;
   transform: translateX(3px);
 }
 .cert-doc svg { transition: transform 0.3s; }
 .cert-doc:hover svg { transform: translateX(3px); }
 .cert-doc--pending {
-  color: rgba(255,255,255,0.55);
+  color: rgba(178,190,201,0.55);
   cursor: not-allowed;
 }
 .cert-doc--pending::after {
@@ -425,7 +426,7 @@
   position: absolute; left: 14px; bottom: 14px;
   font-size: 10px; font-weight: 600;
   letter-spacing: 0.18em; text-transform: uppercase;
-  color: rgba(255,255,255,0.88);
+  color: var(--platino);
   z-index: 1;
 }
 
