@@ -236,7 +236,27 @@ const repeaterRenderers = {
         </button>
       </div>
     `;
-  }
+  },
+  consideraciones(item = { titulo: '', descripcion: '' }) {
+    return `
+      <div class="repeater-item">
+        <div class="repeater-drag" aria-hidden="true">⋮⋮</div>
+        <div class="repeater-fields">
+          <div class="field">
+            <label>Título</label>
+            <input type="text" data-rk="titulo" value="${escapeAttr(item.titulo)}" placeholder="Tipo de daño">
+          </div>
+          <div class="field">
+            <label>Descripción</label>
+            <textarea data-rk="descripcion" placeholder="Corrosión externa, mecánica, abolladuras...">${escapeAttr(item.descripcion)}</textarea>
+          </div>
+        </div>
+        <button type="button" class="repeater-remove" aria-label="Eliminar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+        </button>
+      </div>
+    `;
+  },
 };
 
 function initRepeater(containerId, key) {
@@ -292,4 +312,5 @@ function initRepeaterAddButtons() {
 }
 
 initRepeater('repeaterBeneficios', 'beneficios');
+initRepeater('repeaterConsideraciones', 'consideraciones');
 initRepeaterAddButtons();

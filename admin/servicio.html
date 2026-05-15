@@ -188,7 +188,30 @@
         </div>
 
       </div>
-      <div class="tab-pane" data-pane="consideraciones"><p>Consideraciones — Task 7</p></div>
+      <div class="tab-pane" data-pane="consideraciones">
+
+        <div class="form-section">
+          <div class="form-section-title">Consideraciones técnicas — encabezado</div>
+          <div class="field">
+            <label for="f-cons-titulo">Título</label>
+            <input type="text" id="f-cons-titulo" name="cons-titulo" placeholder="Consideraciones técnicas">
+          </div>
+          <div class="field">
+            <label for="f-cons-lead">Lead</label>
+            <textarea id="f-cons-lead" name="cons-lead" placeholder="Variables que evaluamos en la ingeniería previa."></textarea>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="repeater-head">
+            <label>Consideraciones</label>
+            <span class="hint">6 items recomendado.</span>
+          </div>
+          <div class="repeater" id="repeaterConsideraciones"></div>
+          <button type="button" class="repeater-add" data-add="consideraciones">+ Agregar consideración</button>
+        </div>
+
+      </div>
       <div class="tab-pane" data-pane="geometrias"><p>Geometrías — Task 8</p></div>
       <div class="tab-pane" data-pane="certificacion"><p>Certificación — Task 9</p></div>
       <div class="tab-pane" data-pane="galeria"><p>Galería — Task 10</p></div>
