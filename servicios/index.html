@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Servicio — MTEC</title>
+<meta name="description" content="Servicios especializados, representación y comercialización industrial — MTEC.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/nav.css">
+<link rel="stylesheet" href="../assets/css/page-chrome.css">
+<link rel="stylesheet" href="../assets/css/service-page.css">
+<style>
+  /* Mount root shows a subtle loading state until JS populates. */
+  [data-service-root] { min-height: 60vh; }
+  [data-service-root]:not(.is-ready) [data-service-section] { visibility: hidden; }
+  .service-state {
+    max-width: 720px; margin: 120px auto; padding: 0 24px;
+    color: var(--platino, #B2BEC9);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    text-align: center;
+  }
+  .service-state h1 { font-size: 22px; font-weight: 600; margin-bottom: 8px; color: #fff; }
+  .service-state a { color: #2B82B9; text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<div id="bg-gear-mount"></div>
+<div id="nav-mount"></div>
+
+<div class="breadcrumb-bar">
+  <div class="breadcrumb-bar-inner">
+    <div class="page-breadcrumb">
+      <a href="../index.html">Inicio</a>
+      <span class="sep">›</span>
+      <a href="../que-hacemos.html">Qué Hacemos</a>
+      <span class="sep">›</span>
+      <span data-slot="breadcrumb-name"></span>
+    </div>
+  </div>
+</div>
+
+<main data-service-root>
+
+  <header class="page-hero" data-service-section="hero">
+    <div class="page-hero-inner service-hero-grid">
+      <div>
+        <div class="page-accent-line reveal-x" data-delay="50"></div>
+        <div class="page-eyebrow blur-reveal" data-delay="100" data-slot="eyebrow"></div>
+        <div class="line-wrap"><h1 class="page-title page-title--service line-reveal" data-delay="150" data-slot="titulo"></h1></div>
+        <div class="page-subtitle page-subtitle--service blur-reveal" data-delay="300" data-slot="lead"></div>
+        <div class="hero-cta-row" data-slot="hero-cta-row" hidden>
+          <div class="product-callout reveal-scale" data-delay="350" data-slot="product-callout" hidden>
+            <span class="product-callout-kicker">En alianza con</span>
+            <img class="product-callout-logo" data-slot="callout-logo" alt="">
+          </div>
+          <a class="hero-cta-doc reveal-scale" data-delay="380" data-slot="ficha-cta" target="_blank" rel="noopener" hidden>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+            </svg>
+            <span class="hero-cta-doc-label">Ver ficha técnica</span>
+            <svg class="hero-cta-doc-arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+      <div class="hero-image-stage reveal-x-r" data-delay="200" data-slot="hero-image-wrap" hidden>
+        <div class="hero-image-card">
+          <img data-slot="hero-image" alt="">
+          <span class="hero-image-veil" aria-hidden="true"></span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="section-block section-tinted" data-service-section="certificacion" hidden>
+    <div class="content-wrap">
+      <div class="section-tag">Certificación &amp; Normativa</div>
+      <div class="cert-grid">
+        <div>
+          <div class="line-wrap"><h2 class="section-h2 section-h2--service line-reveal">Cumple con estándares internacionales</h2></div>
+          <p class="section-body blur-reveal" data-delay="150">
+            Los sistemas y productos cumplen con los principales códigos y estándares aplicables a su industria.
+          </p>
+        </div>
+        <div>
+          <div class="cert-badges" data-slot="badges-list"></div>
+          <div class="cert-norms reveal" data-delay="250" data-slot="normas-list"></div>
+          <div class="cert-doc-links reveal" data-delay="350" data-slot="doc-links"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-block" data-service-section="solucion" hidden>
+    <div class="content-wrap">
+      <div class="section-tag">Consideraciones</div>
+      <div class="two-col two-col--service">
+        <div>
+          <p class="section-body blur-reveal" data-delay="150" data-slot="solucion-descripcion"></p>
+          <div class="kpi-row" data-slot="kpi-row" hidden></div>
+        </div>
+        <div class="reveal-x-r" data-delay="200">
+          <div class="consid-carousel">
+            <div class="consid-track" data-slot="beneficios-list"></div>
+            <div class="consid-paginator" data-consid-paginator hidden>
+              <button type="button" class="consid-nav consid-nav--prev" aria-label="Anterior" data-consid-prev>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+              </button>
+              <span class="consid-counter" data-consid-counter>1 / 1</span>
+              <button type="button" class="consid-nav consid-nav--next" aria-label="Siguiente" data-consid-next>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-block section-tinted" data-service-section="geometrias" hidden>
+    <div class="content-wrap">
+      <div class="two-col two-col--service">
+        <div>
+          <div class="section-tag">Geometrías Aplicables</div>
+          <p class="section-body blur-reveal" data-delay="150" data-slot="geo-descripcion"></p>
+        </div>
+        <div>
+          <div class="geo-carousel">
+            <div class="geo-track" data-slot="geo-list"></div>
+            <div class="geo-paginator" data-geo-paginator hidden>
+              <button type="button" class="consid-nav consid-nav--prev" aria-label="Anterior" data-geo-prev>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+              </button>
+              <span class="consid-counter" data-geo-counter>1 / 1</span>
+              <button type="button" class="consid-nav consid-nav--next" aria-label="Siguiente" data-geo-next>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-block" data-service-section="galeria" hidden>
+    <div class="content-wrap">
+      <div class="section-tag">Aplicaciones</div>
+      <div class="line-wrap"><h2 class="section-h2 section-h2--service line-reveal">Casos en terreno</h2></div>
+      <div class="gallery-carousel">
+        <div class="gallery-grid" data-slot="galeria-list"></div>
+        <div class="gallery-paginator" data-gallery-paginator hidden>
+          <button type="button" class="consid-nav consid-nav--prev" aria-label="Anterior" data-gallery-prev>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <span class="consid-counter" data-gallery-counter>1 / 1</span>
+          <button type="button" class="consid-nav consid-nav--next" aria-label="Siguiente" data-gallery-next>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="service-state" data-state="loading" hidden>
+    <p>Cargando servicio…</p>
+  </div>
+
+  <div class="service-state" data-state="error" hidden>
+    <h1>No encontramos este servicio</h1>
+    <p>Es posible que haya sido despublicado o que el enlace esté roto.</p>
+    <p><a href="../que-hacemos.html">Ver todos los servicios</a></p>
+  </div>
+
+</main>
+
+<div id="footer-mount"></div>
+
+<script src="../assets/js/partials.js" defer></script>
+<script src="../assets/js/bg-gear.js" defer></script>
+<script src="../assets/js/reveals.js" defer></script>
+<script src="../assets/js/nav.js" defer></script>
+<script type="module" src="../assets/js/public-nav.js"></script>
+<script type="module" src="../assets/js/public-service.js"></script>
+<script defer>
+  document.addEventListener('DOMContentLoaded', () => {
+    Promise.all([
+      MTEC.loadPartial('#bg-gear-mount', 'partials/bg-gear.html'),
+      MTEC.loadPartial('#footer-mount',  'partials/footer.html'),
+    ]).then(() => {
+      MTEC.initBgGear();
+      const fy = document.getElementById('footerYear');
+      if (fy) fy.textContent = new Date().getFullYear();
+      // Reveals are triggered by public-service.js once the data is populated.
+    });
+  });
+</script>
+</body>
+</html>

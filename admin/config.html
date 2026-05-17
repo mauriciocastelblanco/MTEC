@@ -35,20 +35,19 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
         Volver al sitio público
       </a>
+      <a href="#" class="sidebar-item" data-logout>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Cerrar sesión
+      </a>
     </div>
   </aside>
 
   <main class="admin-main">
     <div class="topbar">
       <div class="topbar-breadcrumb"><span class="current">Configuración</span></div>
-      <div class="topbar-user">M</div>
+      <div class="topbar-user" data-user-chip>·</div>
     </div>
-    <div class="admin-banner">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      <span>Modo maqueta — esta sección estará disponible cuando conectemos la base de datos.</span>
-    </div>
-
-    <div class="admin-content">
+<div class="admin-content">
       <h1>Configuración</h1>
       <p class="page-description">Información de empresa y ajustes globales del sitio.</p>
 
@@ -68,5 +67,6 @@
   </main>
 </div>
 
+<script type="module" src="assets/js/auth-init.js"></script>
 </body>
 </html>

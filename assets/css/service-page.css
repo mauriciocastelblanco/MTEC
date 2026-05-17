@@ -8,12 +8,35 @@
 
 /* ── SERVICE HERO ────────────────────────────────── */
 .page-hero-inner.service-hero-grid {
-  padding: 80px var(--page-pad) 80px;
+  padding: 48px var(--page-pad) 80px;
   display: grid;
   grid-template-columns: 1.05fr 0.95fr;
   gap: clamp(40px, 6vw, 96px);
   align-items: center;
 }
+
+/* Breadcrumb sits flush under the navbar — slim, subtle. Same
+   horizontal padding as nav-inner / page-hero-inner so it lines up
+   with the navbar's logo and the hero content below. The navbar is
+   position:fixed, so the top padding compensates for its height. */
+.breadcrumb-bar { background: transparent; position: relative; z-index: 2; }
+.breadcrumb-bar-inner {
+  margin: 0 auto;
+  padding: calc(clamp(80px, 9vh, 100px) + 14px) var(--page-pad) 0;
+}
+.page-hero[data-service-section="hero"] {
+  padding-top: 0;
+}
+.breadcrumb-bar .page-breadcrumb {
+  margin-bottom: 0;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: rgba(255,255,255,0.55);
+}
+.breadcrumb-bar .page-breadcrumb a { color: rgba(255,255,255,0.55); }
+.breadcrumb-bar .page-breadcrumb a:hover { color: rgba(255,255,255,0.92); }
+.breadcrumb-bar .page-breadcrumb .sep,
+.breadcrumb-bar .page-breadcrumb > span:not([class]) { opacity: 0.5; }
 @media (max-width: 980px) {
   .page-hero-inner.service-hero-grid {
     grid-template-columns: 1fr;
@@ -29,21 +52,111 @@
   margin-bottom: 14px;
 }
 .page-title--service {
-  font-size: clamp(40px, 6.4vw, 88px);
-  letter-spacing: -0.025em;
-  line-height: 0.98;
+  font-size: clamp(32px, 4.6vw, 64px);
+  letter-spacing: -0.02em;
+  line-height: 1.02;
   margin-bottom: 22px;
 }
 .page-subtitle--service {
   margin-bottom: 32px;
   max-width: 56ch;
+  text-align: justify;
+  hyphens: auto;
+}
+.page-subtitle--service .lead-paragraph,
+.page-subtitle--service p {
+  display: block;
+  margin: 0 0 14px;
+  text-align: justify;
+}
+.page-subtitle--service > *:last-child { margin-bottom: 0; }
+.page-subtitle--service strong { color: #fff; font-weight: 600; }
+.page-subtitle--service a {
+  color: var(--platino);
+  text-decoration: underline;
+  text-decoration-color: rgba(178,190,201,0.45);
+  text-underline-offset: 3px;
+  transition: text-decoration-color 0.2s;
+}
+.page-subtitle--service a:hover { text-decoration-color: var(--platino); }
+.page-subtitle--service ul,
+.page-subtitle--service ol {
+  margin: 0 0 14px;
+  padding-left: 1.4em;
+}
+.page-subtitle--service li { margin-bottom: 6px; }
+
+/* Hero CTA row — holds the alliance card and the ficha-técnica link.
+   Either, both, or neither may be present. Center-aligned so the
+   text link sits at the same optical line as the alliance card body. */
+.hero-cta-row {
+  display: flex; align-items: center;
+  gap: 24px; flex-wrap: wrap;
+  margin-top: 8px;
+}
+.hero-cta-row[hidden] { display: none; }
+
+/* Editorial CTA — pure text link with an animated baseline rule that
+   grows from 0% to 100% on hover. No bg, no border. Reads as content,
+   not chrome. Pairs by contrast with the alliance card. */
+.hero-cta-doc {
+  display: inline-flex; align-items: baseline; gap: 14px;
+  padding: 6px 0 8px;
+  background: none; border: none;
+  color: rgba(255,255,255,0.92);
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 13px; font-weight: 500;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  position: relative;
+  transition: color 0.25s ease;
+  cursor: pointer;
+}
+.hero-cta-doc[hidden] { display: none; }
+.hero-cta-doc::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 1px;
+  background: rgba(255,255,255,0.92);
+  transform: scaleX(0.18);            /* short baseline at rest */
+  transform-origin: left center;
+  transition: transform 0.55s cubic-bezier(.2,.85,.25,1);
+}
+.hero-cta-doc:hover { color: #fff; }
+.hero-cta-doc:hover::after { transform: scaleX(1); }
+.hero-cta-doc:focus-visible {
+  outline: 2px solid var(--acero-light, #2B82B9);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+/* Hide the PDF icon — the word "ficha técnica" already implies the doc. */
+.hero-cta-doc > svg:first-of-type { display: none; }
+.hero-cta-doc-arrow {
+  width: 12px; height: 12px;
+  color: currentColor;
+  align-self: center;
+  transition: transform 0.4s cubic-bezier(.2,.85,.25,1);
+}
+.hero-cta-doc:hover .hero-cta-doc-arrow { transform: translateX(5px); }
+@media (max-width: 720px) {
+  .hero-cta-row { gap: 18px; }
+  .hero-cta-doc { font-size: 12.5px; }
 }
 
-/* ── PRODUCT CALLOUT — partner/technology badge ─── */
+/* Sections without an h2 below the kicker need extra breathing room
+   so the small uppercase tag doesn't crowd the paragraph/grid. */
+[data-service-section="solucion"] .section-tag,
+[data-service-section="consideraciones"] .section-tag,
+[data-service-section="geometrias"] .section-tag {
+  margin-bottom: 40px;
+}
+
+/* ── ALLIANCE CALLOUT — appears only when a partner logo is set ─── */
 .product-callout {
   display: inline-flex; flex-direction: column;
-  align-items: flex-start; gap: 10px;
-  padding: 22px 32px;
+  align-items: flex-start; gap: 12px;
+  padding: 18px 26px;
   border: 1px solid rgba(255,255,255,0.20);
   background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(11,53,84,0.30) 100%);
   position: relative; overflow: hidden;
@@ -51,6 +164,7 @@
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
 }
+.product-callout[hidden] { display: none; }
 .product-callout::before {
   content: ''; position: absolute;
   top: -50%; right: -30%;
@@ -84,6 +198,55 @@
   text-transform: uppercase;
   font-size: 11px;
 }
+/* Partner logo — the focal piece of the alliance card. Constrained
+   max-height/width keeps wildly different logo aspect ratios tidy.
+   The brightness(0)+invert(1) filter forces any logo to a clean white
+   silhouette so every partner brand reads consistently on the dark
+   callout. Requires logos uploaded as PNG with transparent background. */
+.product-callout-logo {
+  display: block;
+  max-height: 42px;
+  max-width: 220px;
+  width: auto; height: auto;
+  opacity: 0.95;
+  position: relative; z-index: 1;
+  filter: brightness(0) invert(1);
+}
+
+/* ── HERO IMAGE STAGE — atmospheric halo behind the card ── */
+.hero-image-stage {
+  position: relative;
+  isolation: isolate;
+  max-width: 460px;
+  margin-left: auto;
+  padding: 28px 24px 36px;
+  margin-right: -24px;
+}
+.hero-image-stage::before {
+  content: '';
+  position: absolute;
+  inset: -40px -30px -60px -40px;
+  background:
+    radial-gradient(58% 65% at 72% 35%, rgba(43,130,185,0.85) 0%, rgba(27,108,168,0.35) 40%, transparent 72%),
+    radial-gradient(70% 55% at 25% 88%, rgba(11,53,84,0.80) 0%, rgba(11,53,84,0.20) 50%, transparent 82%);
+  filter: blur(48px);
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.95;
+}
+/* Faint diagonal grid texture inside the halo for editorial depth */
+.hero-image-stage::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(135deg, transparent 49.5%, rgba(178,190,201,0.06) 50%, transparent 50.5%) 0 0 / 28px 28px;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.6;
+  mask-image: radial-gradient(60% 60% at 50% 50%, #000 30%, transparent 80%);
+  -webkit-mask-image: radial-gradient(60% 60% at 50% 50%, #000 30%, transparent 80%);
+}
 
 /* ── HERO IMAGE CARD ─────────────────────────────── */
 .hero-image-card {
@@ -93,15 +256,45 @@
   max-width: 460px;
   margin-left: auto;
   overflow: hidden;
-  border: 1px solid rgba(178,190,201,0.32);
+  border-radius: 4px;
+  border: 1px solid rgba(178,190,201,0.18);
   background: linear-gradient(180deg, rgba(13,27,46,0.25) 0%, rgba(13,27,46,0.55) 100%);
-  box-shadow: 0 28px 64px rgba(6,12,24,0.45), 0 6px 14px rgba(6,12,24,0.30);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.10) inset,
+    0 0 0 1px rgba(43,130,185,0.18),
+    0 30px 60px -18px rgba(6,12,24,0.65),
+    0 70px 120px -40px rgba(43,130,185,0.55);
 }
 .hero-image-card img {
   width: 100%; height: 100%; object-fit: cover;
   transition: transform 1.2s cubic-bezier(.22,1,.36,1);
+  /* Brand "film": gentle desaturation + slight contrast lift so any
+     photo reads as part of the same visual universe — preserves the
+     photo's content. */
+  filter: saturate(0.78) contrast(1.04);
 }
 .hero-image-card:hover img { transform: scale(1.03); }
+
+/* Subtle neutral-grey color cast — pulls any photo toward a unified
+   editorial temperature without bluing it. */
+.hero-image-veil {
+  position: absolute; inset: 0;
+  pointer-events: none;
+  background: #C0C3C5;
+  mix-blend-mode: color;
+  opacity: 0.28;
+}
+
+/* Soft vignette + corner depth — neutral shadows, no blue cast. */
+.hero-image-card::after {
+  content: '';
+  position: absolute; inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(to bottom, rgba(20,24,28,0.12) 0%, transparent 22%, transparent 65%, rgba(20,24,28,0.42) 100%),
+    radial-gradient(120% 90% at 0% 100%, rgba(28,32,36,0.18) 0%, transparent 60%);
+  mix-blend-mode: multiply;
+}
 .hero-image-card::after {
   content: '';
   position: absolute; inset: 12px;
@@ -158,6 +351,64 @@
   .two-col--service { grid-template-columns: 1fr; gap: 40px; }
 }
 
+/* ── CONSIDERACIONES CAROUSEL — horizontal pagination of 5 rows ── */
+.consid-carousel { position: relative; }
+.consid-track {
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.consid-track::-webkit-scrollbar { display: none; }
+.consid-page {
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+}
+
+/* Editorial paginator — small, content-like, not chrome. */
+.consid-paginator {
+  display: flex; align-items: center; gap: 14px;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(178,190,201,0.18);
+  justify-content: flex-end;
+}
+.consid-paginator[hidden] { display: none; }
+.consid-nav {
+  width: 28px; height: 28px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: transparent;
+  border: 1px solid rgba(178,190,201,0.30);
+  color: rgba(255,255,255,0.85);
+  cursor: pointer;
+  border-radius: 999px;
+  transition: background 0.2s, border-color 0.2s, color 0.2s, opacity 0.2s;
+}
+.consid-nav:hover {
+  background: rgba(178,190,201,0.10);
+  border-color: rgba(178,190,201,0.55);
+  color: #fff;
+}
+.consid-nav:focus-visible {
+  outline: 2px solid var(--acero-light, #2B82B9);
+  outline-offset: 2px;
+}
+.consid-nav:disabled {
+  opacity: 0.30; cursor: not-allowed;
+  background: transparent;
+}
+.consid-nav svg { width: 12px; height: 12px; }
+.consid-counter {
+  font-family: ui-monospace, "JetBrains Mono", "Menlo", monospace;
+  font-size: 11px; font-weight: 500;
+  letter-spacing: 0.10em;
+  color: rgba(255,255,255,0.55);
+  min-width: 44px; text-align: center;
+}
+
 /* ── BENEFIT LIST — editorial hairline list ─────── */
 .benefit-list {
   display: flex; flex-direction: column;
@@ -200,24 +451,36 @@
 }
 
 /* ── KEY METRIC chip ─────────────────────────────── */
-.key-metric {
+/* KPI row — up to 3 metrics shown horizontally below the description. */
+.kpi-row {
+  display: flex; align-items: stretch;
+  gap: 16px;
+  margin: 28px 0 8px;
+  flex-wrap: wrap;
+}
+.kpi-row[hidden] { display: none; }
+.kpi {
   display: inline-flex; flex-direction: column;
-  padding: 22px 26px;
+  padding: 18px 22px;
   border-left: 3px solid var(--platino);
   background: linear-gradient(90deg, rgba(178,190,201,0.10) 0%, rgba(11,53,84,0.30) 100%);
-  margin: 28px 0 8px;
+  flex: 1 1 0; min-width: 140px;
 }
-.key-metric-value {
+.kpi-value {
   font-family: "Barlow Condensed", sans-serif;
-  font-size: clamp(32px, 4vw, 48px);
+  font-size: clamp(26px, 2.8vw, 38px);
   font-weight: 700; color: #fff;
   letter-spacing: -0.02em; line-height: 1;
 }
-.key-metric-label {
-  font-size: 11px; font-weight: 600;
+.kpi-label {
+  font-size: 10.5px; font-weight: 600;
   letter-spacing: 0.16em; text-transform: uppercase;
   color: rgba(178,215,255,0.85);
   margin-top: 6px;
+}
+@media (max-width: 540px) {
+  .kpi-row { gap: 10px; }
+  .kpi { min-width: 100%; }
 }
 
 /* ── CONSIDERATIONS GRID ─────────────────────────── */
@@ -258,11 +521,35 @@
 }
 
 /* ── GEOMETRY CARDS ──────────────────────────────── */
+/* Geometrias carousel — pages of 2x3 grid (6 items per page). */
+.geo-carousel { position: relative; }
+.geo-track {
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.geo-track::-webkit-scrollbar { display: none; }
+.geo-page {
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+}
+.geo-paginator {
+  display: flex; align-items: center; gap: 14px;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(178,190,201,0.18);
+  justify-content: flex-end;
+}
+.geo-paginator[hidden] { display: none; }
+
 .geo-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 2px;
-  margin-top: 8px;
 }
 .geo-card {
   background: rgba(178,190,201,0.06);
@@ -323,7 +610,7 @@
   gap: 4px;
   width: 110px; height: 110px;
   border: 1px solid rgba(178,190,201,0.35);
-  background: linear-gradient(180deg, rgba(178,190,201,0.10) 0%, rgba(11,53,84,0.20) 100%);
+  background: linear-gradient(180deg, rgba(178,190,201,0.16) 0%, rgba(178,190,201,0.06) 100%);
   transition: border-color 0.3s, transform 0.4s cubic-bezier(.22,1,.36,1);
 }
 .cert-badge:hover {
@@ -339,6 +626,13 @@
   font-size: 9px; font-weight: 600;
   letter-spacing: 0.22em; text-transform: uppercase;
   color: rgba(178,215,255,0.80);
+}
+.cert-badge-logo {
+  max-width: 72%;
+  max-height: 60%;
+  width: auto; height: auto;
+  filter: brightness(0) invert(1);
+  opacity: 0.95;
 }
 .cert-norms {
   display: flex; flex-wrap: wrap; gap: 8px;
@@ -384,18 +678,30 @@
   margin-left: 4px;
 }
 
-/* ── GALLERY ─────────────────────────────────────── */
-.gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  grid-auto-rows: 110px;
-  gap: 12px;
+/* ── GALLERY — paginated carousel, 3 per page (matches consid/geo style) ─── */
+.gallery-carousel {
+  position: relative;
   margin-top: 8px;
 }
-@media (max-width: 720px) {
-  .gallery-grid { grid-auto-rows: 80px; gap: 8px; }
+.gallery-grid {
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.gallery-grid::-webkit-scrollbar { display: none; }
+.gallery-page {
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
 }
 .gallery-item {
+  aspect-ratio: 4 / 3;
   overflow: hidden;
   position: relative;
   border: 1px solid rgba(178,190,201,0.22);
@@ -411,17 +717,21 @@
   background: linear-gradient(180deg, rgba(11,53,84,0.0) 50%, rgba(11,53,84,0.55) 100%);
   pointer-events: none;
 }
-.gallery-item--a { grid-column: span 4; grid-row: span 3; }
-.gallery-item--b { grid-column: span 5; grid-row: span 2; }
-.gallery-item--c { grid-column: span 3; grid-row: span 2; }
-.gallery-item--d { grid-column: span 4; grid-row: span 2; }
-.gallery-item--e { grid-column: span 4; grid-row: span 2; }
-@media (max-width: 720px) {
-  .gallery-item--a, .gallery-item--b, .gallery-item--c,
-  .gallery-item--d, .gallery-item--e {
-    grid-column: span 12; grid-row: span 2;
-  }
+@media (max-width: 800px) {
+  .gallery-page { grid-template-columns: repeat(2, 1fr); }
 }
+@media (max-width: 540px) {
+  .gallery-page { grid-template-columns: 1fr; }
+}
+
+.gallery-paginator {
+  display: flex; align-items: center; gap: 14px;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(178,190,201,0.18);
+  justify-content: flex-end;
+}
+.gallery-paginator[hidden] { display: none; }
 .gallery-caption {
   position: absolute; left: 14px; bottom: 14px;
   font-size: 10px; font-weight: 600;
@@ -486,7 +796,7 @@
   .section-h2--service { font-size: clamp(24px, 7vw, 36px); }
   .product-callout { padding: 18px 22px; }
   .product-callout-name { font-size: 28px; }
-  .key-metric { padding: 18px 22px; }
+  .kpi { padding: 14px 18px; }
   .geo-card { padding: 22px 16px; }
   .cert-badge { width: 92px; height: 92px; }
   .cert-badge-name { font-size: 24px; }

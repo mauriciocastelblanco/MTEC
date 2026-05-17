@@ -229,6 +229,103 @@ table.admin-table { width: 100%; border-collapse: collapse; }
   box-shadow: 0 0 0 3px rgba(43,130,185,0.20);
 }
 .field textarea { min-height: 100px; resize: vertical; }
+
+/* ── TRIX EDITOR — dark theme overrides ─── */
+.field trix-toolbar {
+  margin-bottom: 6px;
+}
+.field trix-toolbar .trix-button-row {
+  background: rgba(0,0,0,0.30);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 4px;
+  display: flex; flex-wrap: wrap; gap: 2px;
+}
+.field trix-toolbar .trix-button-group {
+  border: none; background: transparent;
+  display: flex; gap: 2px;
+  margin: 0;
+}
+.field trix-toolbar .trix-button-group + .trix-button-group {
+  margin-left: 6px;
+  padding-left: 6px;
+  border-left: 1px solid var(--border);
+}
+.field trix-toolbar .trix-button {
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--vapor);
+  min-width: 28px; height: 28px;
+  border-radius: 4px;
+  transition: background var(--transition), border-color var(--transition);
+}
+.field trix-toolbar .trix-button::before {
+  filter: brightness(0) invert(0.85);
+  opacity: 1;
+}
+.field trix-toolbar .trix-button:not(:disabled):hover {
+  background: var(--surface-hover);
+  border-color: var(--border-strong);
+}
+.field trix-toolbar .trix-button.trix-active {
+  background: rgba(43,130,185,0.20);
+  border-color: rgba(43,130,185,0.45);
+}
+.field trix-toolbar .trix-button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.field trix-editor {
+  display: block;
+  width: 100%; min-height: 140px;
+  padding: 12px 14px;
+  background: rgba(0,0,0,0.20);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  color: var(--vapor); font-size: 14px; line-height: 1.55;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.field trix-editor:hover { border-color: var(--border-strong); }
+.field trix-editor:focus {
+  outline: none;
+  border-color: var(--acero-light);
+  box-shadow: 0 0 0 3px rgba(43,130,185,0.20);
+}
+.field trix-editor[contenteditable]:empty::before {
+  color: var(--plomo);
+}
+.field trix-editor p { margin-bottom: 0.6em; }
+.field trix-editor p:last-child { margin-bottom: 0; }
+.field trix-editor a { color: var(--acero-light); }
+.field trix-editor strong { color: #fff; font-weight: 600; }
+.field trix-editor ul, .field trix-editor ol { padding-left: 1.2em; margin-bottom: 0.6em; }
+/* Hide buttons we don't need (file attachments, heading, quote) */
+.field trix-toolbar .trix-button--icon-attach,
+.field trix-toolbar .trix-button--icon-heading-1,
+.field trix-toolbar .trix-button--icon-quote,
+.field trix-toolbar .trix-button--icon-code {
+  display: none;
+}
+trix-toolbar .trix-dialogs {
+  position: relative;
+}
+trix-toolbar .trix-dialog {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 10px;
+  color: var(--vapor);
+}
+trix-toolbar .trix-input--dialog {
+  background: rgba(0,0,0,0.30);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  color: var(--vapor);
+  padding: 6px 10px;
+}
+trix-toolbar .trix-button--dialog {
+  background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  color: var(--vapor);
+  padding: 6px 12px;
+}
+trix-toolbar .trix-button--dialog:hover { background: var(--surface-hover); }
 .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .field-error { display: none; color: #FCA5A5; font-size: 12px; margin-top: 6px; }
 .field.has-error input, .field.has-error textarea { border-color: #EF4444; }

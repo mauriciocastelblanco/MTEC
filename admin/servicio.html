@@ -8,6 +8,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/admin.css">
+<link rel="stylesheet" href="https://unpkg.com/trix@2.1.15/dist/trix.css">
+<script type="module" src="https://unpkg.com/trix@2.1.15/dist/trix.esm.min.js"></script>
 </head>
 <body>
 
@@ -35,6 +37,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
         Volver al sitio público
       </a>
+      <a href="#" class="sidebar-item" data-logout>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Cerrar sesión
+      </a>
     </div>
   </aside>
 
@@ -53,19 +59,12 @@
       </div>
     </div>
 
-    <div class="admin-banner">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      <span>Modo maqueta — los servicios que crees aquí se guardan en tu navegador. No aparecerán todavía en el sitio público; eso se activa cuando conectemos la base de datos.</span>
-    </div>
-
-    <nav class="tabs-bar" id="tabsBar">
+<nav class="tabs-bar" id="tabsBar">
       <button class="tab-btn is-active" data-tab="hero">Hero</button>
-      <button class="tab-btn" data-tab="solucion">Solución</button>
-      <button class="tab-btn" data-tab="consideraciones">Consideraciones</button>
-      <button class="tab-btn" data-tab="geometrias">Geometrías</button>
       <button class="tab-btn" data-tab="certificacion">Certificación</button>
+      <button class="tab-btn" data-tab="solucion">Consideraciones</button>
+      <button class="tab-btn" data-tab="geometrias">Geometrías</button>
       <button class="tab-btn" data-tab="galeria">Galería</button>
-      <button class="tab-btn" data-tab="cta">CTA</button>
     </nav>
 
     <div class="form-content" id="formRoot">
@@ -112,9 +111,10 @@
           <p class="form-section-desc">El primer bloque visual de la página del servicio.</p>
 
           <div class="field">
-            <label for="f-lead">Descripción corta</label>
-            <textarea id="f-lead" name="lead" maxlength="280" placeholder="Resumen de qué es y para qué sirve este servicio."></textarea>
-            <span class="hint">Máximo 280 caracteres.</span>
+            <label for="f-lead">Descripción del servicio</label>
+            <input id="f-lead" name="lead" type="hidden">
+            <trix-editor input="f-lead" placeholder="Resumen de qué es y para qué sirve este servicio."></trix-editor>
+            <span class="hint">Texto que aparece bajo el título del hero. Usa <strong>Enter</strong> para nuevo párrafo, y la barra de herramientas para negrita, cursiva, listas o enlaces.</span>
           </div>
 
           <div class="field">
@@ -133,30 +133,20 @@
 
           <div class="collapsible" id="calloutGroup">
             <button type="button" class="collapsible-head" data-toggle="calloutGroup" aria-expanded="false" aria-controls="calloutGroup">
-              <span><strong>Product callout</strong> · opcional</span>
+              <span><strong>Alianza</strong> · opcional</span>
               <svg class="chevron" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg>
             </button>
             <div class="collapsible-body">
-              <div class="field-row">
-                <div class="field">
-                  <label for="f-callout-top">Texto superior</label>
-                  <input type="text" id="f-callout-top" name="callout-textoSuperior" placeholder="Tecnología aplicada">
-                </div>
-                <div class="field">
-                  <label for="f-callout-bottom">Texto inferior</label>
-                  <input type="text" id="f-callout-bottom" name="callout-textoInferior" placeholder="AKKAIM INTEGRITY">
-                </div>
-              </div>
               <div class="field">
-                <label for="f-callout-name">Nombre del producto</label>
-                <input type="text" id="f-callout-name" name="callout-nombreProducto" placeholder="Iridium Wrap">
-              </div>
-              <div class="field">
-                <label>Imagen del producto</label>
+                <label>Logo del aliado</label>
+                <span class="hint">
+                  Si este servicio se ejecuta en alianza con otra empresa, sube su logo aquí. En la página pública aparecerá un recuadro <strong>«En alianza con:»</strong> seguido del logo. Si lo dejas vacío, el recuadro no se muestra.<br>
+                  <strong>Formato obligatorio:</strong> PNG con fondo transparente. El sitio convierte el logo a silueta blanca automáticamente para mantener consistencia visual sobre el fondo oscuro — por eso necesita transparencia (los logos con fondo blanco se verán como bloques sólidos).
+                </span>
                 <div class="img-upload">
-                  <div class="img-preview" data-preview="calloutImagen"><span class="img-placeholder">Sin imagen</span></div>
+                  <div class="img-preview" data-preview="calloutImagen"><span class="img-placeholder">Sin logo</span></div>
                   <div class="img-upload-actions">
-                    <input type="file" accept="image/*" data-upload="calloutImagen">
+                    <input type="file" accept="image/png" data-upload="calloutImagen">
                     <span class="img-warn" data-warn="calloutImagen" hidden></span>
                   </div>
                 </div>
@@ -165,86 +155,22 @@
           </div>
         </div>
 
-      </div>
-      <div class="tab-pane" data-pane="solucion">
-
         <div class="form-section">
-          <div class="form-section-title">Solución — encabezado</div>
+          <div class="form-section-title">CTA — Ficha técnica</div>
           <div class="field">
-            <label for="f-sol-titulo">Título</label>
-            <input type="text" id="f-sol-titulo" name="sol-titulo" placeholder="La solución">
-          </div>
-          <div class="field">
-            <label for="f-sol-desc">Descripción</label>
-            <textarea id="f-sol-desc" name="sol-desc" placeholder="Explica brevemente cómo funciona."></textarea>
-          </div>
-          <div class="field-row">
-            <div class="field">
-              <label for="f-sol-metricaValor">Métrica clave — valor</label>
-              <input type="text" id="f-sol-metricaValor" name="sol-metricaValor" placeholder="MAOP">
-            </div>
-            <div class="field">
-              <label for="f-sol-metricaLabel">Métrica clave — etiqueta</label>
-              <input type="text" id="f-sol-metricaLabel" name="sol-metricaLabel" placeholder="original">
+            <label>Ficha técnica (PDF)</label>
+            <span class="hint">Aparece como botón <strong>«Ver ficha técnica»</strong> en el hero, junto al logo del aliado (si lo hay) o en su lugar. Es el CTA primario del servicio.</span>
+            <div class="pdf-upload" data-pdf="fichaTecnicaPdf">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <div class="pdf-meta">
+                <strong data-name="fichaTecnicaPdf">Sin archivo</strong>
+                <span data-size="fichaTecnicaPdf">Sube un PDF de la ficha técnica del producto.</span>
+              </div>
+              <div class="pdf-upload-actions">
+                <input type="file" accept="application/pdf" data-pdf-input="fichaTecnicaPdf">
+              </div>
             </div>
           </div>
-        </div>
-
-        <div class="form-section">
-          <div class="repeater-head">
-            <label>Beneficios</label>
-            <span class="hint">6 beneficios funciona mejor visualmente.</span>
-          </div>
-          <div class="repeater" id="repeaterBeneficios"></div>
-          <button type="button" class="repeater-add" data-add="beneficios">+ Agregar beneficio</button>
-        </div>
-
-      </div>
-      <div class="tab-pane" data-pane="consideraciones">
-
-        <div class="form-section">
-          <div class="form-section-title">Consideraciones técnicas — encabezado</div>
-          <div class="field">
-            <label for="f-cons-titulo">Título</label>
-            <input type="text" id="f-cons-titulo" name="cons-titulo" placeholder="Consideraciones técnicas">
-          </div>
-          <div class="field">
-            <label for="f-cons-lead">Lead</label>
-            <textarea id="f-cons-lead" name="cons-lead" placeholder="Variables que evaluamos en la ingeniería previa."></textarea>
-          </div>
-        </div>
-
-        <div class="form-section">
-          <div class="repeater-head">
-            <label>Consideraciones</label>
-            <span class="hint">6 items recomendado.</span>
-          </div>
-          <div class="repeater" id="repeaterConsideraciones"></div>
-          <button type="button" class="repeater-add" data-add="consideraciones">+ Agregar consideración</button>
-        </div>
-
-      </div>
-      <div class="tab-pane" data-pane="geometrias">
-
-        <div class="form-section">
-          <div class="form-section-title">Geometrías — encabezado</div>
-          <div class="field">
-            <label for="f-geo-titulo">Título</label>
-            <input type="text" id="f-geo-titulo" name="geo-titulo" placeholder="Geometrías aplicables">
-          </div>
-          <div class="field">
-            <label for="f-geo-desc">Descripción</label>
-            <textarea id="f-geo-desc" name="geo-desc" placeholder="El sistema se adapta a múltiples configuraciones."></textarea>
-          </div>
-        </div>
-
-        <div class="form-section">
-          <div class="repeater-head">
-            <label>Geometrías</label>
-            <span class="hint">8 items recomendado para llenar el grid.</span>
-          </div>
-          <div class="repeater" id="repeaterGeometrias"></div>
-          <button type="button" class="repeater-add" data-add="geometrias">+ Agregar geometría</button>
         </div>
 
       </div>
@@ -272,20 +198,6 @@
           <div class="form-section-title">Documentos</div>
 
           <div class="field">
-            <label>Ficha técnica (PDF)</label>
-            <div class="pdf-upload" data-pdf="fichaTecnicaPdf">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-              <div class="pdf-meta">
-                <strong data-name="fichaTecnicaPdf">Sin archivo</strong>
-                <span data-size="fichaTecnicaPdf">Sube un PDF de la ficha técnica del producto.</span>
-              </div>
-              <div class="pdf-upload-actions">
-                <input type="file" accept="application/pdf" data-pdf-input="fichaTecnicaPdf">
-              </div>
-            </div>
-          </div>
-
-          <div class="field">
             <label>Certificados (PDF)</label>
             <div class="pdf-upload" data-pdf="certificadosPdf">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -297,7 +209,55 @@
                 <input type="file" accept="application/pdf" data-pdf-input="certificadosPdf">
               </div>
             </div>
+            <span class="hint">Aparece como link secundario al final de la sección Certificación.</span>
           </div>
+        </div>
+
+      </div>
+      <div class="tab-pane" data-pane="solucion">
+
+        <div class="form-section">
+          <div class="form-section-title">Consideraciones — encabezado</div>
+          <div class="field">
+            <label for="f-sol-desc">Descripción</label>
+            <textarea id="f-sol-desc" name="sol-desc" placeholder="Texto descriptivo que aparece a la izquierda, sobre las consideraciones."></textarea>
+          </div>
+
+          <div class="repeater-head">
+            <label>KPIs</label>
+            <span class="hint">Aparecen debajo de la descripción. Hasta <strong>3 KPIs</strong>. Si lo dejas vacío, no aparece nada.</span>
+          </div>
+          <div class="repeater" id="repeaterKpis"></div>
+          <button type="button" class="repeater-add" data-add="kpis" data-max="3">+ Agregar KPI</button>
+        </div>
+
+        <div class="form-section">
+          <div class="repeater-head">
+            <label>Consideraciones</label>
+            <span class="hint">Aparecen en una lista a la derecha. Se muestran <strong>5 por página</strong>; si agregas más, se puede navegar horizontalmente con flechas en el sitio público.</span>
+          </div>
+          <div class="repeater" id="repeaterBeneficios"></div>
+          <button type="button" class="repeater-add" data-add="beneficios">+ Agregar consideración</button>
+        </div>
+
+      </div>
+      <div class="tab-pane" data-pane="geometrias">
+
+        <div class="form-section">
+          <div class="form-section-title">Geometrías — encabezado</div>
+          <div class="field">
+            <label for="f-geo-desc">Descripción</label>
+            <textarea id="f-geo-desc" name="geo-desc" placeholder="El sistema se adapta a múltiples configuraciones."></textarea>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="repeater-head">
+            <label>Geometrías</label>
+            <span class="hint">8 items recomendado para llenar el grid.</span>
+          </div>
+          <div class="repeater" id="repeaterGeometrias"></div>
+          <button type="button" class="repeater-add" data-add="geometrias">+ Agregar geometría</button>
         </div>
 
       </div>
@@ -310,25 +270,6 @@
           </div>
           <div class="repeater" id="repeaterGaleria"></div>
           <button type="button" class="repeater-add" data-add="galeria">+ Agregar imagen</button>
-        </div>
-
-      </div>
-      <div class="tab-pane" data-pane="cta">
-
-        <div class="form-section">
-          <div class="form-section-title">Call to Action — final de la página</div>
-          <p class="form-section-desc">El bloque que cierra cada página de servicio.</p>
-
-          <div class="field">
-            <label for="f-cta-head">Headline</label>
-            <input type="text" id="f-cta-head" name="cta-headline" placeholder="¿Tu activo necesita esta solución?" value="¿Tu activo necesita esta solución?">
-          </div>
-
-          <div class="field">
-            <label for="f-cta-btn">Texto del botón</label>
-            <input type="text" id="f-cta-btn" name="cta-botonTexto" placeholder="Agenda una reunión" value="Agenda una reunión">
-            <span class="hint">El botón siempre redirige a /contacto.html — el texto es lo único editable.</span>
-          </div>
         </div>
 
       </div>
@@ -346,6 +287,7 @@
 
 <div id="toastRoot"></div>
 
+<script type="module" src="assets/js/auth-init.js"></script>
 <script type="module" src="assets/js/admin-ui.js"></script>
 </body>
 </html>

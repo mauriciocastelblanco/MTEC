@@ -1,4 +1,4 @@
-import { getServicios, getServicio, saveServicio, deleteServicio, slugify } from './admin-data.js';
+import { getServicios, getServicio, saveServicio, deleteServicio, slugify, uploadAsset } from './admin-data.js';
 
 function fmtTime(iso) {
   const d = new Date(iso);
@@ -47,7 +47,7 @@ function renderDashboard(root, servicios) {
       <td><span class="chip-estado chip-${s.estado}">${s.estado === 'publicado' ? 'Publicado' : 'Borrador'}</span></td>
       <td class="col-edited">${fmtTime(s.fechaEdicion)}</td>
       <td class="col-actions">
-        <a href="../servicios/${escapeHtml(s.slug)}.html" target="_blank" rel="noopener noreferrer" class="btn btn-ghost" data-action="view">Ver pública</a>
+        <a href="../servicios/?slug=${encodeURIComponent(s.slug)}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost" data-action="view">Ver pública</a>
         <a href="servicio.html?slug=${escapeHtml(s.slug)}" class="btn btn-ghost" data-action="edit">Editar</a>
         <button class="btn btn-danger" data-action="delete" data-slug="${escapeHtml(s.slug)}">Eliminar</button>
       </td>
@@ -130,27 +130,35 @@ function initHeroTab() {
     el.addEventListener('input', markDirty);
   });
 
-  // Image upload preview
+  // Image upload preview → uploads to Supabase Storage, preview shows public URL.
   document.querySelectorAll('input[type="file"][data-upload]').forEach(input => {
-    input.addEventListener('change', e => {
+    input.addEventListener('change', async e => {
       const file = e.target.files[0];
       if (!file) return;
       const key = input.dataset.upload;
       const preview = document.querySelector(`[data-preview="${key}"]`);
       const warn = document.querySelector(`[data-warn="${key}"]`);
+      if (!preview) return;
 
-      const reader = new FileReader();
-      reader.onload = ev => {
-        preview.innerHTML = `<img src="${ev.target.result}" alt="">`;
-        if (ev.target.result.length > 2_000_000) {
-          warn.hidden = false;
-          warn.textContent = `Imagen pesada (${Math.round(ev.target.result.length / 1024)} KB en base64). Considera optimizarla.`;
-        } else {
-          warn.hidden = true;
-        }
-      };
-      reader.readAsDataURL(file);
+      preview.innerHTML = '<span class="img-placeholder">Subiendo…</span>';
+      if (warn) warn.hidden = true;
+      input.disabled = true;
       markDirty();
+
+      try {
+        const url = await uploadAsset(file, `hero/${key}`);
+        preview.innerHTML = `<img src="${url}" alt="">`;
+      } catch (err) {
+        console.error('[upload]', err);
+        preview.innerHTML = '<span class="img-placeholder">Error al subir</span>';
+        if (warn) {
+          warn.hidden = false;
+          warn.textContent = `No se pudo subir la imagen: ${err.message || err}`;
+        }
+      } finally {
+        input.disabled = false;
+        input.value = '';
+      }
     });
   });
 
@@ -280,14 +288,29 @@ const repeaterRenderers = {
       </div>
     `;
   },
-  badges(item = { nombre: '' }) {
+  badges(item = { nombre: '', imagen: '' }) {
+    const hasLogo = !!item.imagen;
     return `
       <div class="repeater-item">
         <div class="repeater-drag" aria-hidden="true">⋮⋮</div>
         <div class="repeater-fields">
-          <div class="field">
-            <label>Nombre</label>
-            <input type="text" data-rk="nombre" value="${escapeAttr(item.nombre)}" placeholder="API">
+          <div class="field-row">
+            <div class="field">
+              <label>Nombre / texto</label>
+              <input type="text" data-rk="nombre" value="${escapeAttr(item.nombre)}" placeholder="API">
+              <span class="hint">Se muestra como texto si no hay logo.</span>
+            </div>
+            <div class="field">
+              <label>Logo (opcional)</label>
+              <div class="img-upload">
+                <div class="img-preview" data-badge-preview>${hasLogo ? `<img src="${escapeAttr(item.imagen)}" alt="">` : '<span class="img-placeholder">Sin logo</span>'}</div>
+                <div class="img-upload-actions">
+                  <input type="file" accept="image/png" data-badge-input>
+                  <input type="hidden" data-rk="imagen" value="${escapeAttr(item.imagen)}">
+                </div>
+              </div>
+              <span class="hint">PNG con fondo transparente. Se convierte a silueta blanca.</span>
+            </div>
           </div>
         </div>
         <button type="button" class="repeater-remove" aria-label="Eliminar">
@@ -304,6 +327,28 @@ const repeaterRenderers = {
           <div class="field">
             <label>Norma</label>
             <input type="text" data-rk="texto" value="${escapeAttr(item.texto)}" placeholder="ASME PCC-2 Art. 4.1">
+          </div>
+        </div>
+        <button type="button" class="repeater-remove" aria-label="Eliminar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+        </button>
+      </div>
+    `;
+  },
+  kpis(item = { valor: '', label: '' }) {
+    return `
+      <div class="repeater-item">
+        <div class="repeater-drag" aria-hidden="true">⋮⋮</div>
+        <div class="repeater-fields">
+          <div class="field-row">
+            <div class="field">
+              <label>Valor</label>
+              <input type="text" data-rk="valor" value="${escapeAttr(item.valor)}" placeholder="MAOP">
+            </div>
+            <div class="field">
+              <label>Etiqueta</label>
+              <input type="text" data-rk="label" value="${escapeAttr(item.label)}" placeholder="original">
+            </div>
           </div>
         </div>
         <button type="button" class="repeater-remove" aria-label="Eliminar">
@@ -395,31 +440,70 @@ function initRepeaterAddButtons() {
       if (!renderer) return;
       const container = document.querySelector(`[data-repeater-key="${key}"]`);
       if (!container) return;
+      const max = parseInt(btn.dataset.max || '0', 10);
+      const count = container.querySelectorAll('.repeater-item').length;
+      if (max > 0 && count >= max) return;
       container.insertAdjacentHTML('beforeend', renderer());
       markDirty();
+      // After adding, hide the button if we've hit the max.
+      const newCount = container.querySelectorAll('.repeater-item').length;
+      btn.disabled = max > 0 && newCount >= max;
     });
   });
 }
 
+// Sync the disabled state of max-limited add buttons whenever the
+// matching repeater changes (add or remove).
+function syncRepeaterAddLimits() {
+  document.querySelectorAll('[data-add][data-max]').forEach(btn => {
+    const key = btn.dataset.add;
+    const max = parseInt(btn.dataset.max, 10);
+    const container = document.querySelector(`[data-repeater-key="${key}"]`);
+    if (!container || !max) return;
+    const update = () => {
+      btn.disabled = container.querySelectorAll('.repeater-item').length >= max;
+    };
+    new MutationObserver(update).observe(container, { childList: true });
+    update();
+  });
+}
+
 initRepeater('repeaterBeneficios', 'beneficios');
-initRepeater('repeaterConsideraciones', 'consideraciones');
 initRepeater('repeaterGeometrias', 'geometrias');
 initRepeater('repeaterBadges', 'badges');
 initRepeater('repeaterNormas', 'normas');
 initRepeater('repeaterGaleria', 'galeria');
+initRepeater('repeaterKpis', 'kpis');
 initRepeaterAddButtons();
+syncRepeaterAddLimits();
 
 function initPdfUploads() {
   document.querySelectorAll('input[type="file"][data-pdf-input]').forEach(input => {
-    input.addEventListener('change', e => {
+    input.addEventListener('change', async e => {
       const file = e.target.files[0];
       if (!file) return;
       const key = input.dataset.pdfInput;
       const nameEl = document.querySelector(`[data-name="${key}"]`);
       const sizeEl = document.querySelector(`[data-size="${key}"]`);
       if (nameEl) nameEl.textContent = file.name;
-      if (sizeEl) sizeEl.textContent = `${Math.round(file.size / 1024)} KB · se guardará cuando conectemos la base de datos`;
+      if (sizeEl) sizeEl.textContent = 'Subiendo…';
+      input.disabled = true;
       markDirty();
+
+      try {
+        const url = await uploadAsset(file, `pdf/${key}`);
+        if (nameEl) {
+          nameEl.textContent = file.name;
+          nameEl.dataset.url = url;
+        }
+        if (sizeEl) sizeEl.textContent = `${Math.round(file.size / 1024)} KB · listo`;
+      } catch (err) {
+        console.error('[upload pdf]', err);
+        if (sizeEl) sizeEl.textContent = `Error: ${err.message || err}`;
+      } finally {
+        input.disabled = false;
+        input.value = '';
+      }
     });
   });
 }
@@ -427,20 +511,61 @@ function initPdfUploads() {
 initPdfUploads();
 
 function initGalleryUploads() {
-  document.body.addEventListener('change', e => {
+  document.body.addEventListener('change', async e => {
     const input = e.target.closest('input[type="file"][data-gallery-input]');
     if (!input) return;
     const file = input.files[0];
     if (!file) return;
     const preview = input.closest('.img-upload').querySelector('[data-gallery-preview]');
-    const reader = new FileReader();
-    reader.onload = ev => {
-      preview.innerHTML = `<img src="${ev.target.result}" alt="">`;
-      markDirty();
-    };
-    reader.readAsDataURL(file);
+    if (!preview) return;
+
+    preview.innerHTML = '<span class="img-placeholder">Subiendo…</span>';
+    input.disabled = true;
+    markDirty();
+
+    try {
+      const url = await uploadAsset(file, 'galeria');
+      preview.innerHTML = `<img src="${url}" alt="">`;
+    } catch (err) {
+      console.error('[upload galeria]', err);
+      preview.innerHTML = '<span class="img-placeholder">Error al subir</span>';
+    } finally {
+      input.disabled = false;
+      input.value = '';
+    }
   });
 }
+
+function initBadgeUploads() {
+  document.body.addEventListener('change', async e => {
+    const input = e.target.closest('input[type="file"][data-badge-input]');
+    if (!input) return;
+    const file = input.files[0];
+    if (!file) return;
+    const wrap = input.closest('.img-upload');
+    const preview = wrap.querySelector('[data-badge-preview]');
+    const hidden = wrap.querySelector('input[type="hidden"][data-rk="imagen"]');
+    if (!preview || !hidden) return;
+
+    preview.innerHTML = '<span class="img-placeholder">Subiendo…</span>';
+    input.disabled = true;
+    markDirty();
+
+    try {
+      const url = await uploadAsset(file, 'certificacion/badges');
+      preview.innerHTML = `<img src="${url}" alt="">`;
+      hidden.value = url;
+    } catch (err) {
+      console.error('[upload badge]', err);
+      preview.innerHTML = '<span class="img-placeholder">Error al subir</span>';
+    } finally {
+      input.disabled = false;
+      input.value = '';
+    }
+  });
+}
+
+initBadgeUploads();
 
 initGalleryUploads();
 
@@ -492,9 +617,7 @@ function readPdf(key) {
   const nameEl = document.querySelector(`[data-name="${key}"]`);
   const name = nameEl?.textContent.trim();
   if (!name || name === 'Sin archivo') return null;
-  // For maqueta: store the filename but not the actual file bytes (would blow up localStorage).
-  // When BBDD exists, this goes to a file upload endpoint.
-  return { nombre: name, dataUrl: '' };
+  return { nombre: name, dataUrl: nameEl.dataset.url || '' };
 }
 
 function collectForm() {
@@ -507,42 +630,25 @@ function collectForm() {
     hero: {
       imagen: readImagePreview('heroImagen'),
       productCallout: {
-        textoSuperior: readVal('f-callout-top'),
-        nombreProducto: readVal('f-callout-name'),
-        textoInferior: readVal('f-callout-bottom'),
         imagen: readImagePreview('calloutImagen')
       }
     },
     solucion: {
-      titulo: readVal('f-sol-titulo'),
       descripcion: readVal('f-sol-desc'),
-      metricaClave: {
-        valor: readVal('f-sol-metricaValor'),
-        label: readVal('f-sol-metricaLabel')
-      },
+      kpis: readRepeater('repeaterKpis', ['valor', 'label']),
       beneficios: readRepeater('repeaterBeneficios', ['icono', 'label', 'chip'])
     },
-    consideraciones: {
-      titulo: readVal('f-cons-titulo'),
-      lead: readVal('f-cons-lead'),
-      items: readRepeater('repeaterConsideraciones', ['titulo', 'descripcion'])
-    },
     geometrias: {
-      titulo: readVal('f-geo-titulo'),
       descripcion: readVal('f-geo-desc'),
       items: readRepeater('repeaterGeometrias', ['nombre', 'icono'])
     },
     certificacion: {
-      badges: readRepeater('repeaterBadges', ['nombre']),
+      badges: readRepeater('repeaterBadges', ['nombre', 'imagen']),
       normas: readRepeater('repeaterNormas', ['texto']),
       fichaTecnicaPdf: readPdf('fichaTecnicaPdf'),
       certificadosPdf: readPdf('certificadosPdf')
     },
-    galeria: readGaleriaRepeater(),
-    cta: {
-      headline: readVal('f-cta-head'),
-      botonTexto: readVal('f-cta-btn')
-    }
+    galeria: readGaleriaRepeater()
   };
 }
 
@@ -600,7 +706,7 @@ async function handleSave(estado) {
   isDirty = false;
   originalSlug = data.slug;
   if (estado === 'publicado') {
-    showToast('Publicado. Cuando conectemos la base de datos, aparecerá en la navbar bajo Servicios > Servicios Especializados.');
+    showToast('Publicado. Ya aparece en la navbar y en la página pública.');
     setTimeout(() => { window.location.href = 'index.html'; }, 2000);
   } else {
     showToast('Borrador guardado.');
@@ -618,6 +724,16 @@ initSaveButtons();
 // LOAD EXISTING SERVICIO ON ?slug=
 // ══════════════════════════════════════════════════════
 function setVal(id, v) { const el = document.getElementById(id); if (el) el.value = v ?? ''; }
+
+// Trix initializes asynchronously; wait for its editor before loading HTML.
+async function setLead(html) {
+  const trix = document.querySelector('trix-editor[input="f-lead"]');
+  if (!trix) return;
+  if (!trix.editor) {
+    await new Promise(resolve => trix.addEventListener('trix-initialize', resolve, { once: true }));
+  }
+  trix.editor.loadHTML(html || '');
+}
 function setImage(key, src) {
   if (!src) return;
   const preview = document.querySelector(`[data-preview="${key}"]`);
@@ -627,7 +743,10 @@ function setPdf(key, pdf) {
   if (!pdf) return;
   const nameEl = document.querySelector(`[data-name="${key}"]`);
   const sizeEl = document.querySelector(`[data-size="${key}"]`);
-  if (nameEl) nameEl.textContent = pdf.nombre;
+  if (nameEl) {
+    nameEl.textContent = pdf.nombre;
+    if (pdf.dataUrl) nameEl.dataset.url = pdf.dataUrl;
+  }
   if (sizeEl) sizeEl.textContent = 'Existente';
 }
 function populateRepeater(containerId, key, items) {
@@ -648,25 +767,23 @@ async function loadExistingIfAny() {
   setVal('f-slug', s.slug);
   setVal('f-categoria', s.categoria || 'servicios-especializados');
   setVal('f-eyebrow', s.eyebrow);
-  setVal('f-lead', s.lead);
+  setLead(s.lead);
   setImage('heroImagen', s.hero?.imagen);
 
-  setVal('f-callout-top', s.hero?.productCallout?.textoSuperior);
-  setVal('f-callout-name', s.hero?.productCallout?.nombreProducto);
-  setVal('f-callout-bottom', s.hero?.productCallout?.textoInferior);
   setImage('calloutImagen', s.hero?.productCallout?.imagen);
 
-  setVal('f-sol-titulo', s.solucion?.titulo);
   setVal('f-sol-desc', s.solucion?.descripcion);
-  setVal('f-sol-metricaValor', s.solucion?.metricaClave?.valor);
-  setVal('f-sol-metricaLabel', s.solucion?.metricaClave?.label);
+  // KPIs: prefer the new array; fall back to the legacy single metricaClave.
+  const legacyMetric = s.solucion?.metricaClave;
+  const kpis = Array.isArray(s.solucion?.kpis) && s.solucion.kpis.length > 0
+    ? s.solucion.kpis
+    : (legacyMetric && (legacyMetric.valor || legacyMetric.label))
+      ? [{ valor: legacyMetric.valor || '', label: legacyMetric.label || '' }]
+      : [];
+  populateRepeater('repeaterKpis', 'kpis', kpis);
   populateRepeater('repeaterBeneficios', 'beneficios', s.solucion?.beneficios);
 
-  setVal('f-cons-titulo', s.consideraciones?.titulo);
-  setVal('f-cons-lead', s.consideraciones?.lead);
-  populateRepeater('repeaterConsideraciones', 'consideraciones', s.consideraciones?.items);
 
-  setVal('f-geo-titulo', s.geometrias?.titulo);
   setVal('f-geo-desc', s.geometrias?.descripcion);
   populateRepeater('repeaterGeometrias', 'geometrias', s.geometrias?.items);
 
@@ -677,8 +794,6 @@ async function loadExistingIfAny() {
 
   populateRepeater('repeaterGaleria', 'galeria', s.galeria);
 
-  setVal('f-cta-head', s.cta?.headline);
-  setVal('f-cta-btn', s.cta?.botonTexto);
 
   const crumb = document.getElementById('crumbCurrent');
   if (crumb) crumb.textContent = `Editar: ${s.titulo}`;

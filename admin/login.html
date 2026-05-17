@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin MTEC — Iniciar sesión</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/admin.css">
+<style>
+  .login-stage {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background:
+      radial-gradient(1100px 600px at 80% -10%, rgba(43,130,185,0.18), transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, rgba(11,53,84,0.55), transparent 55%),
+      var(--bg);
+  }
+  .login-card {
+    width: 100%;
+    max-width: 380px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 36px 32px 28px;
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.04) inset,
+      0 40px 60px -30px rgba(0,0,0,0.55);
+  }
+  .login-logo { display: flex; justify-content: center; margin-bottom: 28px; }
+  .login-logo img { height: 36px; width: auto; }
+  .login-title { font-size: 18px; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 4px; }
+  .login-sub { font-size: 13px; color: var(--plomo); margin-bottom: 22px; }
+  .login-form .field { margin-bottom: 14px; }
+  .login-form .btn { width: 100%; justify-content: center; padding: 11px 16px; }
+  .login-error {
+    display: none;
+    margin-top: 14px;
+    padding: 10px 12px;
+    border-radius: var(--radius);
+    background: rgba(239,68,68,0.10);
+    border: 1px solid rgba(239,68,68,0.40);
+    color: #FCA5A5;
+    font-size: 12.5px;
+  }
+  .login-error.is-shown { display: block; }
+  .login-foot {
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+  .login-foot a {
+    font-size: 12.5px; color: var(--plomo);
+    transition: color var(--transition);
+  }
+  .login-foot a:hover { color: var(--vapor); }
+  .field input[type="email"],
+  .field input[type="password"] {
+    width: 100%; padding: 10px 12px;
+    background: rgba(0,0,0,0.20);
+    border: 1px solid var(--border); border-radius: var(--radius);
+    color: var(--vapor); font-size: 14px;
+    transition: border-color var(--transition), box-shadow var(--transition);
+  }
+  .field input[type="email"]:hover,
+  .field input[type="password"]:hover { border-color: var(--border-strong); }
+  .field input[type="email"]:focus,
+  .field input[type="password"]:focus {
+    outline: none;
+    border-color: var(--acero-light);
+    box-shadow: 0 0 0 3px rgba(43,130,185,0.20);
+  }
+  .btn[disabled] { opacity: 0.6; cursor: not-allowed; transform: none; }
+</style>
+</head>
+<body>
+
+<main class="login-stage">
+  <div class="login-card">
+    <div class="login-logo">
+      <img src="../deliverables/logos/PNG/Logo MTEC_final_Blanco.png" alt="MTEC">
+    </div>
+    <h1 class="login-title">Panel administrativo</h1>
+    <p class="login-sub">Ingresa con tu cuenta autorizada para administrar el sitio.</p>
+
+    <form class="login-form" id="loginForm" autocomplete="on" novalidate>
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" autocomplete="email" required>
+      </div>
+      <div class="field">
+        <label for="password">Contraseña</label>
+        <input type="password" id="password" name="password" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="btn btn-primary" id="submitBtn">Iniciar sesión</button>
+      <div class="login-error" id="loginError" role="alert"></div>
+    </form>
+
+    <div class="login-foot">
+      <a href="../index.html">← Volver al sitio público</a>
+    </div>
+  </div>
+</main>
+
+<script type="module">
+  import { supabase } from './assets/js/supabase-client.js';
+
+  const form     = document.getElementById('loginForm');
+  const errorEl  = document.getElementById('loginError');
+  const submit   = document.getElementById('submitBtn');
+  const emailEl  = document.getElementById('email');
+  const passEl   = document.getElementById('password');
+
+  // If already signed in, skip the login page.
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session) {
+    const next = new URLSearchParams(location.search).get('next') || 'index.html';
+    location.replace(next);
+  }
+
+  function showError(message) {
+    errorEl.textContent = message;
+    errorEl.classList.add('is-shown');
+  }
+  function clearError() {
+    errorEl.classList.remove('is-shown');
+    errorEl.textContent = '';
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    clearError();
+
+    const email    = emailEl.value.trim();
+    const password = passEl.value;
+
+    if (!email || !password) {
+      showError('Ingresa email y contraseña.');
+      return;
+    }
+
+    submit.disabled = true;
+    submit.textContent = 'Ingresando…';
+
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+    if (error) {
+      submit.disabled = false;
+      submit.textContent = 'Iniciar sesión';
+      showError(error.message === 'Invalid login credentials'
+        ? 'Email o contraseña incorrectos.'
+        : error.message);
+      return;
+    }
+
+    const next = new URLSearchParams(location.search).get('next') || 'index.html';
+    location.replace(next);
+  });
+</script>
+
+</body>
+</html>
