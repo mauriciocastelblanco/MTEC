@@ -134,6 +134,23 @@ img { max-width: 100%; display: block; }
    navbar clearance and the hero drops its own top padding. */
 body:has(.breadcrumb-bar) .page-hero { padding-top: 0; }
 
+/* ──────────────────────────────────────────────────────────────────
+   MOBILE ≤720px — breadcrumb removed (limited vertical real estate),
+   but the bar element stays as a navbar-height spacer so the first
+   content element still clears the fixed nav (which is position:fixed
+   top:0 and would otherwise overlap content beneath it).
+─────────────────────────────────────────────────────────────────── */
+@media (max-width: 720px) {
+  .breadcrumb-bar .page-breadcrumb { display: none; }
+  .breadcrumb-bar-inner {
+    padding:
+      calc(68px + 24px)   /* mobile navbar height + breathing room */
+      var(--page-pad)
+      0;
+    border-bottom: none;
+  }
+}
+
 /* ── EDITORIAL PAGINATOR — shared by service-page carousels,
       industry carousel on que-hacemos, and any future paged grid. */
 .consid-paginator {

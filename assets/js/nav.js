@@ -99,15 +99,41 @@
     });
   }
 
-  /* The main dropdown trigger is now an <a> that navigates to the
-     overview page on click. The panel opens on hover (CSS-driven) on
-     desktop. We only need to handle: closing the panel + any open
-     sub-panels when the user clicks outside or presses Escape. */
+  /* The main dropdown trigger is an <a> that, on desktop, opens the
+     panel on hover and navigates on click. On mobile (≤720px) we
+     intercept the click to toggle the inline accordion instead — so
+     the user can see the sub-services without leaving the menu. */
   function setupDropdowns() {
     const dropdowns = document.querySelectorAll('.nav-dropdown');
     if (dropdowns.length === 0) return;
+
+    const mobileMql = window.matchMedia('(max-width: 720px)');
+
+    dropdowns.forEach(dd => {
+      const trigger = dd.querySelector('.nav-dropdown-trigger');
+      if (!trigger) return;
+      trigger.addEventListener('click', e => {
+        if (mobileMql.matches) {
+          e.preventDefault();
+          e.stopPropagation();
+          const open = !dd.classList.contains('open');
+          // Close any siblings first to keep one open at a time.
+          dropdowns.forEach(other => {
+            if (other !== dd) other.classList.remove('open');
+          });
+          dd.classList.toggle('open', open);
+          trigger.setAttribute('aria-expanded', String(open));
+          if (!open) closeAllSubs();
+        }
+        // On desktop, do nothing — the anchor navigates as usual.
+      });
+    });
+
     const closeAll = () => {
-      dropdowns.forEach(dd => dd.classList.remove('open'));
+      dropdowns.forEach(dd => {
+        dd.classList.remove('open');
+        dd.querySelector('.nav-dropdown-trigger')?.setAttribute('aria-expanded', 'false');
+      });
       closeAllSubs();
     };
     document.addEventListener('click', e => {

@@ -22,9 +22,22 @@
   display: flex; align-items: center; justify-content: space-between;
   height: clamp(80px, 9vh, 100px); gap: 2rem;
 }
-.logo-block { display: flex; align-items: center; }
+.logo-block {
+  display: flex; align-items: center;
+  /* The MTEC PNG has ~13% transparent padding on the left edge.
+     Shift the block left so the visible mark aligns with --page-pad. */
+  margin-left: -22px;
+  /* Stacking: position+z-index gives the logo its own context, so it
+     paints ABOVE the .nav-menu on mobile (.nav-menu is z-index 50 and
+     also inside .nav's stacking context). */
+  position: relative;
+  z-index: 61;
+}
 .logo-img { height: 182px; width: auto; opacity: 0.95; transition: opacity 0.2s; }
 .logo-block:hover .logo-img { opacity: 1; }
+/* Two logos stacked — color shows by default, white is revealed only
+   when the mobile menu is open (rule lives in the mobile media query). */
+.logo-img--white { display: none; }
 
 .nav-links { display: flex; align-items: center; gap: 2.25rem; list-style: none; }
 @media (max-width: 860px) { .nav-links { display: none; } }
@@ -281,120 +294,283 @@
   background: none; border: none; padding: 0;
   width: 44px; height: 44px;
   flex-direction: column; align-items: center; justify-content: center;
-  gap: 6px; cursor: pointer; position: relative; z-index: 52;
+  gap: 6px; cursor: pointer; position: relative; z-index: 62;
 }
 .nav-toggle span {
   display: block; width: 26px; height: 2px;
   background: #0D1B2E;
-  transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), opacity 0.25s;
+  transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), opacity 0.25s, background 0.35s ease;
   transform-origin: center;
 }
 .nav-toggle.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
 .nav-toggle.open span:nth-child(2) { opacity: 0; }
 .nav-toggle.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+.nav-toggle.open span { background: #fff; }
 
-/* ══ Mobile ≤720px ══ */
+/* ══════════════════════════════════════════════════════════════════
+   MOBILE ≤720px — world-class fullscreen overlay
+   - Nav bar sits ABOVE the menu (z-index 60) so logo + X stay visible.
+   - When the menu is open, the bar fades to dark navy and the logo
+     inverts to white, matching the menu's premium dark backdrop.
+   - Menu items reveal with a staggered fade+rise; the active page
+     gets a left accent line. Below the CTA a compact contact footer
+     gives mobile users a one-tap path to call or email.
+═══════════════════════════════════════════════════════════════════ */
 @media (max-width: 720px) {
   .nav-inner { height: 68px; gap: 12px; }
   .logo-img { height: 130px; }
+  .logo-block { margin-left: -16px; }   /* scaled to match smaller logo */
   .nav-toggle { display: flex; }
+
+  /* Bar always above the menu so logo + close stay reachable. */
+  .nav { z-index: 60; transition: background .35s ease, border-bottom-color .35s ease; }
+
+  /* When the menu is open, fade the bar to match the menu and swap to
+     the white logo so it reads on the dark backdrop. */
+  .nav:has(.nav-menu.open) {
+    background: transparent;
+    border-bottom-color: transparent;
+  }
+  .nav:has(.nav-menu.open) .logo-img--color { display: none; }
+  .nav:has(.nav-menu.open) .logo-img--white { display: block; }
+  /* Hamburger bars use --acero by default on platino bar; flip to white
+     when the menu opens (already in the .open state). */
+  .nav:has(.nav-menu.open) .nav-toggle span { background: #fff; }
 
   .nav-menu {
     display: flex;
     position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-    background: #0D1B2E;
+    /* dvh covers the dynamic mobile viewport (address bar in/out) */
+    height: 100dvh;
+    background:
+      radial-gradient(circle at 90% 0%,  rgba(27,108,168,0.22) 0%, transparent 55%),
+      radial-gradient(circle at -10% 100%, rgba(91,169,220,0.14) 0%, transparent 60%),
+      #0B1626;
     flex-direction: column;
-    padding: 96px var(--page-pad, 22px) 40px;
+    padding: 80px var(--page-pad, 24px) 28px;
     align-items: stretch;
-    z-index: 51;
-    transform: translateY(-100%);
-    transition: transform 0.45s cubic-bezier(0.22,1,0.36,1);
+    overflow-y: auto;
+    z-index: 50;
+    /* The whole panel slides + fades in; items stagger inside. */
+    opacity: 0;
+    transform: translateY(-12px);
+    transition: transform .5s cubic-bezier(.22,1,.36,1),
+                opacity .35s ease,
+                visibility 0s linear .5s;
     visibility: hidden;
   }
   .nav-menu::before {
     content: ''; position: absolute;
-    top: 0; left: 0; right: 0; height: 2px;
-    background: linear-gradient(90deg, #1B6CA8 0%, rgba(27,108,168,0.6) 35%, rgba(27,108,168,0.0) 100%);
+    top: 67px; left: 0; right: 0; height: 1px;   /* hairline under the navbar bar */
+    background: linear-gradient(90deg, rgba(91,169,220,0.55) 0%, rgba(91,169,220,0.0) 80%);
+    pointer-events: none;
   }
-  .nav-menu.open { transform: translateY(0); visibility: visible; }
+  /* Faint grain to break up the gradient. */
+  .nav-menu::after {
+    content: ''; position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.55'/></svg>");
+    opacity: 0.035;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+  }
+  .nav-menu.open {
+    opacity: 1; transform: translateY(0); visibility: visible;
+    transition: transform .5s cubic-bezier(.22,1,.36,1),
+                opacity .35s ease,
+                visibility 0s linear 0s;
+  }
 
+  /* ── Primary nav list ────────────────────────────────────────── */
   .nav-links {
     display: flex !important;
     flex-direction: column;
-    gap: 0; margin-bottom: 36px;
+    gap: 0; margin: 8px 0 28px;
+    position: relative;
   }
   .nav-links li {
     width: 100%;
-    border-bottom: 1px solid rgba(255,255,255,0.12);
+    position: relative;
+    border-bottom: 1px solid rgba(255,255,255,0.10);
+    /* Stagger entrance: items start offset, animate in when menu opens. */
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity .55s cubic-bezier(.22,1,.36,1),
+                transform .55s cubic-bezier(.22,1,.36,1);
   }
-  .nav-links a, .nav-links .nav-static, .nav-links .nav-dropdown-trigger {
+  .nav-menu.open .nav-links li { opacity: 1; transform: none; }
+  .nav-menu.open .nav-links li:nth-child(1) { transition-delay: .12s; }
+  .nav-menu.open .nav-links li:nth-child(2) { transition-delay: .18s; }
+  .nav-menu.open .nav-links li:nth-child(3) { transition-delay: .24s; }
+  .nav-menu.open .nav-links li:nth-child(4) { transition-delay: .30s; }
+
+  .nav-links a,
+  .nav-links .nav-static,
+  .nav-links .nav-dropdown-trigger {
     display: flex; width: 100%;
     font-family: "Barlow Condensed", sans-serif;
-    font-size: 28px; font-weight: 500;
-    padding: 18px 0; color: #fff;
-    letter-spacing: 0.02em;
-    text-align: left; justify-content: space-between; align-items: center;
+    font-size: 30px; font-weight: 500;
+    padding: 22px 0 20px;
+    color: #fff;
+    letter-spacing: 0.005em;
+    line-height: 1;
+    text-align: left;
+    justify-content: space-between; align-items: center;
+    position: relative;
+    transition: color .3s ease, padding-left .3s ease;
   }
-  .nav-links .nav-static { color: rgba(255,255,255,0.55); }
-  .nav-links a::after, .nav-dropdown-trigger::after { display: none; }
+  .nav-links a:hover,
+  .nav-links .nav-dropdown-trigger:hover { color: #B2D7FF; }
+  .nav-links a:active { color: #5BA9DC; }
+  .nav-links .nav-static { color: rgba(255,255,255,0.42); }
+  .nav-links a::after,
+  .nav-dropdown-trigger::after { display: none; }
 
+  /* Active page indicator — left accent line that slides in. */
+  .nav-links a.active,
+  .nav-links .nav-dropdown-trigger.active {
+    padding-left: 14px;
+    color: #fff;
+  }
+  .nav-links a.active::before,
+  .nav-links .nav-dropdown-trigger.active::before {
+    content: ''; position: absolute;
+    left: 0; top: 50%; transform: translateY(-50%);
+    width: 3px; height: 28px;
+    background: linear-gradient(180deg, #5BA9DC 0%, #1B6CA8 100%);
+    box-shadow: 0 0 16px rgba(91,169,220,0.65);
+  }
+
+  /* Override desktop active/expanded colors (designed for platino bar)
+     so text stays visible on the dark menu background. */
+  .nav-links a.active,
+  .nav-links .nav-dropdown:hover .nav-dropdown-trigger,
+  .nav-links .nav-dropdown-trigger[aria-expanded="true"],
+  .nav-links .nav-dropdown-trigger.active {
+    color: #fff;
+  }
+  .nav-links .nav-dd-sub-trigger.active,
+  .nav-links .nav-dd-sub-trigger.active .nav-dd-arrow-sub {
+    color: #B2D7FF;
+  }
+  .nav-links .nav-dd-sub-trigger.active .nav-dd-num {
+    color: #5BA9DC;  /* keep the accent on the active line's number */
+    opacity: 1;
+  }
+  .nav-links .nav-dd-subitem.active {
+    color: #fff;
+    background: rgba(91,169,220,0.12);
+  }
+  .nav-links .nav-dd-item:hover .nav-dd-num { color: #B2D7FF; }
+
+  /* Chevron on the dropdown trigger */
+  .nav-chev { width: 18px; height: 18px; transition: transform .35s cubic-bezier(.22,1,.36,1); }
+  .nav-dropdown.open .nav-chev,
+  .nav-dropdown-trigger[aria-expanded="true"] .nav-chev { transform: rotate(180deg); }
+
+  /* ── Dropdown panel (mobile inline-accordion) ───────────────── */
   .nav-dropdown:hover .nav-dropdown-panel,
   .nav-dropdown.open .nav-dropdown-panel,
   .nav-dropdown-trigger[aria-expanded="true"] + .nav-dropdown-panel { transform: none; }
   .nav-dropdown { width: 100%; }
-  .nav-chev { width: 16px; height: 16px; }
   .nav-links .nav-dropdown-panel {
     position: static; transform: none;
-    background: none; border: none; box-shadow: none; padding: 0 0 8px;
+    background: none; border: none; box-shadow: none;
+    padding: 0 0 4px;
     min-width: 0; opacity: 1; visibility: visible; pointer-events: auto;
     max-height: 0; overflow: hidden;
-    transition: max-height 0.45s cubic-bezier(0.22,1,0.36,1);
+    transition: max-height .45s cubic-bezier(.22,1,.36,1);
     backdrop-filter: none; -webkit-backdrop-filter: none;
   }
   .nav-links .nav-dropdown-panel::before { display: none; }
-  .nav-dropdown.open .nav-dropdown-panel { max-height: 420px; }
+  .nav-dropdown.open .nav-dropdown-panel { max-height: 520px; }
+
   .nav-links .nav-dd-item {
-    display: grid; grid-template-columns: 32px 1fr 16px;
-    gap: 12px; align-items: center;
-    width: 100%; padding: 14px 0 14px 22px;
+    display: grid; grid-template-columns: 28px 1fr 16px;
+    gap: 14px; align-items: center;
+    width: 100%; padding: 14px 0 14px 18px;
     font-family: "Inter", sans-serif;
     font-size: 14px; font-weight: 400;
-    border-top: 1px solid rgba(255,255,255,0.10);
+    border-top: 1px solid rgba(255,255,255,0.08);
     color: inherit;
     text-align: left; justify-content: initial;
+    transition: padding-left .25s ease, color .25s ease;
   }
-  .nav-links .nav-dd-num { font-family: "Barlow Condensed", sans-serif; font-size: 18px; font-weight: 500; }
-  .nav-links .nav-dd-name { font-family: "Barlow Condensed", sans-serif; font-size: 17px; font-weight: 600; padding: 0; }
-  .nav-links .nav-dd-desc { font-size: 12px; padding: 0; }
-  .nav-links .nav-dd-arrow { opacity: 0.5; transform: none; color: rgba(255,255,255,0.65); }
+  .nav-links .nav-dd-item:hover { padding-left: 22px; color: #B2D7FF; }
+  .nav-links .nav-dd-num {
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 16px; font-weight: 500;
+    color: rgba(178,215,255,0.65);
+  }
+  .nav-links .nav-dd-name {
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 17px; font-weight: 600;
+    padding: 0; line-height: 1.15;
+    color: #fff;   /* override desktop dark-on-light color */
+  }
+  .nav-links .nav-dd-desc {
+    font-size: 12px; padding: 0;
+    color: rgba(255,255,255,0.55);
+    margin-top: 2px;
+  }
+  .nav-links .nav-dd-arrow {
+    opacity: 0.5; transform: none;
+    color: rgba(255,255,255,0.65);
+  }
 
-  /* Mobile: nested sub-dropdown collapses inline below its parent. */
+  /* Nested sub-dropdown (inline accordion) */
   .nav-links .nav-dd-has-sub { width: 100%; }
   .nav-links .nav-dd-subpanel {
     position: static; transform: none;
-    background: none; border: none; box-shadow: none; padding: 0 0 0 44px;
+    background: rgba(0,0,0,0.18);
+    border: none; box-shadow: none;
+    padding: 0 0 0 40px;
     min-width: 0; opacity: 1; visibility: visible; pointer-events: auto;
     max-height: 0; overflow: hidden;
-    transition: max-height 0.4s cubic-bezier(0.22,1,0.36,1);
+    transition: max-height .4s cubic-bezier(.22,1,.36,1);
     backdrop-filter: none; -webkit-backdrop-filter: none;
   }
   .nav-links .nav-dd-subpanel::before { display: none; }
   .nav-links .nav-dd-has-sub.open > .nav-dd-subpanel { max-height: 600px; }
   .nav-links .nav-dd-subitem {
     grid-template-columns: 1fr 14px;
-    width: 100%; padding: 14px 0;
-    font-size: 14px;
-    border-top: 1px solid rgba(255,255,255,0.08);
+    width: 100%; padding: 13px 0;
+    font-size: 13.5px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.82);
   }
-  .nav-links .nav-dd-sub-arrow { opacity: 0.5; transform: none; color: rgba(255,255,255,0.65); }
-  /* Sub-trigger gets a small rotation on the arrow when open to indicate expand state. */
-  .nav-links .nav-dd-arrow-sub svg { transition: transform 0.3s cubic-bezier(0.22,1,0.36,1); }
+  .nav-links .nav-dd-sub-arrow {
+    opacity: 0.45;
+    color: rgba(255,255,255,0.6);
+  }
+  /* Rotating chevron on the sub-trigger when its panel is open. */
+  .nav-links .nav-dd-arrow-sub svg { transition: transform .3s cubic-bezier(.22,1,.36,1); }
   .nav-links .nav-dd-has-sub.open .nav-dd-arrow-sub svg { transform: rotate(90deg); }
 
+  /* ── Primary CTA ─────────────────────────────────────────────── */
   .nav-cta {
-    margin-top: auto; width: 100%;
+    margin: auto 0 0; width: 100%;
     justify-content: center;
-    padding: 18px 24px; font-size: 0.95rem;
+    padding: 18px 24px;
+    font-size: 0.95rem;
+    letter-spacing: 0.04em;
+    /* Match entrance animation */
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity .55s cubic-bezier(.22,1,.36,1) .38s,
+                transform .55s cubic-bezier(.22,1,.36,1) .38s,
+                background 0.2s, box-shadow 0.2s;
   }
+  .nav-menu.open .nav-cta { opacity: 1; transform: none; }
   .nav-cta svg { width: 14px; height: 14px; }
+
+}
+
+/* Respect reduced motion — drop the stagger + slide. */
+@media (max-width: 720px) and (prefers-reduced-motion: reduce) {
+  .nav-menu,
+  .nav-menu .nav-links li,
+  .nav-menu .nav-cta {
+    transition: none !important;
+    transform: none !important;
+  }
 }
