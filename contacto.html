@@ -198,6 +198,108 @@
       transition: none !important;
     }
   }
+
+  /* ══════════════════════════════════════
+     FORM STATES — honeypot, error, loading, success
+  ══════════════════════════════════════ */
+
+  /* The HTML `hidden` attribute uses the UA default `display: none`,
+     but our `display: flex` rule below would tie and win the cascade.
+     Force hidden to actually hide regardless of element-specific
+     display rules. */
+  [hidden] { display: none !important; }
+
+  /* Honeypot — off-screen but not display:none (some bots skip those).
+     Real users can't see or focus it; bots that fill every field reveal
+     themselves and the submission is dropped. */
+  .hp-field {
+    position: absolute !important;
+    left: -10000px; top: auto;
+    width: 1px; height: 1px;
+    overflow: hidden;
+  }
+
+  /* Invalid field highlight */
+  .form-input[aria-invalid="true"] {
+    border-color: rgba(255, 120, 120, 0.75);
+    background: rgba(255, 100, 100, 0.06);
+  }
+
+  /* Inline error message below the form */
+  .form-error {
+    margin: 4px 0 16px;
+    padding: 12px 16px;
+    background: rgba(255, 90, 90, 0.10);
+    border: 1px solid rgba(255, 90, 90, 0.35);
+    color: #fff;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  /* Submit button — loading + disabled states */
+  .btn-submit[disabled] {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+  .btn-submit.is-loading {
+    pointer-events: none;
+  }
+  .btn-submit.is-loading::before { display: none; }
+
+  /* Success state — replaces the form when an insertion succeeds. */
+  .agenda-success {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 8px 0;
+    animation: agendaSuccessIn .55s cubic-bezier(.22,1,.36,1) both;
+  }
+  @keyframes agendaSuccessIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .agenda-success-icon {
+    width: 56px; height: 56px;
+    color: #fff;
+    filter: drop-shadow(0 0 18px rgba(178,215,255,0.45));
+  }
+  .agenda-success-icon svg { width: 100%; height: 100%; }
+  .agenda-success-title {
+    font-family: "Barlow Condensed",sans-serif;
+    font-size: 28px; font-weight: 600;
+    color: #fff;
+    letter-spacing: 0.005em;
+  }
+  .agenda-success-text {
+    font-size: 14px; line-height: 1.65;
+    color: rgba(255,255,255,0.78);
+    max-width: 44ch;
+  }
+  .agenda-success-text a {
+    color: #fff;
+    border-bottom: 1px solid rgba(255,255,255,0.45);
+    transition: border-color .25s;
+  }
+  .agenda-success-text a:hover { border-color: #fff; }
+  .agenda-success-reset {
+    margin-top: 4px;
+    display: inline-flex; align-items: center; gap: 10px;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.45);
+    color: rgba(255,255,255,0.92);
+    font: inherit;
+    font-size: 12px; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 12px 22px;
+    cursor: pointer;
+    transition: background .25s, border-color .25s, color .25s;
+  }
+  .agenda-success-reset:hover {
+    background: rgba(255,255,255,0.10);
+    border-color: rgba(255,255,255,0.75);
+    color: #fff;
+  }
 </style>
 </head>
 <body>
@@ -272,46 +374,70 @@
 
         <!-- Formulario agenda reunión -->
         <div>
-          <div class="agenda-card reveal-scale" data-delay="100">
-            <div class="agenda-title">Agenda una Reunión</div>
-            <div class="agenda-sub">Cuéntanos sobre tu operación y el desafío técnico que enfrentas. Nuestro equipo te responde con una propuesta concreta.</div>
-            <form onsubmit="return false;">
-              <div class="form-row">
-                <div class="form-group">
-                  <label class="form-label">Nombre</label>
-                  <input type="text" class="form-input" placeholder="Juan Pérez">
+          <div class="agenda-card reveal-scale" data-delay="100" data-agenda-card>
+            <div data-agenda-form>
+              <div class="agenda-title">Agenda una Reunión</div>
+              <div class="agenda-sub">Cuéntanos sobre tu operación y el desafío técnico que enfrentas. Nuestro equipo te responde con una propuesta concreta.</div>
+              <form id="contactForm" novalidate>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label" for="cf-nombre">Nombre</label>
+                    <input id="cf-nombre" name="nombre" type="text" class="form-input" placeholder="Juan Pérez" required autocomplete="name" maxlength="120">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="cf-empresa">Empresa</label>
+                    <input id="cf-empresa" name="empresa" type="text" class="form-input" placeholder="ENAP, Codelco..." autocomplete="organization" maxlength="120">
+                  </div>
                 </div>
                 <div class="form-group">
-                  <label class="form-label">Empresa</label>
-                  <input type="text" class="form-input" placeholder="ENAP, Codelco...">
+                  <label class="form-label" for="cf-email">Correo electrónico</label>
+                  <input id="cf-email" name="email" type="email" class="form-input" placeholder="juan@empresa.cl" required autocomplete="email" maxlength="160">
                 </div>
+                <div class="form-group">
+                  <label class="form-label" for="cf-sector">Sector industrial</label>
+                  <select id="cf-sector" name="sector" class="form-input form-select">
+                    <option value="" disabled selected>Selecciona tu sector</option>
+                    <option>Refinería / Petroquímica</option>
+                    <option>Minería</option>
+                    <option>Energía / Generación</option>
+                    <option>Oil &amp; Gas</option>
+                    <option>Celulosa &amp; Papel</option>
+                    <option>Sanitarias &amp; Agua</option>
+                    <option>Otro sector industrial</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="cf-mensaje">Descripción del requerimiento</label>
+                  <textarea id="cf-mensaje" name="mensaje" class="form-input form-textarea" placeholder="Cuéntanos brevemente qué necesitas resolver. Ser específico nos ayuda a llegar preparados." required maxlength="3000"></textarea>
+                </div>
+
+                <!-- Honeypot — real users leave this empty; bots fill everything. -->
+                <div class="hp-field" aria-hidden="true">
+                  <label>No completes este campo</label>
+                  <input type="text" name="website" tabindex="-1" autocomplete="off">
+                </div>
+
+                <div class="form-error" data-form-error hidden role="alert"></div>
+
+                <button type="submit" class="btn-submit" data-submit-btn>
+                  <span data-submit-label>Enviar solicitud</span>
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+              </form>
+            </div>
+
+            <!-- Success state — swapped in after a successful submission. -->
+            <div class="agenda-success" data-agenda-success hidden>
+              <div class="agenda-success-icon" aria-hidden="true">
+                <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="24" cy="24" r="22"/>
+                  <polyline points="14 24 21 31 34 17"/>
+                </svg>
               </div>
-              <div class="form-group">
-                <label class="form-label">Correo electrónico</label>
-                <input type="email" class="form-input" placeholder="juan@empresa.cl">
-              </div>
-              <div class="form-group">
-                <label class="form-label">Sector industrial</label>
-                <select class="form-input form-select">
-                  <option value="" disabled selected>Selecciona tu sector</option>
-                  <option>Refinería / Petroquímica</option>
-                  <option>Minería</option>
-                  <option>Energía / Generación</option>
-                  <option>Oil & Gas</option>
-                  <option>Celulosa & Papel</option>
-                  <option>Sanitarias & Agua</option>
-                  <option>Otro sector industrial</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label class="form-label">Descripción del requerimiento</label>
-                <textarea class="form-input form-textarea" placeholder="Cuéntanos brevemente qué necesitas resolver. Ser específico nos ayuda a llegar preparados."></textarea>
-              </div>
-              <button type="submit" class="btn-submit">
-                Enviar solicitud
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              </button>
-            </form>
+              <div class="agenda-success-title">Solicitud enviada</div>
+              <p class="agenda-success-text">Gracias por contactar a MTEC. Te respondemos en menos de 2 horas en horario laboral. Si es una emergencia operacional, llámanos al <a href="tel:+56322818996">+56 (32) 2818996</a>.</p>
+              <button type="button" class="agenda-success-reset" data-agenda-reset>Enviar otra solicitud</button>
+            </div>
           </div>
         </div>
 
@@ -353,5 +479,6 @@
 </script>
 <script src="assets/js/nav.js" defer></script>
 <script type="module" src="assets/js/public-nav.js"></script>
+<script type="module" src="assets/js/public-contacto.js"></script>
 </body>
 </html>

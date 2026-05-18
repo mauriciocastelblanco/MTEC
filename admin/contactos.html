@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin MTEC — Contactos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/admin.css">
+</head>
+<body>
+
+<div class="admin-shell">
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <img src="../deliverables/logos/PNG/Logo MTEC_final_Blanco.png" alt="MTEC">
+    </div>
+    <nav class="sidebar-nav">
+      <a href="index.html" class="sidebar-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Servicios
+      </a>
+      <a href="contactos.html" class="sidebar-item is-active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        Contactos
+        <span class="sidebar-badge" data-sidebar-unread hidden></span>
+      </a>
+      <a href="media.html" class="sidebar-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        Media
+      </a>
+      <a href="config.html" class="sidebar-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Configuración
+      </a>
+    </nav>
+    <div class="sidebar-spacer"></div>
+    <div class="sidebar-foot">
+      <a href="../index.html" class="sidebar-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        Volver al sitio público
+      </a>
+      <a href="#" class="sidebar-item" data-logout>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Cerrar sesión
+      </a>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+
+    <div class="topbar">
+      <div class="topbar-breadcrumb">
+        <span class="current">Contactos</span>
+      </div>
+      <div class="topbar-user" data-user-chip>·</div>
+    </div>
+
+    <div class="admin-content">
+      <div class="page-head">
+        <div>
+          <h1>Contactos</h1>
+          <p class="page-description">Solicitudes recibidas desde el formulario público. Haz click en una fila para ver el detalle y cambiar su estado.</p>
+        </div>
+      </div>
+
+      <!-- Filter pills -->
+      <div class="filter-bar" data-filter-bar role="tablist" aria-label="Filtrar por estado">
+        <button type="button" class="filter-pill is-active" data-filter="todos"      role="tab" aria-selected="true">
+          Todos <span class="filter-count" data-count="todos">0</span>
+        </button>
+        <button type="button" class="filter-pill" data-filter="nuevo"      role="tab">
+          Nuevos <span class="filter-count" data-count="nuevo">0</span>
+        </button>
+        <button type="button" class="filter-pill" data-filter="leido"      role="tab">
+          Leídos <span class="filter-count" data-count="leido">0</span>
+        </button>
+        <button type="button" class="filter-pill" data-filter="respondido" role="tab">
+          Respondidos <span class="filter-count" data-count="respondido">0</span>
+        </button>
+        <button type="button" class="filter-pill" data-filter="archivado"  role="tab">
+          Archivados <span class="filter-count" data-count="archivado">0</span>
+        </button>
+      </div>
+
+      <div id="contactosRoot" data-contactos-root></div>
+    </div>
+
+  </main>
+
+</div>
+
+<!-- Detail modal -->
+<div class="modal-backdrop" data-modal-backdrop hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalNombre" data-modal>
+    <button type="button" class="modal-close" data-modal-close aria-label="Cerrar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+
+    <div class="modal-head">
+      <h2 id="modalNombre" data-slot="nombre">—</h2>
+      <div class="modal-meta">
+        <span data-slot="empresa-sector">—</span>
+        <span class="modal-meta-sep">·</span>
+        <span data-slot="fecha">—</span>
+      </div>
+    </div>
+
+    <div class="modal-row">
+      <div class="modal-label">Email</div>
+      <div class="modal-value">
+        <a data-slot="email-link" href="mailto:" target="_blank" rel="noopener" data-slot="email">—</a>
+      </div>
+    </div>
+
+    <div class="modal-row">
+      <div class="modal-label">Mensaje</div>
+      <div class="modal-message" data-slot="mensaje">—</div>
+    </div>
+
+    <div class="modal-row modal-row--diag" data-slot="user-agent-row" hidden>
+      <div class="modal-label">User agent</div>
+      <div class="modal-value modal-value--diag" data-slot="user-agent">—</div>
+    </div>
+
+    <div class="modal-foot">
+      <div class="estado-group" role="radiogroup" aria-label="Estado">
+        <label class="estado-radio">
+          <input type="radio" name="estadoRadio" value="nuevo">      <span>Nuevo</span>
+        </label>
+        <label class="estado-radio">
+          <input type="radio" name="estadoRadio" value="leido">      <span>Leído</span>
+        </label>
+        <label class="estado-radio">
+          <input type="radio" name="estadoRadio" value="respondido"> <span>Respondido</span>
+        </label>
+        <label class="estado-radio">
+          <input type="radio" name="estadoRadio" value="archivado">  <span>Archivado</span>
+        </label>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-danger" data-action="delete">Eliminar</button>
+        <a class="btn btn-primary" data-slot="reply-link" href="mailto:">Responder</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toastRoot"></div>
+
+<script type="module" src="assets/js/auth-init.js"></script>
+<script type="module" src="assets/js/admin-contactos.js"></script>
+</body>
+</html>

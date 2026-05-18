@@ -1,6 +1,6 @@
 {
   "cleanUrls": true,
   "rewrites": [
-    { "source": "/servicios/:slug", "destination": "/servicios/index.html" }
+    { "source": "/servicios/:slug", "destination": "/servicios/index" }
   ]
 }
