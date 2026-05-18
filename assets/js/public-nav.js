@@ -24,7 +24,7 @@ function escapeHtml(s) {
 const ARROW = '<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
 function buildSubitem(s) {
-  const href = `${PREFIX}servicios/?slug=${encodeURIComponent(s.slug)}`;
+  const href = `${PREFIX}servicios/${encodeURIComponent(s.slug)}`;
   return `
     <a href="${href}" class="nav-dd-subitem" role="menuitem">
       <span class="nav-dd-sub-name">${escapeHtml(s.titulo)}</span>

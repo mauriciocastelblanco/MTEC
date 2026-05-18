@@ -63,6 +63,118 @@ img { max-width: 100%; display: block; }
   padding-top: clamp(80px, 9vh, 100px);
   position: relative; overflow: hidden;
 }
+
+/* ── BREADCRUMB BAR — editorial, world-class spacing ──────────────
+   Sits flush under the navbar with generous breathing room and a
+   barely-there platino hairline beneath. The navbar is position:fixed
+   so top padding compensates for its height. The bottom padding +
+   border-bottom create the divider between page metadata and the hero. */
+.breadcrumb-bar {
+  background: transparent;
+  position: relative;
+  z-index: 2;
+}
+.breadcrumb-bar-inner {
+  margin: 0 auto;
+  padding:
+    calc(clamp(80px, 9vh, 100px) + 32px)
+    var(--page-pad)
+    20px;
+  border-bottom: 1px solid rgba(178,190,201,0.14);
+}
+.breadcrumb-bar .page-breadcrumb {
+  margin-bottom: 0;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+  gap: 14px;
+}
+/* Parent links — animated underline grows on hover, color shifts in. */
+.breadcrumb-bar .page-breadcrumb a {
+  color: rgba(255,255,255,0.55);
+  position: relative;
+  padding-bottom: 3px;
+  transition: color 0.35s cubic-bezier(.22,1,.36,1);
+}
+.breadcrumb-bar .page-breadcrumb a::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 100%; height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.55s cubic-bezier(.22,1,.36,1);
+}
+.breadcrumb-bar .page-breadcrumb a:hover {
+  color: rgba(255,255,255,0.96);
+}
+.breadcrumb-bar .page-breadcrumb a:hover::after { transform: scaleX(1); }
+.breadcrumb-bar .page-breadcrumb a:focus-visible {
+  outline: 2px solid #2B82B9;
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+/* Separators — barely there, decorative only. */
+.breadcrumb-bar .page-breadcrumb .sep {
+  color: rgba(178,190,201,0.32);
+  font-weight: 400;
+  letter-spacing: 0;
+  user-select: none;
+}
+/* Current page — slightly emphasized so the user knows where they are. */
+.breadcrumb-bar .page-breadcrumb > span:not([class]) {
+  color: rgba(255,255,255,0.92);
+  font-weight: 600;
+}
+
+/* When a breadcrumb-bar precedes the page-hero, the bar absorbs the
+   navbar clearance and the hero drops its own top padding. */
+body:has(.breadcrumb-bar) .page-hero { padding-top: 0; }
+
+/* ── EDITORIAL PAGINATOR — shared by service-page carousels,
+      industry carousel on que-hacemos, and any future paged grid. */
+.consid-paginator {
+  display: flex; align-items: center; gap: 14px;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(178,190,201,0.18);
+  justify-content: flex-end;
+}
+.consid-paginator[hidden] { display: none; }
+.consid-nav {
+  width: 28px; height: 28px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: transparent;
+  border: 1px solid rgba(178,190,201,0.30);
+  color: rgba(255,255,255,0.85);
+  cursor: pointer;
+  border-radius: 999px;
+  transition: background 0.2s, border-color 0.2s, color 0.2s, opacity 0.2s;
+}
+.consid-nav:hover {
+  background: rgba(178,190,201,0.10);
+  border-color: rgba(178,190,201,0.55);
+  color: #fff;
+}
+.consid-nav:focus-visible {
+  outline: 2px solid #2B82B9;
+  outline-offset: 2px;
+}
+.consid-nav:disabled {
+  opacity: 0.30; cursor: not-allowed;
+  background: transparent;
+}
+.consid-nav svg { width: 12px; height: 12px; }
+.consid-counter {
+  font-family: ui-monospace, "JetBrains Mono", "Menlo", monospace;
+  font-size: 11px; font-weight: 500;
+  letter-spacing: 0.10em;
+  color: rgba(255,255,255,0.55);
+  min-width: 44px; text-align: center;
+}
 .page-hero-inner {
   margin: 0 auto;
   padding: 80px var(--page-pad) 24px;

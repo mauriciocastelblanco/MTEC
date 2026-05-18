@@ -47,7 +47,7 @@ function renderDashboard(root, servicios) {
       <td><span class="chip-estado chip-${s.estado}">${s.estado === 'publicado' ? 'Publicado' : 'Borrador'}</span></td>
       <td class="col-edited">${fmtTime(s.fechaEdicion)}</td>
       <td class="col-actions">
-        <a href="../servicios/?slug=${encodeURIComponent(s.slug)}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost" data-action="view">Ver pública</a>
+        <a href="../servicios/${encodeURIComponent(s.slug)}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost" data-action="view">Ver pública</a>
         <a href="servicio.html?slug=${escapeHtml(s.slug)}" class="btn btn-ghost" data-action="edit">Editar</a>
         <button class="btn btn-danger" data-action="delete" data-slug="${escapeHtml(s.slug)}">Eliminar</button>
       </td>

@@ -24,15 +24,20 @@ const MIME = {
   '.webp': 'image/webp',
 };
 
-const server = http.createServer((req, res) => {
-  let urlPath = decodeURIComponent(req.url.split('?')[0]);
-  if (urlPath === '/' || urlPath.endsWith('/')) urlPath = urlPath + 'index.html';
-  if (!path.extname(urlPath)) urlPath = urlPath + '/index.html';
+// Clean-URL rewrite for service pages. Mirrors the production
+// Vercel rewrite rule (`/servicios/:slug` → `/servicios/index.html`)
+// so local dev resolves URLs like `/servicios/encintado-de-lineas`.
+function rewriteCleanUrls(urlPath) {
+  const m = urlPath.match(/^\/servicios\/([^/]+?)(?:\.html)?\/?$/);
+  if (m && m[1] !== 'index') {
+    return '/servicios/index.html';
+  }
+  return null;
+}
 
-  const filePath = path.join(__dirname, urlPath);
+function serveFile(res, filePath) {
   const ext = path.extname(filePath).toLowerCase();
   const contentType = MIME[ext] || 'application/octet-stream';
-
   fs.readFile(filePath, (err, data) => {
     if (err) {
       res.writeHead(404, { 'Content-Type': 'text/plain' });
@@ -42,6 +47,20 @@ const server = http.createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': contentType });
     res.end(data);
   });
+}
+
+const server = http.createServer((req, res) => {
+  let urlPath = decodeURIComponent(req.url.split('?')[0]);
+  if (urlPath === '/' || urlPath.endsWith('/')) urlPath = urlPath + 'index.html';
+
+  const rewritten = rewriteCleanUrls(urlPath);
+  if (rewritten) {
+    serveFile(res, path.join(__dirname, rewritten));
+    return;
+  }
+
+  if (!path.extname(urlPath)) urlPath = urlPath + '/index.html';
+  serveFile(res, path.join(__dirname, urlPath));
 });
 
 server.listen(PORT, () => {

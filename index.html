@@ -656,39 +656,28 @@ img { max-width: 100%; display: block; }
 }
 .serv-card:hover { transform: translateY(-6px); }
 
-/* Circular icon container — subtle glass surround, no fill bg */
+/* Icon slot — no frame, just the icon with a hairline accent below.
+   Editorial minimalist: the icon breathes, typography leads. */
 .serv-circle {
-  width: clamp(180px, 17vw, 230px);
-  height: clamp(220px, 21vw, 280px);
-  border-radius: 24px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(178,190,201,0.08) 100%);
-  border: 1px solid rgba(255,255,255,0.20);
-  display: flex; align-items: center; justify-content: center;
-  overflow: hidden;
+  width: 100%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 32px;
   margin-bottom: 32px;
+  padding: 24px 0 12px;
   position: relative;
-  transition: background 0.45s ease, border-color 0.45s ease,
-              box-shadow 0.45s ease, transform 0.5s cubic-bezier(0.22,1,0.36,1);
 }
-.serv-circle::before {
-  content: ''; position: absolute; inset: -1px;
-  border-radius: 24px;
-  background: conic-gradient(from 90deg,
-    rgba(255,255,255,0.0), rgba(255,255,255,0.45),
-    rgba(255,255,255,0.0), rgba(255,255,255,0.0));
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-          mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor; mask-composite: exclude;
-  padding: 1px;
-  opacity: 0; transition: opacity 0.5s;
+.serv-circle::after {
+  content: '';
+  display: block;
+  width: 36px; height: 1px;
+  background: rgba(178,190,201,0.55);
+  transition: width 0.55s cubic-bezier(0.22,1,0.36,1), background 0.35s ease;
 }
-.serv-card:hover .serv-circle {
-  background: linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(178,190,201,0.14) 100%);
-  border-color: rgba(255,255,255,0.40);
-  box-shadow: 0 18px 40px rgba(6,12,24,0.35), 0 0 60px rgba(255,255,255,0.08);
-  transform: translateY(-2px);
+.serv-card:hover .serv-circle::after {
+  width: 88px;
+  background: rgba(255,255,255,0.92);
 }
-.serv-card:hover .serv-circle::before { opacity: 1; }
 
 .serv-photo {
   width: 102%; height: auto;
@@ -699,13 +688,14 @@ img { max-width: 100%; display: block; }
 }
 .serv-card:hover .serv-photo { transform: scale(1.04); }
 
-/* Service icon — replaces the photos with line-art SVG inside the circle. */
+/* Service icon — protagonist of the slot, no chrome around it. */
 .serv-icon {
-  width: 48%; height: auto;
+  width: clamp(76px, 7vw, 96px);
+  height: auto;
   color: rgba(255,255,255,0.92);
-  transition: transform 0.5s cubic-bezier(0.22,1,0.36,1), color 0.3s;
+  transition: transform 0.55s cubic-bezier(0.22,1,0.36,1), color 0.3s;
 }
-.serv-card:hover .serv-icon { transform: scale(1.06); color: #fff; }
+.serv-card:hover .serv-icon { transform: translateY(-3px); color: #fff; }
 
 .serv-card-title {
   font-family: "Barlow Condensed", sans-serif;
@@ -733,6 +723,12 @@ img { max-width: 100%; display: block; }
   font-weight: 400;
 }
 .serv-card-tags span:first-child::before { display: none; }
+.serv-card-tags .serv-card-soon {
+  color: rgba(255,255,255,0.40);
+  font-style: italic;
+  letter-spacing: 0.12em;
+  text-transform: none;
+}
 
 .serv-card-cta {
   display: inline-flex; align-items: center; gap: 8px;
@@ -1072,8 +1068,7 @@ img { max-width: 100%; display: block; }
   .s-h2 { font-size: clamp(26px, 7vw, 36px); }
   .serv-cards { gap: 40px; }
   .serv-card { padding: 8px 0; }
-  .serv-circle { width: 200px; height: 240px; margin-bottom: 20px; border-radius: 20px; }
-  .serv-circle::before { border-radius: 20px; }
+  .serv-circle { margin-bottom: 20px; gap: 22px; padding: 8px 0; }
   .serv-card-title { font-size: 22px; margin-bottom: 10px; }
   .serv-card-desc { font-size: 13.5px; margin-bottom: 14px; }
   .serv-card-tags { font-size: 9.5px; margin-bottom: 16px; }
@@ -1126,6 +1121,66 @@ img { max-width: 100%; display: block; }
   margin: 0 auto;
   padding: 0 var(--page-pad);
   display: flex; flex-direction: column;
+}
+
+/* ══ FINAL CTA — minimal banner ════════════════════════════
+   Slim banner inheriting the page background, bracketed by
+   subtle platino hairlines. One copy line + one button. */
+.final-cta {
+  border-top: 1px solid rgba(178,190,201,0.14);
+  border-bottom: 1px solid rgba(178,190,201,0.14);
+}
+.final-cta-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 32px var(--page-pad);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: clamp(24px, 4vw, 56px);
+  flex-wrap: wrap;
+}
+.final-cta-copy {
+  font-size: clamp(15px, 1.3vw, 18px);
+  font-weight: 400;
+  color: rgba(255,255,255,0.70);
+  letter-spacing: 0.01em;
+  margin: 0;
+}
+.final-cta-copy span {
+  color: #fff;
+  font-weight: 600;
+}
+.final-cta-button {
+  display: inline-flex; align-items: center; gap: 12px;
+  padding: 14px 24px;
+  background: transparent;
+  border: 1px solid rgba(178,190,201,0.40);
+  color: rgba(255,255,255,0.92);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: 2px;
+  transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+  white-space: nowrap;
+}
+.final-cta-button svg {
+  width: 14px; height: 14px;
+  transition: transform 0.4s cubic-bezier(.22,1,.36,1);
+}
+.final-cta-button:hover {
+  background: rgba(178,190,201,0.08);
+  border-color: rgba(178,190,201,0.65);
+  color: #fff;
+}
+.final-cta-button:hover svg { transform: translateX(4px); }
+.final-cta-button:focus-visible {
+  outline: 2px solid #2B82B9;
+  outline-offset: 3px;
+}
+@media (max-width: 720px) {
+  .final-cta-inner { padding: 24px var(--page-pad); gap: 20px; }
+  .final-cta-copy { font-size: 14px; }
 }
 
 /* — Column grid — */
@@ -1422,12 +1477,29 @@ img { max-width: 100%; display: block; }
     </div>
 
     <div class="serv-cards">
-      <a href="que-hacemos.html#especializados" class="serv-card reveal" data-delay="0">
+      <a href="que-hacemos.html#especializados" class="serv-card reveal" data-delay="0" data-category="servicios-especializados">
         <div class="serv-circle">
-          <!-- Wrench — represents hands-on technical intervention -->
-          <svg class="serv-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M48 8 a10 10 0 0 0 -13 13 L13 43 a4 4 0 0 0 0 5.6 l2.4 2.4 a4 4 0 0 0 5.6 0 L43 29 a10 10 0 0 0 13 -13 L46 26 L38 24 L36 16 z"/>
-            <circle cx="42" cy="22" r="2.5"/>
+          <!-- ISA P&ID style: pipe section with composite wrap reinforcement.
+               Concentric layers show the multi-layer fiber composite that
+               restores structural capacity in service. -->
+          <svg class="serv-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <!-- Pipe entering -->
+            <line x1="4" y1="26" x2="20" y2="26"/>
+            <line x1="4" y1="38" x2="20" y2="38"/>
+            <!-- Pipe exiting -->
+            <line x1="44" y1="26" x2="60" y2="26"/>
+            <line x1="44" y1="38" x2="60" y2="38"/>
+            <!-- Outer wrap layer -->
+            <rect x="20" y="18" width="24" height="28"/>
+            <!-- Inner wrap layer -->
+            <rect x="23" y="21" width="18" height="22" opacity="0.55"/>
+            <!-- Innermost wrap layer -->
+            <rect x="26" y="24" width="12" height="16" opacity="0.35"/>
+            <!-- Centerline indicator -->
+            <circle cx="32" cy="32" r="1.5" fill="currentColor" stroke="none"/>
+            <!-- Flow indicators on each pipe end -->
+            <path d="M10 32 L14 32" opacity="0.45"/>
+            <path d="M50 32 L54 32" opacity="0.45"/>
           </svg>
         </div>
         <h3 class="serv-card-title">Servicios Especializados</h3>
@@ -1437,21 +1509,29 @@ img { max-width: 100%; display: block; }
           <span>Pop-a-Plug</span>
           <span>Inspección</span>
         </div>
-        <span class="serv-card-cta" aria-hidden="true">
-          Ver más
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </span>
       </a>
 
-      <a href="que-hacemos.html#representacion" class="serv-card reveal" data-delay="120">
+      <a href="que-hacemos.html#representacion" class="serv-card reveal" data-delay="120" data-category="representacion">
         <div class="serv-circle">
-          <!-- Award / badge — represents the standing for leading brands -->
-          <svg class="serv-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="32" cy="24" r="16"/>
-            <circle cx="32" cy="24" r="9"/>
-            <path d="M22 36 L18 58 L32 50 L46 58 L42 36"/>
+          <!-- ISA P&ID style: distribution manifold with three branches,
+               each terminating in a tagged instrument (ISA balloon). The
+               filled-source dot at the inlet represents MTEC; each branch
+               is a represented brand reaching its application. -->
+          <svg class="serv-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <!-- Main supply header -->
+            <line x1="6" y1="20" x2="58" y2="20"/>
+            <!-- Source indicator (MTEC inlet) -->
+            <circle cx="6" cy="20" r="2.5" fill="currentColor" stroke="none"/>
+            <!-- Branch 1 (left) — secondary brand -->
+            <line x1="16" y1="20" x2="16" y2="42"/>
+            <circle cx="16" cy="50" r="6" opacity="0.5"/>
+            <!-- Branch 2 (center) — primary brand, larger ISA balloon -->
+            <line x1="32" y1="20" x2="32" y2="36"/>
+            <circle cx="32" cy="46" r="9"/>
+            <line x1="23" y1="46" x2="41" y2="46" opacity="0.45"/>
+            <!-- Branch 3 (right) — secondary brand -->
+            <line x1="48" y1="20" x2="48" y2="42"/>
+            <circle cx="48" cy="50" r="6" opacity="0.5"/>
           </svg>
         </div>
         <h3 class="serv-card-title">Representación</h3>
@@ -1461,22 +1541,30 @@ img { max-width: 100%; display: block; }
           <span>Soporte técnico</span>
           <span>Repuestos</span>
         </div>
-        <span class="serv-card-cta" aria-hidden="true">
-          Ver más
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </span>
       </a>
 
-      <a href="que-hacemos.html#comercializacion" class="serv-card reveal" data-delay="240">
+      <a href="que-hacemos.html#comercializacion" class="serv-card reveal" data-delay="240" data-category="comercializacion">
         <div class="serv-circle">
-          <!-- Package — represents commercialization / catalog / traceable goods -->
-          <svg class="serv-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M56 44 V20 a2 2 0 0 0 -1 -1.7 l-21 -12 a2 2 0 0 0 -2 0 l-21 12 A2 2 0 0 0 10 20 v24 a2 2 0 0 0 1 1.7 l21 12 a2 2 0 0 0 2 0 l21 -12 A2 2 0 0 0 56 44 z"/>
-            <polyline points="11 21 33 33 55 21"/>
-            <line x1="33" y1="33" x2="33" y2="58"/>
-            <line x1="22" y1="13" x2="44" y2="25"/>
+          <!-- ISA P&ID style: cylindrical storage vessel with content
+               level lines, plus an ISA tag balloon at top right marking
+               the lot as certified (filled dot = "released/approved"). -->
+          <svg class="serv-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <!-- Tag tether (dashed-feel via opacity) -->
+            <line x1="40" y1="22" x2="50" y2="12" opacity="0.55"/>
+            <!-- Certification tag balloon (ISA instrument bubble) -->
+            <circle cx="54" cy="10" r="7"/>
+            <line x1="47" y1="10" x2="61" y2="10" opacity="0.45"/>
+            <circle cx="54" cy="10" r="2" fill="currentColor" stroke="none"/>
+            <!-- Vessel top ellipse -->
+            <ellipse cx="24" cy="22" rx="14" ry="4"/>
+            <!-- Vessel walls -->
+            <line x1="10" y1="22" x2="10" y2="54"/>
+            <line x1="38" y1="22" x2="38" y2="54"/>
+            <!-- Vessel bottom ellipse -->
+            <path d="M10 54 a14 4 0 0 0 28 0"/>
+            <!-- Internal level lines (content) -->
+            <path d="M10 36 a14 4 0 0 0 28 0" opacity="0.45"/>
+            <path d="M10 46 a14 4 0 0 0 28 0" opacity="0.35"/>
           </svg>
         </div>
         <h3 class="serv-card-title">Comercialización</h3>
@@ -1486,95 +1574,31 @@ img { max-width: 100%; display: block; }
           <span>Trazabilidad</span>
           <span>Catálogo</span>
         </div>
-        <span class="serv-card-cta" aria-hidden="true">
-          Ver más
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </span>
       </a>
     </div>
 
   </div>
 </section>
 
-<!-- ══ FOOTER ══════════════════════════════ -->
-<footer class="footer">
-  <div class="footer-inner">
-
-    <!-- Column grid -->
-    <div class="footer-grid">
-
-      <div class="footer-brand">
-        <img src="deliverables/logos/PNG/Logo MTEC_final_Blanco.png" alt="MTEC" class="footer-logo">
-        <p class="footer-tagline">Más de una década de experiencia en mantenimiento industrial.</p>
-        <div class="footer-channels">
-          <a href="mailto:contacto@mtec.cl" class="footer-channel">contacto@mtec.cl</a>
-          <span class="footer-sep">·</span>
-          <a href="tel:+56322818996" class="footer-channel">+56 (32) 2818996</a>
-          <span class="footer-sep">·</span>
-          <a href="https://www.linkedin.com/company/mtec/" target="_blank" rel="noopener noreferrer" class="footer-channel footer-channel--icon" aria-label="LinkedIn MTEC">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/>
-              <rect x="2" y="9" width="4" height="12"/>
-              <circle cx="4" cy="4" r="2"/>
-            </svg>
-          </a>
-        </div>
-        <a class="footer-address" href="https://www.google.com/maps/search/?api=1&amp;query=Calle+Punta+Arenas+856%2C+Conc%C3%B3n%2C+Regi%C3%B3n+de+Valpara%C3%ADso%2C+Chile" target="_blank" rel="noopener noreferrer">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-          Calle Punta Arenas 856, Concón, Región de Valparaíso · Chile
-        </a>
-      </div>
-
-      <div class="footer-cluster">
-        <nav class="footer-col" aria-label="Navegación">
-          <span class="footer-col-kicker">Navegación</span>
-          <ul class="footer-links">
-            <li><a href="index.html">Inicio</a></li>
-            <li><a href="quienes-somos.html">Quiénes Somos</a></li>
-            <li><a href="que-hacemos.html">Qué Hacemos</a></li>
-            <li><span class="footer-link-static">Innovación</span></li>
-            <li><a href="contacto.html">Contacto</a></li>
-          </ul>
-        </nav>
-
-        <nav class="footer-col" aria-label="Servicios">
-          <span class="footer-col-kicker">Servicios</span>
-          <ul class="footer-links">
-            <li><a href="que-hacemos.html#especializados">Servicios Especializados</a></li>
-            <li><a href="que-hacemos.html#representacion">Representación</a></li>
-            <li><a href="que-hacemos.html#comercializacion">Comercialización</a></li>
-          </ul>
-        </nav>
-
-        <a href="https://erres.cl" target="_blank" rel="noopener" class="footer-erres">
-          <span class="footer-erres-kicker">
-            Parte del ecosistema
-            <span class="footer-erres-arrow" aria-hidden="true">
-              <svg width="12" height="12" viewBox="0 0 14 14" fill="none">
-                <path d="M3 11l8-8M5 3h6v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </span>
-          </span>
-          <img src="brand_assets/logo_erres.png" alt="ERRES" class="footer-erres-logo">
-        </a>
-      </div>
-
-    </div>
-
-    <!-- Bottom row -->
-    <div class="footer-bottom">
-      <span class="footer-copy">© <span id="footerYear">2026</span> MTEC. Todos los derechos reservados.</span>
-      <div class="footer-legal">
-        <a href="#">Términos</a>
-        <span class="footer-sep">·</span>
-        <a href="#">Privacidad</a>
-      </div>
-    </div>
-
+<!-- ══ FINAL CTA — minimal banner ════════════════════════════
+     Single-row banner sitting on the existing page background,
+     bracketed by subtle hairlines. -->
+<aside class="final-cta" aria-label="Agenda una reunión">
+  <div class="final-cta-inner">
+    <p class="final-cta-copy">
+      ¿Tu próxima intervención técnica? <span>Conversemos.</span>
+    </p>
+    <a href="contacto.html" class="final-cta-button">
+      Agenda una reunión
+      <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
   </div>
-</footer>
+</aside>
+
+<!-- ══ FOOTER — loaded async from partials/footer.html ═════════ -->
+<div id="footer-mount"></div>
 
 <script>
 /* ════════════════════════
@@ -1588,7 +1612,7 @@ const chapterNav  = document.getElementById('chapterNav');
 const techWM      = document.getElementById('techWatermark');
 const chDots      = Array.from(document.querySelectorAll('.ch-dot'));
 const sections    = ['ch0','ch1','ch2'].map(id => document.getElementById(id));
-const footerEl    = document.querySelector('.footer');
+let footerEl      = document.querySelector('.footer');
 const footerYear  = document.getElementById('footerYear');
 if (footerYear) footerYear.textContent = new Date().getFullYear();
 
@@ -1611,9 +1635,12 @@ function updateChapter(sy) {
   });
   chDots.forEach((dot, i) => dot.classList.toggle('active', i === active));
   /* Hide chapter nav once the footer enters the viewport — there's no
-     dot mapped to it, so showing the last active is misleading. */
+     dot mapped to it, so showing the last active is misleading.
+     The footer loads async via partial loader, so retry the lookup
+     until we find it; cache once found. */
+  if (!footerEl) footerEl = document.querySelector('.footer');
   const footerInView = footerEl
-    ? footerEl.getBoundingClientRect().top <= window.innerHeight * 0.6
+    ? footerEl.getBoundingClientRect().top <= window.innerHeight * 0.85
     : false;
   chapterNav.classList.toggle('visible', sy > heroH * 0.45 && !footerInView);
 }
@@ -1758,7 +1785,17 @@ if (btnAgenda && !isMobile) {
   });
 }
 </script>
+<script src="assets/js/partials.js" defer></script>
 <script src="assets/js/nav.js" defer></script>
 <script type="module" src="assets/js/public-nav.js"></script>
+<script type="module" src="assets/js/public-home-services.js"></script>
+<script defer>
+  document.addEventListener('DOMContentLoaded', () => {
+    MTEC.loadPartial('#footer-mount', 'partials/footer.html').then(() => {
+      const fy = document.getElementById('footerYear');
+      if (fy) fy.textContent = new Date().getFullYear();
+    });
+  });
+</script>
 </body>
 </html>

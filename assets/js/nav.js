@@ -43,6 +43,7 @@
 
   /* Active state — highlights the relevant nav entry for the current page.
      - quienes-somos.html → top-level "Quiénes Somos" link
+     - que-hacemos.html → the "Qué Hacemos" dropdown trigger
      - any page under /servicios/ → the "Qué Hacemos" dropdown trigger
        and the nested "Servicios Especializados" sub-trigger */
   function applyActiveState() {
@@ -52,6 +53,11 @@
     if (file === 'quienes-somos.html') {
       const link = document.querySelector('.nav-links a[data-nav="quienes-somos"]');
       if (link) link.classList.add('active');
+    }
+
+    if (file === 'que-hacemos.html') {
+      const ddTrigger = document.querySelector('.nav-dropdown-trigger[data-nav="que-hacemos"]');
+      if (ddTrigger) ddTrigger.classList.add('active');
     }
 
     if (path.includes('/servicios/')) {
@@ -93,42 +99,22 @@
     });
   }
 
+  /* The main dropdown trigger is now an <a> that navigates to the
+     overview page on click. The panel opens on hover (CSS-driven) on
+     desktop. We only need to handle: closing the panel + any open
+     sub-panels when the user clicks outside or presses Escape. */
   function setupDropdowns() {
     const dropdowns = document.querySelectorAll('.nav-dropdown');
-    dropdowns.forEach(dd => {
-      const trigger = dd.querySelector('.nav-dropdown-trigger');
-      if (!trigger) return;
-      trigger.addEventListener('click', e => {
-        e.stopPropagation();
-        const open = !dd.classList.contains('open');
-        dropdowns.forEach(other => {
-          if (other !== dd) {
-            other.classList.remove('open');
-            other.querySelector('.nav-dropdown-trigger')?.setAttribute('aria-expanded', 'false');
-          }
-        });
-        dd.classList.toggle('open', open);
-        trigger.setAttribute('aria-expanded', String(open));
-        if (!open) closeAllSubs();
-      });
-    });
+    if (dropdowns.length === 0) return;
+    const closeAll = () => {
+      dropdowns.forEach(dd => dd.classList.remove('open'));
+      closeAllSubs();
+    };
     document.addEventListener('click', e => {
-      if (!e.target.closest('.nav-dropdown')) {
-        dropdowns.forEach(dd => {
-          dd.classList.remove('open');
-          dd.querySelector('.nav-dropdown-trigger')?.setAttribute('aria-expanded', 'false');
-        });
-        closeAllSubs();
-      }
+      if (!e.target.closest('.nav-dropdown')) closeAll();
     });
     document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') {
-        dropdowns.forEach(dd => {
-          dd.classList.remove('open');
-          dd.querySelector('.nav-dropdown-trigger')?.setAttribute('aria-expanded', 'false');
-        });
-        closeAllSubs();
-      }
+      if (e.key === 'Escape') closeAll();
     });
   }
 

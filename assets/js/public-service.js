@@ -69,6 +69,11 @@ function escapeHtml(s) {
 }
 
 function getSlug() {
+  // Clean URL form: /servicios/<slug>
+  const path = location.pathname.replace(/\/+$/, '');
+  const match = path.match(/\/servicios\/([^/]+?)(?:\.html)?$/);
+  if (match && match[1] && match[1] !== 'index') return decodeURIComponent(match[1]);
+  // Backward compat: ?slug=<slug>
   return new URLSearchParams(location.search).get('slug') || '';
 }
 

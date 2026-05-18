@@ -109,13 +109,17 @@
     position: relative; overflow: hidden;
   }
   .erres-block::before {
-    content: 'ERRES';
-    position: absolute; right: -20px; top: 50%;
+    content: '';
+    position: absolute; right: -30px; top: 50%;
     transform: translateY(-50%);
-    font-family: "Barlow Condensed", sans-serif;
-    font-size: 140px; font-weight: 700;
-    color: rgba(255,255,255,0.06);
-    letter-spacing: -0.04em; pointer-events: none;
+    width: 380px; height: 160px;
+    background-image: url('brand_assets/logo_erres.png');
+    background-position: center right;
+    background-size: contain;
+    background-repeat: no-repeat;
+    filter: brightness(0) invert(1);
+    opacity: 0.16;
+    pointer-events: none;
   }
   .erres-logo-img {
     height: 44px; width: auto; display: block;
@@ -271,7 +275,7 @@
     .value-desc { font-size: 12.5px; }
 
     .erres-block { padding: 28px 24px; }
-    .erres-block::before { font-size: 80px; right: -10px; }
+    .erres-block::before { width: 220px; height: 80px; right: -10px; }
     .erres-logo-img { height: 36px; margin-bottom: 22px; }
     .erres-quote { font-size: 20px; margin-bottom: 18px; }
     .erres-detail { font-size: 12.5px; }
@@ -292,14 +296,20 @@
 <!-- Shared nav -->
 <div id="nav-mount"></div>
 
-<!-- PAGE HERO -->
-<header class="page-hero">
-  <div class="page-hero-inner">
+<!-- Editorial breadcrumb bar -->
+<div class="breadcrumb-bar">
+  <div class="breadcrumb-bar-inner">
     <div class="page-breadcrumb">
       <a href="index.html">Inicio</a>
       <span class="sep">›</span>
-      Quiénes Somos
+      <span>Quiénes Somos</span>
     </div>
+  </div>
+</div>
+
+<!-- PAGE HERO -->
+<header class="page-hero">
+  <div class="page-hero-inner">
     <div class="page-accent-line"></div>
   </div>
 </header>

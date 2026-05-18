@@ -292,6 +292,13 @@ table.admin-table { width: 100%; border-collapse: collapse; }
 .field trix-editor[contenteditable]:empty::before {
   color: var(--plomo);
 }
+/* Lead editor matches the public hero's max-width (.page-subtitle--service)
+   so writers see line wrapping exactly as it will render. */
+.field--lead trix-toolbar,
+.field--lead trix-editor,
+.field--lead .hint {
+  max-width: 56ch;
+}
 .field trix-editor p { margin-bottom: 0.6em; }
 .field trix-editor p:last-child { margin-bottom: 0; }
 .field trix-editor a { color: var(--acero-light); }
