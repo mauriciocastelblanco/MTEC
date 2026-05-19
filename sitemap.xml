@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Sitemap MTEC. Las páginas de servicios se listan a mano porque viven
+  como /servicios/<slug> servidas desde un único servicios/index.html
+  poblado por JS desde Supabase. Cuando se publique un nuevo servicio
+  en el admin, agregar su <url> en el bloque "Servicios" más abajo.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <url>
+    <loc>https://mtec.cl/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://mtec.cl/que-hacemos</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://mtec.cl/quienes-somos</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://mtec.cl/tecnologia</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://mtec.cl/contacto</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Servicios (mantener sincronizado con la tabla `servicios` de Supabase) -->
+  <url>
+    <loc>https://mtec.cl/servicios/encintado-de-lineas</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Legales -->
+  <url>
+    <loc>https://mtec.cl/privacidad</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://mtec.cl/terminos</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+</urlset>

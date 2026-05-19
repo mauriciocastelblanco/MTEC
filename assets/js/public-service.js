@@ -87,8 +87,100 @@ async function fetchService(slug) {
   return data;
 }
 
+// Strip HTML tags and collapse whitespace so a description meta tag
+// gets clean prose (Trix saves lead as HTML; meta tags need plain text).
+function stripHtml(html) {
+  const tmp = document.createElement('div');
+  tmp.innerHTML = String(html || '');
+  return (tmp.textContent || '').replace(/\s+/g, ' ').trim();
+}
+
+// Truncate to ~155 chars at a word boundary so descriptions fit the
+// ~160-char SERP / OG card guideline without mid-word cuts.
+function clampForMeta(text, max = 155) {
+  const clean = stripHtml(text);
+  if (clean.length <= max) return clean;
+  return clean.slice(0, max).replace(/\s+\S*$/, '') + '…';
+}
+
+// Set the content attribute on any element marked with data-meta="<key>".
+// Used for <meta property="og:title" data-meta="og:title"> etc.
+function setMeta(key, value) {
+  document.querySelectorAll(`[data-meta="${key}"]`).forEach(el => {
+    if (el.tagName === 'LINK') el.setAttribute('href', value);
+    else el.setAttribute('content', value);
+  });
+}
+
+function applySeoMeta(s) {
+  const slug = getSlug();
+  const url = `https://mtec.cl/servicios/${encodeURIComponent(slug)}`;
+  const title = `${s.titulo} — MTEC`;
+  const desc = clampForMeta(s.lead || s.eyebrow || `Servicio MTEC: ${s.titulo}.`);
+  const image = s.hero?.imagen
+    ? (s.hero.imagen.startsWith('http')
+        ? s.hero.imagen
+        : `https://mtec.cl/${s.hero.imagen.replace(/^\/+/, '').replace(/^\.\.\//, '')}`)
+    : 'https://mtec.cl/brand_assets/og-image.png';
+
+  document.title = title;
+  setMeta('canonical', url);
+  setMeta('og:type', 'article');
+  setMeta('og:title', title);
+  setMeta('og:description', desc);
+  setMeta('og:url', url);
+  setMeta('og:image', image);
+  setMeta('og:image:alt', `${s.titulo} — MTEC`);
+  setMeta('twitter:title', title);
+  setMeta('twitter:description', desc);
+  setMeta('twitter:image', image);
+
+  // Update the description meta (not data-meta — the static one)
+  const descEl = document.querySelector('meta[name="description"]');
+  if (descEl) descEl.setAttribute('content', desc);
+
+  // JSON-LD: Service + BreadcrumbList. Inject (or replace) one script tag
+  // each so crawlers can parse rich snippets for this specific service.
+  injectJsonLd('service', {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: s.titulo,
+    description: desc,
+    url,
+    image,
+    serviceType: s.eyebrow || 'Servicio industrial',
+    provider: {
+      '@type': 'Organization',
+      name: 'MTEC',
+      url: 'https://mtec.cl/',
+    },
+    areaServed: { '@type': 'Country', name: 'Chile' },
+  });
+  injectJsonLd('breadcrumb', {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://mtec.cl/' },
+      { '@type': 'ListItem', position: 2, name: 'Qué Hacemos', item: 'https://mtec.cl/que-hacemos' },
+      { '@type': 'ListItem', position: 3, name: s.titulo, item: url },
+    ],
+  });
+}
+
+function injectJsonLd(slot, data) {
+  const id = `jsonld-${slot}`;
+  let el = document.getElementById(id);
+  if (!el) {
+    el = document.createElement('script');
+    el.type = 'application/ld+json';
+    el.id = id;
+    document.head.appendChild(el);
+  }
+  el.textContent = JSON.stringify(data);
+}
+
 function renderHero(s) {
-  document.title = `${s.titulo} — MTEC`;
+  applySeoMeta(s);
   setText('breadcrumb-name', s.titulo);
   setText('eyebrow', s.eyebrow || '');
   setText('titulo', s.titulo);

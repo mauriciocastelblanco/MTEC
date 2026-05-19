@@ -1,0 +1,9 @@
+# robots.txt — MTEC
+# https://mtec.cl
+
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /partials/
+
+Sitemap: https://mtec.cl/sitemap.xml
