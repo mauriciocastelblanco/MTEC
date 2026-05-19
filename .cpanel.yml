@@ -1,0 +1,5 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/mtec8159/public_html/
+    - /usr/bin/rsync -av --delete --exclude='.git/' --exclude='.github/' --exclude='.gitignore' --exclude='.cpanel.yml' --exclude='.env*' --exclude='.mcp.json' --exclude='node_modules/' --exclude='.claude/' --exclude='temporary screenshots/' --exclude='docs/' --exclude='supabase/' --exclude='Propuesta 1/' --exclude='propuesta temporal/' --exclude='MTEC_Template.pptx' --exclude='serve.mjs' --exclude='screenshot*.mjs' --exclude='generate_pdf.mjs' --exclude='generate_pptx.js' --exclude='package.json' --exclude='package-lock.json' --exclude='vercel.json' --exclude='*.md' ./ $DEPLOYPATH
