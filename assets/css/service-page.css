@@ -176,19 +176,23 @@
   text-transform: uppercase;
   font-size: 11px;
 }
-/* Partner logo — the focal piece of the alliance card. Constrained
-   max-height/width keeps wildly different logo aspect ratios tidy.
-   The brightness(0)+invert(1) filter forces any logo to a clean white
-   silhouette so every partner brand reads consistently on the dark
-   callout. Requires logos uploaded as PNG with transparent background. */
+/* Partner logo — integrated into the dark callout in MTEC's monochrome
+   palette. The brightness(0)+invert(1) filter renders any partner logo
+   as a clean white silhouette so it sits in the same visual universe
+   as the surrounding chrome (eyebrow, kicker, etc.). A fixed external
+   box + object-fit:contain keeps every partner logo at the same visual
+   size regardless of its source aspect ratio.
+   Requires logos uploaded as PNG with transparent background. */
 .product-callout-logo {
   display: block;
-  max-height: 42px;
-  max-width: 220px;
-  width: auto; height: auto;
+  box-sizing: border-box;
+  height: 56px;
+  width: 200px;
+  max-width: 100%;
+  object-fit: contain;
   opacity: 0.95;
-  position: relative; z-index: 1;
   filter: brightness(0) invert(1);
+  position: relative; z-index: 1;
 }
 
 /* ── HERO IMAGE STAGE — atmospheric halo behind the card ── */
@@ -544,15 +548,93 @@
   .cert-grid { grid-template-columns: 1fr; }
 }
 .cert-badges {
-  display: flex; flex-wrap: wrap; gap: 16px;
+  display: flex; flex-wrap: wrap; gap: 20px;
+  align-items: flex-start;
+}
+
+/* Each standard (API/ASME/ISO) is its own vertical card: logo on top,
+   then a stack of its specific normas underneath. The badge tile keeps
+   its 110x110 white-chip styling; norms hang below as a tight list. */
+.cert-stack-card {
+  display: flex; flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+  width: 160px;
+}
+.cert-stack-card .cert-badge--in-stack {
+  align-self: center;
+}
+.cert-stack-norms {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 12px 0 0;
+  border-top: 1px solid rgba(178,190,201,0.22);
+  display: flex; flex-direction: column;
+  gap: 6px;
+}
+.cert-stack-norms li {
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+.cert-stack-norm {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 500;
+  letter-spacing: 0.02em;
+  color: rgba(255,255,255,0.78);
+  padding: 4px 0;
+  line-height: 1.35;
+  text-align: left;
+  width: 100%;
+}
+.cert-stack-norm--link {
+  color: rgba(255,255,255,0.92);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.2s, transform 0.25s cubic-bezier(.22,1,.36,1);
+  position: relative;
+  padding-bottom: 5px;
+}
+.cert-stack-norm--link::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 100%; height: 1px;
+  background: rgba(178,190,201,0.55);
+  transform: scaleX(0.16);
+  transform-origin: left center;
+  transition: transform 0.45s cubic-bezier(.2,.85,.25,1);
+}
+.cert-stack-norm--link:hover { color: #fff; }
+.cert-stack-norm--link:hover::after { transform: scaleX(1); }
+.cert-stack-norm--link:focus-visible {
+  outline: 2px solid var(--acero-light, #2B82B9);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+.cert-stack-norm-arrow {
+  flex: 0 0 12px;
+  margin-left: auto;
+  color: rgba(178,215,255,0.78);
+  transition: transform 0.3s cubic-bezier(.2,.85,.25,1);
+}
+.cert-stack-norm--link:hover .cert-stack-norm-arrow {
+  transform: translateX(3px);
+  color: #fff;
+}
+@media (max-width: 540px) {
+  .cert-stack-card { width: 100%; flex-direction: row; gap: 18px; align-items: flex-start; }
+  .cert-stack-card .cert-badge--in-stack { align-self: flex-start; flex-shrink: 0; }
+  .cert-stack-norms { border-top: none; padding-top: 0; flex: 1; }
 }
 .cert-badge {
   display: inline-flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 4px;
   width: 110px; height: 110px;
   border: 1px solid rgba(178,190,201,0.35);
-  background: linear-gradient(180deg, rgba(178,190,201,0.16) 0%, rgba(178,190,201,0.06) 100%);
+  background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(11,53,84,0.30) 100%);
   transition: border-color 0.3s, transform 0.4s cubic-bezier(.22,1,.36,1);
+  overflow: hidden;
 }
 .cert-badge:hover {
   border-color: var(--platino);
@@ -568,12 +650,18 @@
   letter-spacing: 0.22em; text-transform: uppercase;
   color: rgba(178,215,255,0.80);
 }
+/* Logo is rendered in monochrome white so every cert mark integrates
+   into the MTEC palette over the dark page. A fixed inner square keeps
+   every logo at the same visual area regardless of its aspect ratio.
+   Requires PNG with transparent background. */
 .cert-badge-logo {
-  max-width: 72%;
-  max-height: 60%;
-  width: auto; height: auto;
-  filter: brightness(0) invert(1);
+  display: block;
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  padding: 4px;
   opacity: 0.95;
+  filter: brightness(0) invert(1);
 }
 .cert-norms {
   display: flex; flex-wrap: wrap; gap: 8px;
@@ -741,4 +829,6 @@
   .geo-card { padding: 22px 16px; }
   .cert-badge { width: 92px; height: 92px; }
   .cert-badge-name { font-size: 24px; }
+  .cert-badge-logo { width: 68px; height: 68px; }
+  .product-callout-logo { height: 48px; width: 180px; }
 }

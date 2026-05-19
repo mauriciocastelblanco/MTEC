@@ -288,10 +288,35 @@ const repeaterRenderers = {
       </div>
     `;
   },
-  badges(item = { nombre: '', imagen: '' }) {
-    const hasLogo = !!item.imagen;
+  // A single norma row inside a badge — text input + optional per-norm
+  // certificate PDF. The pdf URL/name live in hidden inputs scoped to
+  // the row so they read back via readBadges() without global IDs.
+  normaRow(item = { texto: '', certificadoPdf: null }) {
+    const pdf = item.certificadoPdf || {};
+    const hasPdf = !!pdf.dataUrl;
     return `
-      <div class="repeater-item">
+      <div class="norm-row" data-norm-row>
+        <input type="text" class="norm-row-text" data-rk-n="texto" value="${escapeAttr(item.texto)}" placeholder="ASME PCC-2 Art. 4.1">
+        <label class="norm-row-pdf ${hasPdf ? 'has-pdf' : ''}" data-norm-pdf>
+          <input type="file" accept="application/pdf" data-norm-pdf-input hidden>
+          <input type="hidden" data-rk-n="pdfUrl" value="${escapeAttr(pdf.dataUrl || '')}">
+          <input type="hidden" data-rk-n="pdfName" value="${escapeAttr(pdf.nombre || '')}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <span class="norm-row-pdf-label" data-norm-pdf-label>${hasPdf ? escapeAttr(pdf.nombre || 'Certificado.pdf') : 'Subir certificado'}</span>
+          ${hasPdf ? `<button type="button" class="norm-row-pdf-clear" data-norm-pdf-clear aria-label="Quitar PDF">×</button>` : ''}
+        </label>
+        <button type="button" class="norm-remove" data-norm-remove aria-label="Eliminar norma">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+    `;
+  },
+  badges(item = { nombre: '', imagen: '', normas: [] }) {
+    const hasLogo = !!item.imagen;
+    const normas = Array.isArray(item.normas) ? item.normas : [];
+    const normasHtml = normas.map(n => repeaterRenderers.normaRow(n)).join('');
+    return `
+      <div class="repeater-item" data-badge-item>
         <div class="repeater-drag" aria-hidden="true">⋮⋮</div>
         <div class="repeater-fields">
           <div class="field-row">
@@ -309,27 +334,20 @@ const repeaterRenderers = {
                   <input type="hidden" data-rk="imagen" value="${escapeAttr(item.imagen)}">
                 </div>
               </div>
-              <span class="hint">PNG con fondo transparente. Se convierte a silueta blanca.</span>
+              <span class="hint"><strong>PNG con fondo realmente transparente</strong> (sin círculo ni recuadro blanco). El sitio lo convierte a silueta blanca para integrarlo a la paleta MTEC. Si el PNG tiene fondo blanco, se verá como un cuadrado blanco sólido.</span>
             </div>
           </div>
-        </div>
-        <button type="button" class="repeater-remove" aria-label="Eliminar">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
-        </button>
-      </div>
-    `;
-  },
-  normas(item = { texto: '' }) {
-    return `
-      <div class="repeater-item">
-        <div class="repeater-drag" aria-hidden="true">⋮⋮</div>
-        <div class="repeater-fields">
-          <div class="field">
-            <label>Norma</label>
-            <input type="text" data-rk="texto" value="${escapeAttr(item.texto)}" placeholder="ASME PCC-2 Art. 4.1">
+
+          <div class="norm-sublist">
+            <div class="norm-sublist-head">
+              <label>Normas específicas</label>
+              <span class="hint">Cada norma puede llevar un PDF con el certificado.</span>
+            </div>
+            <div class="norm-rows" data-norm-rows>${normasHtml}</div>
+            <button type="button" class="norm-add" data-norm-add>+ Agregar norma</button>
           </div>
         </div>
-        <button type="button" class="repeater-remove" aria-label="Eliminar">
+        <button type="button" class="repeater-remove" aria-label="Eliminar estándar">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
         </button>
       </div>
@@ -471,11 +489,103 @@ function syncRepeaterAddLimits() {
 initRepeater('repeaterBeneficios', 'beneficios');
 initRepeater('repeaterGeometrias', 'geometrias');
 initRepeater('repeaterBadges', 'badges');
-initRepeater('repeaterNormas', 'normas');
 initRepeater('repeaterGaleria', 'galeria');
 initRepeater('repeaterKpis', 'kpis');
 initRepeaterAddButtons();
 syncRepeaterAddLimits();
+
+// ── Nested norma rows inside each badge ───────────────
+// Each badge has its own list of normas (data-norm-rows). Click
+// handlers for add/remove and PDF upload are delegated from the
+// outer #repeaterBadges container so dynamically added rows just
+// work without re-binding.
+function initNormaRowsInsideBadges() {
+  const badges = document.getElementById('repeaterBadges');
+  if (!badges) return;
+
+  badges.addEventListener('click', e => {
+    // Add a new norma row to the badge whose button was clicked.
+    const addBtn = e.target.closest('[data-norm-add]');
+    if (addBtn) {
+      const rows = addBtn.parentElement.querySelector('[data-norm-rows]');
+      if (rows) {
+        rows.insertAdjacentHTML('beforeend', repeaterRenderers.normaRow());
+        markDirty();
+      }
+      return;
+    }
+    // Remove a norma row.
+    if (e.target.closest('[data-norm-remove]')) {
+      const row = e.target.closest('.norm-row');
+      if (row) {
+        row.remove();
+        markDirty();
+      }
+      return;
+    }
+    // Clear the per-norm PDF without removing the row.
+    if (e.target.closest('[data-norm-pdf-clear]')) {
+      e.preventDefault();
+      e.stopPropagation();
+      const row = e.target.closest('.norm-row');
+      if (row) {
+        const url = row.querySelector('[data-rk-n="pdfUrl"]');
+        const name = row.querySelector('[data-rk-n="pdfName"]');
+        const label = row.querySelector('[data-norm-pdf-label]');
+        const wrap = row.querySelector('[data-norm-pdf]');
+        const clearBtn = row.querySelector('[data-norm-pdf-clear]');
+        if (url) url.value = '';
+        if (name) name.value = '';
+        if (label) label.textContent = 'Subir certificado';
+        if (wrap) wrap.classList.remove('has-pdf');
+        if (clearBtn) clearBtn.remove();
+        markDirty();
+      }
+      return;
+    }
+  });
+
+  // PDF upload per norma — uploads to certificacion/normas/* and writes
+  // the public URL into the row's hidden inputs.
+  badges.addEventListener('change', async e => {
+    const input = e.target.closest('input[type="file"][data-norm-pdf-input]');
+    if (!input) return;
+    const file = input.files[0];
+    if (!file) return;
+    const row = input.closest('.norm-row');
+    if (!row) return;
+    const wrap = row.querySelector('[data-norm-pdf]');
+    const label = row.querySelector('[data-norm-pdf-label]');
+    const urlField = row.querySelector('[data-rk-n="pdfUrl"]');
+    const nameField = row.querySelector('[data-rk-n="pdfName"]');
+
+    const prevText = label?.textContent;
+    if (label) label.textContent = 'Subiendo…';
+    input.disabled = true;
+    markDirty();
+
+    try {
+      const url = await uploadAsset(file, 'certificacion/normas');
+      if (urlField) urlField.value = url;
+      if (nameField) nameField.value = file.name;
+      if (label) label.textContent = file.name;
+      if (wrap) {
+        wrap.classList.add('has-pdf');
+        if (!wrap.querySelector('[data-norm-pdf-clear]')) {
+          wrap.insertAdjacentHTML('beforeend', `<button type="button" class="norm-row-pdf-clear" data-norm-pdf-clear aria-label="Quitar PDF">×</button>`);
+        }
+      }
+    } catch (err) {
+      console.error('[upload norma pdf]', err);
+      if (label) label.textContent = prevText || 'Error al subir';
+    } finally {
+      input.disabled = false;
+      input.value = '';
+    }
+  });
+}
+
+initNormaRowsInsideBadges();
 
 function initPdfUploads() {
   document.querySelectorAll('input[type="file"][data-pdf-input]').forEach(input => {
@@ -620,6 +730,28 @@ function readPdf(key) {
   return { nombre: name, dataUrl: nameEl.dataset.url || '' };
 }
 
+// Read badges + their nested normas + per-norm certificate PDFs.
+// Returns the new shape: [{ nombre, imagen, normas: [{ texto, certificadoPdf|null }] }].
+function readBadges() {
+  const container = document.getElementById('repeaterBadges');
+  if (!container) return [];
+  return Array.from(container.querySelectorAll(':scope > .repeater-item')).map(item => {
+    const nombre = item.querySelector(':scope > .repeater-fields [data-rk="nombre"]')?.value.trim() ?? '';
+    const imagen = item.querySelector(':scope > .repeater-fields [data-rk="imagen"]')?.value.trim() ?? '';
+    const rows = Array.from(item.querySelectorAll('[data-norm-rows] > .norm-row'));
+    const normas = rows.map(row => {
+      const texto = row.querySelector('[data-rk-n="texto"]')?.value.trim() ?? '';
+      const pdfUrl = row.querySelector('[data-rk-n="pdfUrl"]')?.value.trim() ?? '';
+      const pdfName = row.querySelector('[data-rk-n="pdfName"]')?.value.trim() ?? '';
+      return {
+        texto,
+        certificadoPdf: pdfUrl ? { nombre: pdfName || 'Certificado.pdf', dataUrl: pdfUrl } : null,
+      };
+    }).filter(n => n.texto || n.certificadoPdf);
+    return { nombre, imagen, normas };
+  });
+}
+
 function collectForm() {
   return {
     slug: readVal('f-slug'),
@@ -643,10 +775,8 @@ function collectForm() {
       items: readRepeater('repeaterGeometrias', ['nombre', 'icono'])
     },
     certificacion: {
-      badges: readRepeater('repeaterBadges', ['nombre', 'imagen']),
-      normas: readRepeater('repeaterNormas', ['texto']),
-      fichaTecnicaPdf: readPdf('fichaTecnicaPdf'),
-      certificadosPdf: readPdf('certificadosPdf')
+      badges: readBadges(),
+      fichaTecnicaPdf: readPdf('fichaTecnicaPdf')
     },
     galeria: readGaleriaRepeater()
   };
@@ -787,10 +917,25 @@ async function loadExistingIfAny() {
   setVal('f-geo-desc', s.geometrias?.descripcion);
   populateRepeater('repeaterGeometrias', 'geometrias', s.geometrias?.items);
 
-  populateRepeater('repeaterBadges', 'badges', s.certificacion?.badges);
-  populateRepeater('repeaterNormas', 'normas', s.certificacion?.normas);
+  // Badges are loaded with their nested normas. Legacy services stored
+  // normas as a flat array alongside `badges` and a global certificadosPdf;
+  // fold those into the first badge so the form shows everything in one
+  // place — the user can then redistribute manually.
+  const certBadges = Array.isArray(s.certificacion?.badges)
+    ? s.certificacion.badges.map(b => ({
+        nombre: b.nombre || '',
+        imagen: b.imagen || '',
+        normas: Array.isArray(b.normas)
+          ? b.normas.map(n => ({ texto: n.texto || '', certificadoPdf: n.certificadoPdf || null }))
+          : [],
+      }))
+    : [];
+  const legacyNormas = Array.isArray(s.certificacion?.normas) ? s.certificacion.normas : [];
+  if (legacyNormas.length > 0 && certBadges.length > 0 && certBadges[0].normas.length === 0) {
+    certBadges[0].normas = legacyNormas.map(n => ({ texto: n.texto || '', certificadoPdf: null }));
+  }
+  populateRepeater('repeaterBadges', 'badges', certBadges);
   setPdf('fichaTecnicaPdf', s.certificacion?.fichaTecnicaPdf);
-  setPdf('certificadosPdf', s.certificacion?.certificadosPdf);
 
   populateRepeater('repeaterGaleria', 'galeria', s.galeria);
 

@@ -292,41 +292,63 @@ function initGeoCarousel(track, pageCount) {
   update();
 }
 
+// Normalize the certificacion payload into the new shape:
+//   badges: [{ nombre, imagen, normas: [{ texto, certificadoPdf }] }]
+// Legacy records may have a flat `normas` array alongside `badges` and a
+// global `certificadosPdf`. We fold the flat normas into the first badge
+// (preserving order) so old data renders without manual intervention.
+function normalizeCertificacion(cert) {
+  const badges = Array.isArray(cert.badges)
+    ? cert.badges.map(b => ({
+        nombre: b.nombre || '',
+        imagen: b.imagen || '',
+        sub: b.sub || '',
+        normas: Array.isArray(b.normas)
+          ? b.normas.map(n => ({
+              texto: n.texto || '',
+              certificadoPdf: n.certificadoPdf || null,
+            }))
+          : [],
+      }))
+    : [];
+
+  const legacyNormas = Array.isArray(cert.normas) ? cert.normas : [];
+  if (legacyNormas.length > 0 && badges.length > 0 && badges[0].normas.length === 0) {
+    badges[0].normas = legacyNormas.map(n => ({ texto: n.texto || '', certificadoPdf: null }));
+  }
+  return badges;
+}
+
 function renderCertificacion(s) {
   const cert = s.certificacion || {};
-  const badges = Array.isArray(cert.badges) ? cert.badges : [];
-  const normas = Array.isArray(cert.normas) ? cert.normas : [];
-  const ficha = cert.fichaTecnicaPdf;
-  const certPdf = cert.certificadosPdf;
-  if (badges.length === 0 && normas.length === 0 && !ficha && !certPdf) {
-    return showSection('certificacion', false);
-  }
+  const badges = normalizeCertificacion(cert);
+  if (badges.length === 0) return showSection('certificacion', false);
 
-  const badgesEl = document.querySelector('[data-slot="badges-list"]');
-  badgesEl.innerHTML = badges.map((b, i) => {
-    const inner = b.imagen
+  const ARROW = '<svg class="cert-stack-norm-arrow" width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  const stackEl = document.querySelector('[data-slot="badges-list"]');
+  stackEl.innerHTML = badges.map((b, i) => {
+    const head = b.imagen
       ? `<img class="cert-badge-logo" src="${escapeHtml(b.imagen)}" alt="${escapeHtml(b.nombre || '')}">`
       : `<span class="cert-badge-name">${escapeHtml(b.nombre)}</span>${b.sub ? `<span class="cert-badge-sub">${escapeHtml(b.sub)}</span>` : ''}`;
+
+    const normasHtml = b.normas.length > 0
+      ? `<ul class="cert-stack-norms">${b.normas.map(n => {
+          const text = escapeHtml(n.texto || '');
+          const url = n.certificadoPdf?.dataUrl;
+          return url
+            ? `<li><a class="cert-stack-norm cert-stack-norm--link" href="${escapeHtml(url)}" target="_blank" rel="noopener">${text}${ARROW}</a></li>`
+            : `<li><span class="cert-stack-norm">${text}</span></li>`;
+        }).join('')}</ul>`
+      : '';
+
     return `
-      <div class="cert-badge reveal-scale" data-delay="${i * 100}">
-        ${inner}
-      </div>
+      <article class="cert-stack-card reveal-scale" data-delay="${i * 100}">
+        <div class="cert-badge cert-badge--in-stack">${head}</div>
+        ${normasHtml}
+      </article>
     `;
   }).join('');
-
-  const normasEl = document.querySelector('[data-slot="normas-list"]');
-  normasEl.innerHTML = normas.map(n => `<span class="cert-norm">${escapeHtml(n.texto)}</span>`).join('');
-
-  // Note: ficha técnica is rendered as the primary CTA in the hero,
-  // so only certificados appears here as a secondary link.
-  const linksEl = document.querySelector('[data-slot="doc-links"]');
-  const ARROW = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  const linkParts = [];
-  if (certPdf?.dataUrl) {
-    linkParts.push(`<a href="${escapeHtml(certPdf.dataUrl)}" class="cert-doc" target="_blank" rel="noopener">Ver certificados${ARROW}</a>`);
-  }
-  linksEl.innerHTML = linkParts.join('');
-  linksEl.hidden = linkParts.length === 0;
 
   showSection('certificacion', true);
 }
