@@ -20,6 +20,11 @@
 <meta name="twitter:title" content="MTEC — Donde la falla no es una opción">
 <meta name="twitter:description" content="Ingeniería chilena en integridad mecánica. Rehabilitación de tuberías y activos críticos sin paro de operación.">
 <meta name="twitter:image" content="https://mtec.cl/brand_assets/og-image.png">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="mask-icon" href="/favicon.svg" color="#1B6CA8">
+<meta name="theme-color" content="#1B6CA8">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,500;0,600;0,700;1,300&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -401,6 +406,90 @@ img { max-width: 100%; display: block; }
   position: relative; z-index: 1;
 }
 @media (max-width: 900px) { .s-quienes-inner { grid-template-columns: 1fr; gap: 48px; } }
+
+/* ══════════════════════════════════════
+   LOGO MARQUEE — auto-scrolling brand strip
+   Lives in the transition between the hero and Quiénes Somos.
+   Placeholder marks render monochrome white; the brightness(0) invert(1)
+   filter normalises ANY future colour logo to uniform white so the strip
+   stays cohesive on the acero canvas. Swap the inline SVGs for <img> later.
+══════════════════════════════════════ */
+.logo-collab {
+  position: relative; z-index: 1;
+  margin: 0 0 100px;
+}
+/* Label is hidden by default and revealed, centred over the strip, only
+   while the cursor is over the carousel — the logos blur back behind it. */
+.logo-collab-label {
+  position: absolute; inset: 0; z-index: 2;
+  display: flex; align-items: center; justify-content: center; gap: 16px;
+  margin: 0;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.28em;
+  text-transform: uppercase; color: rgba(255,255,255,0.95);
+  opacity: 0; transform: translateY(4px);
+  transition: opacity 0.45s ease, transform 0.45s ease;
+  pointer-events: none;
+}
+.logo-collab-label::before,
+.logo-collab-label::after {
+  content: ""; width: 34px; height: 1px;
+  background: rgba(255,255,255,0.50);
+}
+.logo-collab:hover .logo-collab-label,
+.logo-collab:focus-within .logo-collab-label {
+  opacity: 1; transform: translateY(0);
+}
+.logo-strip {
+  position: relative;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 13%, #000 87%, transparent 100%);
+          mask-image: linear-gradient(90deg, transparent 0, #000 13%, #000 87%, transparent 100%);
+}
+.logo-strip-track {
+  display: flex; width: max-content; align-items: center;
+  gap: clamp(56px, 8vw, 132px);
+  padding-left: clamp(56px, 8vw, 132px);
+  animation: logoScroll 34s linear infinite;
+  will-change: transform;
+  transition: filter 0.45s ease;
+}
+/* Hover the carousel → pause, blur + dim the logos, surface the label. */
+.logo-collab:hover .logo-strip-track,
+.logo-collab:focus-within .logo-strip-track {
+  animation-play-state: paused;
+  filter: blur(4px);
+}
+.logo-strip-item {
+  flex: 0 0 auto;
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 44px;
+  color: #EDF1F5;
+  opacity: 0.52;
+  filter: brightness(0) invert(1);   /* uniform white, any source colour */
+  transition: opacity 0.45s ease;
+}
+.logo-collab:hover .logo-strip-item,
+.logo-collab:focus-within .logo-strip-item { opacity: 0.3; }
+.logo-strip-item svg, .logo-strip-item img { height: 100%; width: auto; display: block; }
+@keyframes logoScroll { to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) {
+  .logo-strip-track { animation: none; }
+}
+/* Touch devices have no hover — show the label statically above the strip. */
+@media (hover: none) {
+  .logo-collab-label {
+    position: static; opacity: 1; transform: none;
+    margin: 0 0 26px; color: rgba(255,255,255,0.60);
+  }
+  .logo-collab-label::before, .logo-collab-label::after { background: rgba(255,255,255,0.30); }
+}
+@media (max-width: 720px) {
+  .logo-collab { margin-bottom: 56px; }
+  .logo-collab-label { font-size: 10px; letter-spacing: 0.22em; }
+  .logo-collab-label::before, .logo-collab-label::after { width: 24px; }
+  .logo-strip-track { gap: 48px; padding-left: 48px; animation-duration: 24s; }
+  .logo-strip-item { height: 34px; }
+}
 
 /* ══════════════════════════════════════
    QUÉ HACEMOS — CAPÍTULO 2
@@ -1408,6 +1497,26 @@ img { max-width: 100%; display: block; }
           vector-effect="non-scaling-stroke"/>
   </svg>
   <div class="s-quienes-glow"></div>
+
+  <!-- ══ COLABORADORES — logo marquee ══ -->
+  <div class="logo-collab">
+    <p class="logo-collab-label">Colaboradores</p>
+    <div class="logo-strip">
+      <div class="logo-strip-track">
+        <!-- Set A -->
+        <span class="logo-strip-item"><img src="brand_assets/colaboradores/enap.png" alt="ENAP" width="413" height="118" loading="lazy" decoding="async"></span>
+        <span class="logo-strip-item"><img src="brand_assets/colaboradores/andean-integrity.png" alt="Andean Integrity" width="433" height="132" loading="lazy" decoding="async"></span>
+        <span class="logo-strip-item"><img src="brand_assets/colaboradores/mutual.png" alt="Mutual de Seguridad" width="431" height="117" loading="lazy" decoding="async"></span>
+        <span class="logo-strip-item"><img src="brand_assets/colaboradores/erres.png" alt="ERRES" width="257" height="62" loading="lazy" decoding="async"></span>
+        <!-- Set B (duplicate for seamless loop) -->
+        <span class="logo-strip-item" aria-hidden="true"><img src="brand_assets/colaboradores/enap.png" alt="" width="413" height="118" loading="lazy" decoding="async"></span>
+        <span class="logo-strip-item" aria-hidden="true"><img src="brand_assets/colaboradores/andean-integrity.png" alt="" width="433" height="132" loading="lazy" decoding="async"></span>
+        <span class="logo-strip-item" aria-hidden="true"><img src="brand_assets/colaboradores/mutual.png" alt="" width="431" height="117" loading="lazy" decoding="async"></span>
+        <span class="logo-strip-item" aria-hidden="true"><img src="brand_assets/colaboradores/erres.png" alt="" width="257" height="62" loading="lazy" decoding="async"></span>
+      </div>
+    </div>
+  </div>
+
   <div class="s-quienes-inner">
 
     <div>
@@ -1416,7 +1525,7 @@ img { max-width: 100%; display: block; }
         Empresa fundada en el año 2014, con sólida experiencia en el desarrollo de diversas líneas de negocio dentro del ámbito del mantenimiento industrial.
       </p>
       <p class="s-body s-body--justify blur-reveal" data-delay="260">
-        Su enfoque está orientado a potenciar oportunidades en servicios industriales especializados, soluciones tecnológicas, comercialización de equipamiento y representación de empresas nacionales e internacionales.
+        Su enfoque es potenciar oportunidades en servicios industriales especializados, soluciones tecnológicas, comercialización de equipamiento y representación de empresas nacionales e internacionales.
       </p>
       <p class="s-body s-body--justify blur-reveal" data-delay="320">
         El portafolio de las líneas de negocio tiene como propósito entregar una respuesta integral, flexible y de alto valor agregado, alineada con las necesidades actuales y futuras de nuestros clientes, contribuyendo a la eficiencia operativa, la continuidad de los procesos productivos y la innovación industrial.

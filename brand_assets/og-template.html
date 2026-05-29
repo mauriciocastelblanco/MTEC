@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;1,300&family=Inter:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { background: #0D1B2E; }
+  .og {
+    position: relative;
+    width: 1200px; height: 630px;
+    overflow: hidden;
+    font-family: "Inter", sans-serif;
+    color: #EDF1F5;
+    background:
+      radial-gradient(120% 95% at 14% 6%, rgba(255,255,255,0.10), transparent 52%),
+      linear-gradient(155deg, #2280C2 0%, #1B6CA8 46%, #134C72 100%);
+  }
+  /* brushed anisotropic grain */
+  .og::before {
+    content: ""; position: absolute; inset: 0; z-index: 1;
+    background-image:
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='600'><filter id='b'><feTurbulence type='fractalNoise' baseFrequency='0.012 5' numOctaves='2' seed='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.55 0'/></filter><rect width='100%25' height='100%25' filter='url(%23b)'/></svg>"),
+      repeating-linear-gradient(90deg, rgba(178,190,201,0) 0px, rgba(178,190,201,0.03) 1px, rgba(178,190,201,0) 2px, rgba(255,255,255,0.022) 3px, rgba(178,190,201,0) 4px);
+    background-blend-mode: overlay, normal;
+    mix-blend-mode: overlay; opacity: 0.7;
+  }
+  /* specular platino streak + corner glow */
+  .og::after {
+    content: ""; position: absolute; inset: 0; z-index: 1;
+    background:
+      linear-gradient(115deg, transparent 28%, rgba(178,190,201,0.06) 46%, rgba(224,232,240,0.16) 50%, rgba(178,190,201,0.05) 54%, transparent 70%),
+      radial-gradient(60% 90% at 100% 100%, rgba(13,27,46,0.55) 0%, transparent 60%);
+    mix-blend-mode: screen;
+  }
+  .og-inner {
+    position: relative; z-index: 2;
+    height: 100%;
+    padding: 60px 80px 64px;
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  /* top row */
+  .og-top { display: flex; align-items: center; justify-content: space-between; }
+  .og-brand { display: flex; align-items: center; gap: 18px; }
+  .og-mark { height: 58px; width: auto; display: block; }
+  .og-word {
+    font-family: "Barlow Condensed", sans-serif;
+    font-weight: 700; font-size: 46px; letter-spacing: 0.02em;
+    line-height: 1; color: #fff;
+  }
+  .og-url {
+    font-size: 13px; font-weight: 600; letter-spacing: 0.24em;
+    text-transform: uppercase; color: rgba(255,255,255,0.62);
+    display: inline-flex; align-items: center; gap: 9px;
+  }
+  .og-url::before {
+    content: ""; width: 7px; height: 7px; border-radius: 50%;
+    background: #fff; box-shadow: 0 0 12px rgba(255,255,255,0.8);
+  }
+  /* middle */
+  .og-mid { margin-top: auto; }
+  .og-eyebrow {
+    font-size: 15px; font-weight: 600; letter-spacing: 0.26em;
+    text-transform: uppercase; color: rgba(178,190,201,0.92);
+    margin-bottom: 22px;
+    display: inline-flex; align-items: center; gap: 16px;
+  }
+  .og-eyebrow::before {
+    content: ""; width: 40px; height: 2px; background: rgba(255,255,255,0.85);
+  }
+  .og-headline {
+    font-family: "Barlow Condensed", sans-serif;
+    font-weight: 700; font-size: 92px; line-height: 0.92;
+    letter-spacing: -0.02em; color: #fff;
+  }
+  .og-headline em {
+    display: block; font-style: italic; font-weight: 300;
+    color: rgba(255,255,255,0.92);
+  }
+  /* bottom badges */
+  .og-bottom {
+    margin-top: 40px; padding-top: 26px;
+    border-top: 1px solid rgba(255,255,255,0.16);
+    display: flex; align-items: center; gap: 28px;
+  }
+  .og-badge {
+    font-size: 16px; font-weight: 600; letter-spacing: 0.06em;
+    color: rgba(255,255,255,0.80);
+  }
+  .og-badge-sep { color: rgba(255,255,255,0.30); font-size: 13px; }
+</style>
+</head>
+<body>
+  <div class="og">
+    <div class="og-inner">
+      <div class="og-top">
+        <div class="og-brand">
+          <svg class="og-mark" viewBox="150 348 356 384" fill="#fff" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <polygon points="390.5 579.14 327.92 615.27 327.92 553.44 501.09 453.46 501.09 515.28 438.51 551.41 390.5 579.14"/>
+            <polygon points="390.5 690.48 438.51 662.76 438.51 551.41 390.5 579.14 390.5 690.48"/>
+            <polygon points="199.2 479.12 154.75 453.46 154.75 626.63 199.2 652.3 199.2 483.95 199.2 483.95 199.2 479.12"/>
+            <polygon points="282.93 527.46 280.2 525.89 241.33 566.39 202.46 481 199.2 479.12 199.2 483.94 199.2 483.95 199.2 548.8 240.52 635.82 241.45 636.36 282.93 596.78 282.93 527.46"/>
+            <polygon points="327.92 553.44 282.93 527.45 282.93 700.62 327.92 726.61 327.92 558.26 327.92 558.26 327.92 553.44"/>
+            <g opacity="0.28">
+              <polygon points="456.1 427.38 456.1 427.39 453.38 425.82 414.51 466.32 375.64 380.94 372.38 379.06 372.38 379.06 327.92 353.39 327.92 526.56 372.38 552.23 372.38 448.73 413.69 535.76 414.62 536.29 456.1 496.71 456.1 600.55 501.09 626.54 501.09 458.19 501.09 458.19 501.09 453.37 456.1 427.38"/>
+              <polygon points="154.75 515.2 217.33 479.07 217.33 590.41 265.34 562.69 265.34 451.35 327.92 415.22 327.92 353.39 154.75 453.37 154.75 515.2"/>
+            </g>
+          </svg>
+          <span class="og-word">MTEC</span>
+        </div>
+        <span class="og-url">mtec.cl</span>
+      </div>
+
+      <div class="og-mid">
+        <span class="og-eyebrow">Ingeniería en integridad mecánica</span>
+        <h1 class="og-headline">Donde la falla<em>no es una opción.</em></h1>
+        <div class="og-bottom">
+          <span class="og-badge">ASME PCC-2</span>
+          <span class="og-badge-sep">●</span>
+          <span class="og-badge">ISO 24817</span>
+          <span class="og-badge-sep">●</span>
+          <span class="og-badge">API 570</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
