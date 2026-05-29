@@ -418,26 +418,17 @@ img { max-width: 100%; display: block; }
   position: relative; z-index: 1;
   margin: 0 0 100px;
 }
-/* Label is hidden by default and revealed, centred over the strip, only
-   while the cursor is over the carousel — the logos blur back behind it. */
+/* "Colaboradores" label — always visible, centred above the strip. */
 .logo-collab-label {
-  position: absolute; inset: 0; z-index: 2;
   display: flex; align-items: center; justify-content: center; gap: 16px;
-  margin: 0;
+  margin: 0 0 34px;
   font-size: 11px; font-weight: 600; letter-spacing: 0.28em;
-  text-transform: uppercase; color: rgba(255,255,255,0.95);
-  opacity: 0; transform: translateY(4px);
-  transition: opacity 0.45s ease, transform 0.45s ease;
-  pointer-events: none;
+  text-transform: uppercase; color: rgba(255,255,255,0.60);
 }
 .logo-collab-label::before,
 .logo-collab-label::after {
   content: ""; width: 34px; height: 1px;
-  background: rgba(255,255,255,0.50);
-}
-.logo-collab:hover .logo-collab-label,
-.logo-collab:focus-within .logo-collab-label {
-  opacity: 1; transform: translateY(0);
+  background: rgba(255,255,255,0.30);
 }
 .logo-strip {
   position: relative;
@@ -451,14 +442,9 @@ img { max-width: 100%; display: block; }
   padding-left: clamp(56px, 8vw, 132px);
   animation: logoScroll 34s linear infinite;
   will-change: transform;
-  transition: filter 0.45s ease;
 }
-/* Hover the carousel → pause, blur + dim the logos, surface the label. */
-.logo-collab:hover .logo-strip-track,
-.logo-collab:focus-within .logo-strip-track {
-  animation-play-state: paused;
-  filter: blur(4px);
-}
+.logo-strip:hover .logo-strip-track,
+.logo-strip:focus-within .logo-strip-track { animation-play-state: paused; }
 .logo-strip-item {
   flex: 0 0 auto;
   display: inline-flex; align-items: center; justify-content: center;
@@ -468,24 +454,14 @@ img { max-width: 100%; display: block; }
   filter: brightness(0) invert(1);   /* uniform white, any source colour */
   transition: opacity 0.45s ease;
 }
-.logo-collab:hover .logo-strip-item,
-.logo-collab:focus-within .logo-strip-item { opacity: 0.3; }
 .logo-strip-item svg, .logo-strip-item img { height: 100%; width: auto; display: block; }
 @keyframes logoScroll { to { transform: translateX(-50%); } }
 @media (prefers-reduced-motion: reduce) {
   .logo-strip-track { animation: none; }
 }
-/* Touch devices have no hover — show the label statically above the strip. */
-@media (hover: none) {
-  .logo-collab-label {
-    position: static; opacity: 1; transform: none;
-    margin: 0 0 26px; color: rgba(255,255,255,0.60);
-  }
-  .logo-collab-label::before, .logo-collab-label::after { background: rgba(255,255,255,0.30); }
-}
 @media (max-width: 720px) {
   .logo-collab { margin-bottom: 56px; }
-  .logo-collab-label { font-size: 10px; letter-spacing: 0.22em; }
+  .logo-collab-label { margin-bottom: 26px; font-size: 10px; letter-spacing: 0.22em; }
   .logo-collab-label::before, .logo-collab-label::after { width: 24px; }
   .logo-strip-track { gap: 48px; padding-left: 48px; animation-duration: 24s; }
   .logo-strip-item { height: 34px; }
