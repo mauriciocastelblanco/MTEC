@@ -1,5 +1,13 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/mtec8159/public_html/
-    - /usr/bin/rsync -av --delete --exclude='.git/' --exclude='.github/' --exclude='.gitignore' --exclude='.cpanel.yml' --exclude='.env*' --exclude='.mcp.json' --exclude='node_modules/' --exclude='.claude/' --exclude='temporary screenshots/' --exclude='docs/' --exclude='supabase/' --exclude='Propuesta 1/' --exclude='propuesta temporal/' --exclude='MTEC_Template.pptx' --exclude='serve.mjs' --exclude='screenshot*.mjs' --exclude='generate_pdf.mjs' --exclude='generate_pptx.js' --exclude='package.json' --exclude='package-lock.json' --exclude='vercel.json' --exclude='*.md' ./ $DEPLOYPATH
+    # This server has no rsync, so we deploy with tar.
+    # --no-overwrite-dir keeps public_html's own permissions intact,
+    # and the find/chmod steps normalise web permissions (dirs 755, files 644)
+    # which also prevents the "Server unable to read htaccess" 403.
+    - export DEPLOYPATH=/home/mtec8159/public_html
+    - tar -cf /tmp/mtec_deploy.tar --exclude='./.git' --exclude='./.github' --exclude='./.gitignore' --exclude='./.cpanel.yml' --exclude='./.env' --exclude='./.env.example' --exclude='./.mcp.json' --exclude='./node_modules' --exclude='./.claude' --exclude='./temporary screenshots' --exclude='./docs' --exclude='./supabase' --exclude='./Propuesta 1' --exclude='./propuesta temporal' --exclude='./MTEC_Template.pptx' --exclude='./serve.mjs' --exclude='./screenshot.mjs' --exclude='./generate_pdf.mjs' --exclude='./generate_pptx.js' --exclude='./package.json' --exclude='./package-lock.json' --exclude='./vercel.json' --exclude='*.md' .
+    - tar -xf /tmp/mtec_deploy.tar --no-overwrite-dir -C "$DEPLOYPATH"
+    - rm -f /tmp/mtec_deploy.tar
+    - find "$DEPLOYPATH" -type d -exec chmod 755 {} +
+    - find "$DEPLOYPATH" -type f -exec chmod 644 {} +
