@@ -92,9 +92,18 @@
         </div>
       </div>
       <div class="hero-image-stage reveal-x-r" data-delay="200" data-slot="hero-image-wrap" hidden>
-        <div class="hero-image-card">
-          <img data-slot="hero-image" alt="">
-          <span class="hero-image-veil" aria-hidden="true"></span>
+        <div class="hero-carousel" data-hero-carousel>
+          <div class="hero-image-card">
+            <div class="hero-slides" data-hero-slides aria-live="polite"></div>
+            <span class="hero-image-veil" aria-hidden="true"></span>
+            <button type="button" class="hero-nav hero-nav--prev" aria-label="Imagen anterior" data-hero-prev hidden>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <button type="button" class="hero-nav hero-nav--next" aria-label="Imagen siguiente" data-hero-next hidden>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+            <div class="hero-dots" role="tablist" aria-label="Imágenes del servicio" data-hero-dots hidden></div>
+          </div>
         </div>
       </div>
     </div>

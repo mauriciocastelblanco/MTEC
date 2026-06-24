@@ -123,17 +123,14 @@
           </div>
 
           <div class="field">
-            <label>Imagen principal</label>
-            <div class="img-upload">
-              <div class="img-preview" data-preview="heroImagen">
-                <span class="img-placeholder">Sin imagen</span>
-              </div>
-              <div class="img-upload-actions">
-                <input type="file" accept="image/*" data-upload="heroImagen">
-                <span class="hint">Recomendado: JPG/PNG, mínimo 1200×800. Se ajusta automáticamente.</span>
-                <span class="img-warn" data-warn="heroImagen" hidden></span>
-              </div>
+            <div class="repeater-head">
+              <label>Imágenes del hero</label>
+              <span class="hint">
+                De <strong>1 a 4 imágenes</strong>. Con una sola, el hero se ve como hasta ahora. Con dos o más, en la página pública se muestran como un <strong>carrusel</strong> (flechas, indicadores y avance automático). El orden de aparición es el orden en que las agregas; la primera también se usa como imagen para compartir en redes. Recomendado: JPG/PNG, mínimo 1200×800. Se ajusta automáticamente.
+              </span>
             </div>
+            <div class="repeater" id="repeaterHero"></div>
+            <button type="button" class="repeater-add" data-add="heroImagenes" data-max="4">+ Agregar imagen</button>
           </div>
 
           <div class="collapsible" id="calloutGroup">

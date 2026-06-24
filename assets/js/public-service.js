@@ -199,11 +199,19 @@ function renderHero(s) {
 
   const hero = s.hero || {};
   const heroImageWrap = document.querySelector('[data-slot="hero-image-wrap"]');
-  const heroImg = document.querySelector('[data-slot="hero-image"]');
-  if (hero.imagen) {
-    heroImg.src = hero.imagen;
-    heroImg.alt = s.titulo;
+  const slidesWrap = document.querySelector('[data-hero-slides]');
+  // Carousel images: prefer the new `imagenes` array (1–4); fall back to
+  // the legacy single `imagen` so older records still render.
+  const imagenes = (Array.isArray(hero.imagenes) && hero.imagenes.length
+    ? hero.imagenes
+    : (hero.imagen ? [hero.imagen] : [])
+  ).filter(Boolean).slice(0, 4);
+  if (imagenes.length && slidesWrap) {
+    slidesWrap.innerHTML = imagenes.map((src, i) =>
+      `<img class="hero-slide${i === 0 ? ' is-active' : ''}" src="${escapeHtml(src)}" alt="${escapeHtml(s.titulo)}"${i > 0 ? ' loading="lazy"' : ''}>`
+    ).join('');
     heroImageWrap.hidden = false;
+    initHeroCarousel(imagenes.length);
   } else {
     heroImageWrap.hidden = true;
   }
@@ -236,6 +244,87 @@ function renderHero(s) {
   ctaRow.hidden = !calloutLogo && !ficha;
 
   showSection('hero', true);
+}
+
+// Hero carousel — crossfade slideshow with bar indicators, overlaid
+// arrows, autoplay (paused on hover/focus, disabled under reduced
+// motion) and pointer swipe. With a single image it stays static.
+function initHeroCarousel(count) {
+  const carousel = document.querySelector('[data-hero-carousel]');
+  const slides = Array.from(document.querySelectorAll('.hero-slide'));
+  const dotsWrap = document.querySelector('[data-hero-dots]');
+  const prev = document.querySelector('[data-hero-prev]');
+  const next = document.querySelector('[data-hero-next]');
+  if (!carousel || slides.length === 0) return;
+
+  // One image (or none): no controls, no autoplay.
+  if (count <= 1) {
+    if (dotsWrap) { dotsWrap.hidden = true; dotsWrap.innerHTML = ''; }
+    if (prev) prev.hidden = true;
+    if (next) next.hidden = true;
+    return;
+  }
+
+  let index = 0;
+  let timer = null;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const DELAY = 5500;
+  const stop = () => { if (timer) { clearInterval(timer); timer = null; } };
+  const start = () => { if (reduce) return; stop(); timer = setInterval(() => go(index + 1), DELAY); };
+  const restart = () => { stop(); start(); };
+
+  function go(i) {
+    index = (i + count) % count;
+    slides.forEach((sl, n) => sl.classList.toggle('is-active', n === index));
+    if (dotsWrap) {
+      Array.from(dotsWrap.children).forEach((d, n) => {
+        const on = n === index;
+        d.classList.toggle('is-active', on);
+        d.setAttribute('aria-selected', on ? 'true' : 'false');
+        d.tabIndex = on ? 0 : -1;
+      });
+    }
+  }
+
+  // Bar indicators
+  if (dotsWrap) {
+    dotsWrap.hidden = false;
+    dotsWrap.innerHTML = '';
+    for (let i = 0; i < count; i++) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'hero-dot' + (i === 0 ? ' is-active' : '');
+      b.setAttribute('role', 'tab');
+      b.setAttribute('aria-label', `Ir a la imagen ${i + 1}`);
+      b.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+      b.tabIndex = i === 0 ? 0 : -1;
+      b.addEventListener('click', () => { go(i); restart(); });
+      dotsWrap.appendChild(b);
+    }
+  }
+
+  // Overlaid arrows
+  if (prev) { prev.hidden = false; prev.addEventListener('click', () => { go(index - 1); restart(); }); }
+  if (next) { next.hidden = false; next.addEventListener('click', () => { go(index + 1); restart(); }); }
+
+  // Pause while interacting
+  carousel.addEventListener('mouseenter', stop);
+  carousel.addEventListener('mouseleave', start);
+  carousel.addEventListener('focusin', stop);
+  carousel.addEventListener('focusout', start);
+
+  // Pointer swipe (touch + mouse drag)
+  let startX = null;
+  carousel.addEventListener('pointerdown', e => { startX = e.clientX; });
+  carousel.addEventListener('pointerup', e => {
+    if (startX === null) return;
+    const dx = e.clientX - startX;
+    startX = null;
+    if (Math.abs(dx) > 40) { go(index + (dx < 0 ? 1 : -1)); restart(); }
+  });
+
+  go(0);
+  start();
 }
 
 function renderSolucion(s) {

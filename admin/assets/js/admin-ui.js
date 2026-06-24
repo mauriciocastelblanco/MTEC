@@ -375,6 +375,27 @@ const repeaterRenderers = {
       </div>
     `;
   },
+  heroImagenes(item = { url: '' }) {
+    return `
+      <div class="repeater-item">
+        <div class="repeater-drag" aria-hidden="true">⋮⋮</div>
+        <div class="repeater-fields">
+          <div class="field">
+            <label>Imagen</label>
+            <div class="img-upload">
+              <div class="img-preview" data-hero-preview>${item.url ? `<img src="${escapeAttr(item.url)}" alt="">` : '<span class="img-placeholder">Sin imagen</span>'}</div>
+              <div class="img-upload-actions">
+                <input type="file" accept="image/*" data-hero-input>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button type="button" class="repeater-remove" aria-label="Eliminar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+        </button>
+      </div>
+    `;
+  },
   galeria(item = { dataUrl: '', caption: '', tamano: 'M' }) {
     return `
       <div class="repeater-item">
@@ -486,6 +507,7 @@ function syncRepeaterAddLimits() {
   });
 }
 
+initRepeater('repeaterHero', 'heroImagenes');
 initRepeater('repeaterBeneficios', 'beneficios');
 initRepeater('repeaterGeometrias', 'geometrias');
 initRepeater('repeaterBadges', 'badges');
@@ -646,6 +668,32 @@ function initGalleryUploads() {
   });
 }
 
+function initHeroImageUploads() {
+  document.body.addEventListener('change', async e => {
+    const input = e.target.closest('input[type="file"][data-hero-input]');
+    if (!input) return;
+    const file = input.files[0];
+    if (!file) return;
+    const preview = input.closest('.img-upload').querySelector('[data-hero-preview]');
+    if (!preview) return;
+
+    preview.innerHTML = '<span class="img-placeholder">Subiendo…</span>';
+    input.disabled = true;
+    markDirty();
+
+    try {
+      const url = await uploadAsset(file, 'hero');
+      preview.innerHTML = `<img src="${url}" alt="">`;
+    } catch (err) {
+      console.error('[upload hero]', err);
+      preview.innerHTML = '<span class="img-placeholder">Error al subir</span>';
+    } finally {
+      input.disabled = false;
+      input.value = '';
+    }
+  });
+}
+
 function initBadgeUploads() {
   document.body.addEventListener('change', async e => {
     const input = e.target.closest('input[type="file"][data-badge-input]');
@@ -678,6 +726,8 @@ function initBadgeUploads() {
 initBadgeUploads();
 
 initGalleryUploads();
+
+initHeroImageUploads();
 
 // ══════════════════════════════════════════════════════
 // SAVE FLOW
@@ -723,6 +773,17 @@ function readImagePreview(key) {
   return img ? img.src : '';
 }
 
+// Hero carousel images, in repeater order. Returns up to 4 URL strings;
+// empty slots (no upload) are dropped.
+function readHeroImagenes() {
+  const container = document.getElementById('repeaterHero');
+  if (!container) return [];
+  return Array.from(container.querySelectorAll('.repeater-item'))
+    .map(item => item.querySelector('[data-hero-preview] img')?.src || '')
+    .filter(Boolean)
+    .slice(0, 4);
+}
+
 function readPdf(key) {
   const nameEl = document.querySelector(`[data-name="${key}"]`);
   const name = nameEl?.textContent.trim();
@@ -753,6 +814,7 @@ function readBadges() {
 }
 
 function collectForm() {
+  const heroImagenes = readHeroImagenes();
   return {
     slug: readVal('f-slug'),
     titulo: readVal('f-titulo'),
@@ -760,7 +822,10 @@ function collectForm() {
     eyebrow: readVal('f-eyebrow'),
     lead: readVal('f-lead'),
     hero: {
-      imagen: readImagePreview('heroImagen'),
+      // Carousel images (1–4). `imagen` keeps the first one for backward
+      // compatibility with older records and the SEO/OG image.
+      imagenes: heroImagenes,
+      imagen: heroImagenes[0] || '',
       productCallout: {
         imagen: readImagePreview('calloutImagen')
       }
@@ -898,7 +963,12 @@ async function loadExistingIfAny() {
   setVal('f-categoria', s.categoria || 'servicios-especializados');
   setVal('f-eyebrow', s.eyebrow);
   setLead(s.lead);
-  setImage('heroImagen', s.hero?.imagen);
+  // Hero images: prefer the new `imagenes` array; fall back to the legacy
+  // single `imagen` so older records still load into the carousel editor.
+  const heroImgs = Array.isArray(s.hero?.imagenes) && s.hero.imagenes.length
+    ? s.hero.imagenes.filter(Boolean)
+    : (s.hero?.imagen ? [s.hero.imagen] : []);
+  populateRepeater('repeaterHero', 'heroImagenes', heroImgs.map(url => ({ url })));
 
   setImage('calloutImagen', s.hero?.productCallout?.imagen);
 
@@ -955,3 +1025,13 @@ async function loadExistingIfAny() {
 }
 
 loadExistingIfAny();
+
+// Brand-new service (no ?slug): start the hero with one empty image slot
+// so the upload control is visible without clicking "Agregar imagen".
+(function seedNewHero() {
+  if (new URLSearchParams(window.location.search).get('slug')) return;
+  const container = document.getElementById('repeaterHero');
+  if (container && container.children.length === 0) {
+    container.insertAdjacentHTML('beforeend', repeaterRenderers.heroImagenes());
+  }
+})();

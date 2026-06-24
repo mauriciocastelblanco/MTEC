@@ -78,7 +78,7 @@ s1.addText("[Subtítulo o descripción del documento]", {
 });
 
 // Tagline
-s1.addText("DONDE LA FALLA NO ES UNA OPCIÓN", {
+s1.addText("INNOVACIÓN Y TECNOLOGÍA", {
   x: 0.45, y: H - 0.72, w: 8, h: 0.4,
   fontSize: 10,
   color: C.primary,
@@ -228,7 +228,7 @@ s3.addShape(pres.ShapeType.rect, {
 });
 
 // Tagline in footer
-s3.addText("DONDE LA FALLA NO ES UNA OPCIÓN", {
+s3.addText("INNOVACIÓN Y TECNOLOGÍA", {
   x: 0.4, y: H - 0.55, w: 7, h: 0.45,
   fontSize: 8,
   color: C.secondary,
@@ -291,7 +291,7 @@ s4.addText("[TÍTULO DE LA SECCIÓN]", {
 s4.addImage({ path: LOGO_BLANCO, x: W / 2 - 1.3, y: H - 1.1, w: 2.6, h: 0.75 });
 
 // Bottom tagline
-s4.addText("DONDE LA FALLA NO ES UNA OPCIÓN", {
+s4.addText("INNOVACIÓN Y TECNOLOGÍA", {
   x: 0, y: H - 0.35, w: W, h: 0.28,
   fontSize: 8,
   color: C.secondary,

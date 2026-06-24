@@ -199,6 +199,7 @@
 .hero-image-stage {
   position: relative;
   isolation: isolate;
+  width: 100%;
   max-width: 460px;
   margin-left: auto;
   padding: 28px 24px 36px;
@@ -247,15 +248,83 @@
     0 30px 60px -18px rgba(6,12,24,0.65),
     0 70px 120px -40px rgba(43,130,185,0.55);
 }
-.hero-image-card img {
+/* ── HERO CAROUSEL — crossfade slideshow inside the card ── */
+.hero-carousel { position: relative; width: 100%; }
+/* Slides layer: fills the fixed-aspect card; each slide is stacked. */
+.hero-slides { position: absolute; inset: 0; z-index: 0; }
+.hero-slide {
+  position: absolute; inset: 0;
   width: 100%; height: 100%; object-fit: cover;
-  transition: transform 1.2s cubic-bezier(.22,1,.36,1);
+  opacity: 0;
+  /* Only opacity (crossfade) + transform (hover zoom) are animated. */
+  transition: opacity 0.9s cubic-bezier(.22,1,.36,1),
+              transform 1.2s cubic-bezier(.22,1,.36,1);
   /* Brand "film": gentle desaturation + slight contrast lift so any
      photo reads as part of the same visual universe — preserves the
      photo's content. */
   filter: saturate(0.78) contrast(1.04);
 }
-.hero-image-card:hover img { transform: scale(1.03); }
+.hero-slide.is-active { opacity: 1; }
+.hero-image-card:hover .hero-slide.is-active { transform: scale(1.03); }
+@media (prefers-reduced-motion: reduce) {
+  .hero-slide { transition: opacity 0.2s linear; }
+  .hero-image-card:hover .hero-slide.is-active { transform: none; }
+}
+
+/* Bar indicators — editorial, angular, on-brand (no round dots). */
+.hero-dots {
+  position: absolute; left: 0; right: 0; bottom: 16px;
+  z-index: 3;
+  display: flex; justify-content: center; gap: 7px;
+  padding: 0 18px;
+}
+.hero-dots[hidden] { display: none; }
+.hero-dot {
+  width: 24px; height: 4px; padding: 0;
+  border: none; border-radius: 0;
+  background: rgba(255,255,255,0.55);
+  /* Soft shadow keeps the bars legible over light photos. */
+  box-shadow: 0 1px 3px rgba(6,12,24,0.5);
+  cursor: pointer;
+  transition: background 0.3s, transform 0.3s cubic-bezier(.22,1,.36,1);
+}
+.hero-dot:hover { background: rgba(255,255,255,0.85); }
+.hero-dot.is-active { background: #fff; transform: scaleY(1.5); }
+.hero-dot:focus-visible { outline: 2px solid #2B82B9; outline-offset: 3px; }
+
+/* Overlaid prev/next — appear on hover (desktop), always shown on touch. */
+.hero-nav {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  z-index: 3;
+  width: 38px; height: 38px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: rgba(11,32,58,0.55);
+  border: 1px solid rgba(178,190,201,0.30);
+  color: rgba(255,255,255,0.85);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.3s, background 0.25s, border-color 0.25s, color 0.25s;
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+.hero-nav[hidden] { display: none; }
+.hero-nav--prev { left: 12px; }
+.hero-nav--next { right: 12px; }
+.hero-nav svg { width: 16px; height: 16px; }
+.hero-carousel:hover .hero-nav { opacity: 1; }
+.hero-nav:hover {
+  background: rgba(11,32,58,0.85);
+  border-color: rgba(178,190,201,0.55);
+  color: #fff;
+}
+.hero-nav:focus-visible {
+  opacity: 1;
+  outline: 2px solid #2B82B9;
+  outline-offset: 2px;
+}
+@media (hover: none) {
+  .hero-nav { opacity: 0.9; }
+}
 
 /* Subtle neutral-grey color cast — pulls any photo toward a unified
    editorial temperature without bluing it. */

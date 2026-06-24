@@ -134,7 +134,7 @@ La paleta está construida sobre la identidad visual existente: isotipo plata/pl
 | Reservado → Expresivo | Moderadamente expresivo |
 
 ### Tagline
-**Principal**: Donde la falla no es una opción.
+**Principal**: Innovación y Tecnología.
 
 **Alternativas**:
 - Especialización técnica para la continuidad operacional
