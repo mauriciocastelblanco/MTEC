@@ -122,11 +122,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   <section class="section-block section-tinted" data-service-section="certificacion" hidden>
     <div class="content-wrap">
-      <div class="section-tag">Certificación &amp; Normativa</div>
+      <div class="section-tag" data-slot="cert-tag">Certificación &amp; Normativa</div>
       <div class="cert-grid">
         <div>
-          <div class="line-wrap"><h2 class="section-h2 section-h2--service line-reveal">Cumple con estándares internacionales</h2></div>
-          <p class="section-body blur-reveal" data-delay="150">
+          <div class="line-wrap"><h2 class="section-h2 section-h2--service line-reveal" data-slot="cert-titulo">Cumple con estándares internacionales</h2></div>
+          <p class="section-body blur-reveal" data-delay="150" data-slot="cert-descripcion">
             Los sistemas y productos cumplen con los principales códigos y estándares aplicables a su industria.
           </p>
         </div>
@@ -139,9 +139,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   <section class="section-block" data-service-section="solucion" hidden>
     <div class="content-wrap">
-      <div class="section-tag">Consideraciones</div>
+      <div class="section-tag" data-slot="sol-tag">Consideraciones</div>
       <div class="two-col two-col--service">
         <div>
+          <div class="line-wrap" hidden><h2 class="section-h2 section-h2--service line-reveal" data-slot="sol-titulo"></h2></div>
           <p class="section-body blur-reveal" data-delay="150" data-slot="solucion-descripcion"></p>
           <div class="kpi-row" data-slot="kpi-row" hidden></div>
         </div>
@@ -167,7 +168,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="content-wrap">
       <div class="two-col two-col--service">
         <div>
-          <div class="section-tag">Geometrías Aplicables</div>
+          <div class="section-tag" data-slot="geo-tag">Geometrías Aplicables</div>
+          <div class="line-wrap" hidden><h2 class="section-h2 section-h2--service line-reveal" data-slot="geo-titulo"></h2></div>
           <p class="section-body blur-reveal" data-delay="150" data-slot="geo-descripcion"></p>
         </div>
         <div>
@@ -190,8 +192,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   <section class="section-block" data-service-section="galeria" hidden>
     <div class="content-wrap">
-      <div class="section-tag">Aplicaciones</div>
-      <div class="line-wrap"><h2 class="section-h2 section-h2--service line-reveal">Casos en terreno</h2></div>
+      <div class="section-tag" data-slot="gal-tag">Aplicaciones</div>
+      <div class="line-wrap"><h2 class="section-h2 section-h2--service line-reveal" data-slot="gal-titulo">Casos en terreno</h2></div>
+      <p class="section-lead blur-reveal" data-delay="150" data-slot="gal-descripcion" hidden></p>
       <div class="gallery-carousel">
         <div class="gallery-grid" data-slot="galeria-list"></div>
         <div class="gallery-paginator" data-gallery-paginator hidden>

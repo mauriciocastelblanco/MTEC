@@ -183,6 +183,102 @@ window.addEventListener('beforeunload', e => {
 });
 
 // ══════════════════════════════════════════════════════
+// CHARACTER LIMITS
+// ══════════════════════════════════════════════════════
+// Every limited control carries its cap in `maxlength` (or `data-limit`
+// for the Trix editor, which ignores maxlength). The browser enforces
+// the cap; this module only draws the counter, pinned to the field's
+// label line so it never shifts the layout.
+//
+// The counter stays invisible while there is room to spare, so the form
+// looks untouched during normal editing. It fades in at 70% of the cap,
+// turns amber at 90%, and turns red when the value is already over —
+// which only happens with text saved before the limit existed. Nothing
+// is ever truncated on load; over-limit text is flagged, not cut.
+const COUNT_NEAR = 0.70;
+const COUNT_CLOSE = 0.90;
+
+function limitOf(el) {
+  return parseInt(el.getAttribute('maxlength') || el.dataset.limit || '0', 10) || 0;
+}
+
+// Trix stores rich text, so the cap applies to the plain text — bold and
+// link markup should not eat into the writer's budget. `toString()` ends
+// every document with a newline, which is not part of the content.
+function usedOf(el) {
+  if (el.tagName === 'TRIX-EDITOR') {
+    if (!el.editor) return 0;
+    return el.editor.getDocument().toString().replace(/\n$/, '').length;
+  }
+  return String(el.value || '').length;
+}
+
+function syncCounter(control) {
+  const limit = limitOf(control);
+  if (!limit) return;
+  const field = control.closest('.field');
+  // Norm rows are bare inputs in a flex row with no label to hang a
+  // counter from. maxlength still caps them; they just go uncounted.
+  if (!field) return;
+
+  let el = field.querySelector(':scope > .char-count');
+  if (!el) {
+    el = document.createElement('span');
+    el.className = 'char-count';
+    el.setAttribute('aria-hidden', 'true');
+    field.appendChild(el);
+  }
+
+  const used = usedOf(control);
+  el.textContent = `${used} / ${limit}`;
+  const ratio = used / limit;
+  el.classList.toggle('is-near', used <= limit && ratio >= COUNT_NEAR && ratio < COUNT_CLOSE);
+  el.classList.toggle('is-close', used <= limit && ratio >= COUNT_CLOSE);
+  el.classList.toggle('is-over', used > limit);
+}
+
+function refreshCounters(root) {
+  const scope = root || document.getElementById('formRoot');
+  if (!scope) return;
+  scope.querySelectorAll('[maxlength], trix-editor[data-limit]').forEach(syncCounter);
+}
+
+document.addEventListener('input', e => {
+  const t = e.target;
+  if (t && t.getAttribute && t.hasAttribute('maxlength')) syncCounter(t);
+});
+
+// Trix ignores maxlength, so the cap is enforced by hand: anything past
+// the limit is deleted as it is typed or pasted. Suppressed while an
+// existing service loads so saved text is never silently truncated.
+let suppressLeadLimit = false;
+
+function initLeadLimit() {
+  const trix = document.querySelector('trix-editor[data-limit]');
+  if (!trix) return;
+  const limit = limitOf(trix);
+  if (!limit) return;
+
+  const enforce = () => {
+    if (!trix.editor) return;
+    if (!suppressLeadLimit) {
+      const used = usedOf(trix);
+      if (used > limit) {
+        trix.editor.setSelectedRange([limit, used]);
+        trix.editor.deleteInDirection('forward');
+      }
+    }
+    syncCounter(trix);
+  };
+
+  if (trix.editor) enforce();
+  else trix.addEventListener('trix-initialize', enforce, { once: true });
+  trix.addEventListener('trix-change', enforce);
+}
+
+initLeadLimit();
+
+// ══════════════════════════════════════════════════════
 // ICONS — set predefinido reutilizado en beneficios y geometrías
 // ══════════════════════════════════════════════════════
 const ICONS = {
@@ -235,11 +331,11 @@ const repeaterRenderers = {
           </div>
           <div class="field">
             <label>Label</label>
-            <input type="text" data-rk="label" value="${escapeAttr(item.label)}" placeholder="Sin detener el flujo">
+            <input type="text" data-rk="label" maxlength="90" value="${escapeAttr(item.label)}" placeholder="Sin detener el flujo">
           </div>
           <div class="field">
             <label>Chip / etiqueta</label>
-            <input type="text" data-rk="chip" value="${escapeAttr(item.chip)}" placeholder="En operación">
+            <input type="text" data-rk="chip" maxlength="15" value="${escapeAttr(item.chip)}" placeholder="En operación">
           </div>
         </div>
         <button type="button" class="repeater-remove" aria-label="Eliminar">
@@ -275,7 +371,7 @@ const repeaterRenderers = {
         <div class="repeater-fields">
           <div class="field">
             <label>Nombre</label>
-            <input type="text" data-rk="nombre" value="${escapeAttr(item.nombre)}" placeholder="Codos">
+            <input type="text" data-rk="nombre" maxlength="32" value="${escapeAttr(item.nombre)}" placeholder="Codos">
           </div>
           <div class="field">
             <label>Icono</label>
@@ -296,7 +392,7 @@ const repeaterRenderers = {
     const hasPdf = !!pdf.dataUrl;
     return `
       <div class="norm-row" data-norm-row>
-        <input type="text" class="norm-row-text" data-rk-n="texto" value="${escapeAttr(item.texto)}" placeholder="ASME PCC-2 Art. 4.1">
+        <input type="text" class="norm-row-text" data-rk-n="texto" maxlength="40" value="${escapeAttr(item.texto)}" placeholder="ASME PCC-2 Art. 4.1">
         <label class="norm-row-pdf ${hasPdf ? 'has-pdf' : ''}" data-norm-pdf>
           <input type="file" accept="application/pdf" data-norm-pdf-input hidden>
           <input type="hidden" data-rk-n="pdfUrl" value="${escapeAttr(pdf.dataUrl || '')}">
@@ -322,8 +418,8 @@ const repeaterRenderers = {
           <div class="field-row">
             <div class="field">
               <label>Nombre / texto</label>
-              <input type="text" data-rk="nombre" value="${escapeAttr(item.nombre)}" placeholder="API">
-              <span class="hint">Se muestra como texto si no hay logo.</span>
+              <input type="text" data-rk="nombre" maxlength="8" value="${escapeAttr(item.nombre)}" placeholder="API">
+              <span class="hint">Se muestra como texto si no hay logo. La baldosa es cuadrada y chica: sirve para siglas (API, ASME, ISO), no para nombres largos.</span>
             </div>
             <div class="field">
               <label>Logo (opcional)</label>
@@ -361,11 +457,11 @@ const repeaterRenderers = {
           <div class="field-row">
             <div class="field">
               <label>Valor</label>
-              <input type="text" data-rk="valor" value="${escapeAttr(item.valor)}" placeholder="MAOP">
+              <input type="text" data-rk="valor" maxlength="8" value="${escapeAttr(item.valor)}" placeholder="MAOP">
             </div>
             <div class="field">
               <label>Etiqueta</label>
-              <input type="text" data-rk="label" value="${escapeAttr(item.label)}" placeholder="original">
+              <input type="text" data-rk="label" maxlength="20" value="${escapeAttr(item.label)}" placeholder="original">
             </div>
           </div>
         </div>
@@ -413,7 +509,7 @@ const repeaterRenderers = {
           <div class="field-row">
             <div class="field">
               <label>Caption (opcional)</label>
-              <input type="text" data-rk="caption" value="${escapeAttr(item.caption)}" placeholder="Aplicación en planta">
+              <input type="text" data-rk="caption" maxlength="40" value="${escapeAttr(item.caption)}" placeholder="Aplicación en planta">
             </div>
             <div class="field">
               <label>Tamaño en grid</label>
@@ -483,6 +579,7 @@ function initRepeaterAddButtons() {
       const count = container.querySelectorAll('.repeater-item').length;
       if (max > 0 && count >= max) return;
       container.insertAdjacentHTML('beforeend', renderer());
+      refreshCounters(container.lastElementChild);
       markDirty();
       // After adding, hide the button if we've hit the max.
       const newCount = container.querySelectorAll('.repeater-item').length;
@@ -532,6 +629,7 @@ function initNormaRowsInsideBadges() {
       const rows = addBtn.parentElement.querySelector('[data-norm-rows]');
       if (rows) {
         rows.insertAdjacentHTML('beforeend', repeaterRenderers.normaRow());
+        refreshCounters(rows);
         markDirty();
       }
       return;
@@ -813,6 +911,72 @@ function readBadges() {
   });
 }
 
+// ══════════════════════════════════════════════════════
+// SECTION HEADINGS
+// ══════════════════════════════════════════════════════
+// The eyebrow / title / lead above each section used to be hard-coded in
+// servicios/index.html, so every service shared them. They now live in
+// the `secciones` column, one entry per section.
+//
+// These are the texts the public page falls back to when a service has
+// no stored value for a key — the same words that used to be in the
+// markup. The form pre-fills them so the writer sees the current wording
+// and can edit or clear it. Consideraciones and Geometrías have no
+// default title because they had no <h2> before this change; leaving it
+// blank keeps those pages looking exactly as they do today.
+const SECCION_DEFAULTS = {
+  certificacion: {
+    tag: 'Certificación & Normativa',
+    titulo: 'Cumple con estándares internacionales',
+    descripcion: 'Los sistemas y productos cumplen con los principales códigos y estándares aplicables a su industria.',
+  },
+  solucion:   { tag: 'Consideraciones',       titulo: '', descripcion: '' },
+  geometrias: { tag: 'Geometrías Aplicables', titulo: '', descripcion: '' },
+  galeria:    { tag: 'Aplicaciones',          titulo: 'Casos en terreno', descripcion: '' },
+};
+
+const SECCION_FIELDS = {
+  certificacion: { tag: 'f-cert-tag', titulo: 'f-cert-titulo', descripcion: 'f-cert-desc' },
+  solucion:      { tag: 'f-sol-tag',  titulo: 'f-sol-titulo',  descripcion: 'f-sol-desc' },
+  geometrias:    { tag: 'f-geo-tag',  titulo: 'f-geo-titulo',  descripcion: 'f-geo-desc' },
+  galeria:       { tag: 'f-gal-tag',  titulo: 'f-gal-titulo',  descripcion: 'f-gal-desc' },
+};
+
+function readSecciones() {
+  const out = {};
+  Object.entries(SECCION_FIELDS).forEach(([name, ids]) => {
+    out[name] = {
+      tag: readVal(ids.tag),
+      titulo: readVal(ids.titulo),
+      descripcion: readVal(ids.descripcion),
+    };
+  });
+  return out;
+}
+
+// Fill the heading inputs for `s` (null for a brand-new service).
+// Order of preference: what was saved for this service → the legacy
+// location the text used to live in → the built-in default.
+function fillSecciones(s) {
+  const stored = s?.secciones || {};
+  const legacy = {
+    solucion:   { descripcion: s?.solucion?.descripcion },
+    geometrias: { descripcion: s?.geometrias?.descripcion },
+  };
+
+  Object.entries(SECCION_FIELDS).forEach(([name, ids]) => {
+    Object.entries(ids).forEach(([key, id]) => {
+      const saved = stored[name];
+      if (saved && Object.prototype.hasOwnProperty.call(saved, key)) {
+        setVal(id, saved[key] ?? '');
+        return;
+      }
+      const old = legacy[name]?.[key];
+      setVal(id, old || SECCION_DEFAULTS[name][key] || '');
+    });
+  });
+}
+
 function collectForm() {
   const heroImagenes = readHeroImagenes();
   return {
@@ -830,20 +994,22 @@ function collectForm() {
         imagen: readImagePreview('calloutImagen')
       }
     },
+    // The section descriptions used to live here; they now travel in
+    // `secciones` alongside their eyebrow and title. Public rendering
+    // still falls back to the old paths for records saved before this.
     solucion: {
-      descripcion: readVal('f-sol-desc'),
       kpis: readRepeater('repeaterKpis', ['valor', 'label']),
       beneficios: readRepeater('repeaterBeneficios', ['icono', 'label', 'chip'])
     },
     geometrias: {
-      descripcion: readVal('f-geo-desc'),
       items: readRepeater('repeaterGeometrias', ['nombre', 'icono'])
     },
     certificacion: {
       badges: readBadges(),
       fichaTecnicaPdf: readPdf('fichaTecnicaPdf')
     },
-    galeria: readGaleriaRepeater()
+    galeria: readGaleriaRepeater(),
+    secciones: readSecciones()
   };
 }
 
@@ -927,7 +1093,14 @@ async function setLead(html) {
   if (!trix.editor) {
     await new Promise(resolve => trix.addEventListener('trix-initialize', resolve, { once: true }));
   }
+  // Saved text longer than the current limit is shown in full and
+  // flagged by the counter, never cut behind the writer's back.
+  suppressLeadLimit = true;
   trix.editor.loadHTML(html || '');
+  setTimeout(() => {
+    suppressLeadLimit = false;
+    syncCounter(trix);
+  }, 0);
 }
 function setImage(key, src) {
   if (!src) return;
@@ -948,6 +1121,7 @@ function populateRepeater(containerId, key, items) {
   const container = document.getElementById(containerId);
   if (!container || !items) return;
   container.innerHTML = items.map(it => repeaterRenderers[key](it)).join('');
+  refreshCounters(container);
 }
 
 async function loadExistingIfAny() {
@@ -972,7 +1146,8 @@ async function loadExistingIfAny() {
 
   setImage('calloutImagen', s.hero?.productCallout?.imagen);
 
-  setVal('f-sol-desc', s.solucion?.descripcion);
+  fillSecciones(s);
+
   // KPIs: prefer the new array; fall back to the legacy single metricaClave.
   const legacyMetric = s.solucion?.metricaClave;
   const kpis = Array.isArray(s.solucion?.kpis) && s.solucion.kpis.length > 0
@@ -984,7 +1159,6 @@ async function loadExistingIfAny() {
   populateRepeater('repeaterBeneficios', 'beneficios', s.solucion?.beneficios);
 
 
-  setVal('f-geo-desc', s.geometrias?.descripcion);
   populateRepeater('repeaterGeometrias', 'geometrias', s.geometrias?.items);
 
   // Badges are loaded with their nested normas. Legacy services stored
@@ -1021,17 +1195,23 @@ async function loadExistingIfAny() {
     });
   }
 
+  refreshCounters();
   isDirty = false;
 }
 
 loadExistingIfAny();
 
 // Brand-new service (no ?slug): start the hero with one empty image slot
-// so the upload control is visible without clicking "Agregar imagen".
-(function seedNewHero() {
+// so the upload control is visible without clicking "Agregar imagen",
+// and pre-fill the section headings with their default wording.
+(function seedNewService() {
   if (new URLSearchParams(window.location.search).get('slug')) return;
   const container = document.getElementById('repeaterHero');
   if (container && container.children.length === 0) {
     container.insertAdjacentHTML('beforeend', repeaterRenderers.heroImagenes());
+  }
+  if (document.getElementById('formRoot')) {
+    fillSecciones(null);
+    refreshCounters();
   }
 })();

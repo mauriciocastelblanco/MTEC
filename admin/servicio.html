@@ -82,7 +82,7 @@
           <div class="field-row">
             <div class="field" data-field="titulo">
               <label for="f-titulo">Título</label>
-              <input type="text" id="f-titulo" name="titulo" placeholder="Ej. Encintado de Líneas" required>
+              <input type="text" id="f-titulo" name="titulo" maxlength="48" placeholder="Ej. Encintado de Líneas" required>
               <div class="field-error">El título es obligatorio.</div>
             </div>
             <div class="field" data-field="slug">
@@ -105,7 +105,7 @@
             </div>
             <div class="field">
               <label for="f-eyebrow">Eyebrow (subtítulo)</label>
-              <input type="text" id="f-eyebrow" name="eyebrow" placeholder="Servicio Especializado · Operación">
+              <input type="text" id="f-eyebrow" name="eyebrow" maxlength="60" placeholder="Servicio Especializado · Operación">
               <span class="hint">Texto pequeño sobre el título del hero. Opcional.</span>
             </div>
           </div>
@@ -118,7 +118,7 @@
           <div class="field field--lead">
             <label for="f-lead">Descripción del servicio</label>
             <input id="f-lead" name="lead" type="hidden">
-            <trix-editor input="f-lead" placeholder="Resumen de qué es y para qué sirve este servicio."></trix-editor>
+            <trix-editor input="f-lead" data-limit="650" placeholder="Resumen de qué es y para qué sirve este servicio."></trix-editor>
             <span class="hint">El ancho del editor refleja exactamente cómo se verá el texto en el hero. Usa <strong>Enter</strong> para nuevo párrafo, y la barra de herramientas para negrita, cursiva, listas o enlaces.</span>
           </div>
 
@@ -179,6 +179,29 @@
       <div class="tab-pane" data-pane="certificacion">
 
         <div class="form-section">
+          <div class="form-section-title">Encabezado de la sección</div>
+          <p class="form-section-desc">Lo que se lee arriba de esta sección en la página pública. Si borras un campo, ese elemento deja de mostrarse.</p>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="f-cert-tag">Etiqueta</label>
+              <input type="text" id="f-cert-tag" maxlength="40" placeholder="Certificación &amp; Normativa">
+              <span class="hint">El texto pequeño en mayúsculas con la línea al costado.</span>
+            </div>
+            <div class="field">
+              <label for="f-cert-titulo">Título</label>
+              <input type="text" id="f-cert-titulo" maxlength="60" placeholder="Cumple con estándares internacionales">
+              <span class="hint">El titular grande de la sección.</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="f-cert-desc">Bajada</label>
+            <textarea id="f-cert-desc" maxlength="360" placeholder="Los sistemas y productos cumplen con los principales códigos y estándares aplicables a su industria."></textarea>
+          </div>
+        </div>
+
+        <div class="form-section">
           <div class="repeater-head">
             <label>Estándares y sus normas</label>
             <span class="hint">
@@ -193,12 +216,29 @@
       <div class="tab-pane" data-pane="solucion">
 
         <div class="form-section">
-          <div class="form-section-title">Consideraciones — encabezado</div>
-          <div class="field">
-            <label for="f-sol-desc">Descripción</label>
-            <textarea id="f-sol-desc" name="sol-desc" placeholder="Texto descriptivo que aparece a la izquierda, sobre las consideraciones."></textarea>
+          <div class="form-section-title">Encabezado de la sección</div>
+          <p class="form-section-desc">Lo que se lee arriba de esta sección en la página pública. Si borras un campo, ese elemento deja de mostrarse.</p>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="f-sol-tag">Etiqueta</label>
+              <input type="text" id="f-sol-tag" maxlength="40" placeholder="Consideraciones">
+              <span class="hint">El texto pequeño en mayúsculas con la línea al costado.</span>
+            </div>
+            <div class="field">
+              <label for="f-sol-titulo">Título</label>
+              <input type="text" id="f-sol-titulo" maxlength="60" placeholder="Ej. Por qué funciona">
+              <span class="hint">El titular grande de la sección.</span>
+            </div>
           </div>
 
+          <div class="field">
+            <label for="f-sol-desc">Bajada</label>
+            <textarea id="f-sol-desc" name="sol-desc" maxlength="360" placeholder="Texto descriptivo que aparece a la izquierda, sobre las consideraciones."></textarea>
+          </div>
+        </div>
+
+        <div class="form-section">
           <div class="repeater-head">
             <label>KPIs</label>
             <span class="hint">Aparecen debajo de la descripción. Hasta <strong>3 KPIs</strong>. Si lo dejas vacío, no aparece nada.</span>
@@ -220,10 +260,25 @@
       <div class="tab-pane" data-pane="geometrias">
 
         <div class="form-section">
-          <div class="form-section-title">Geometrías — encabezado</div>
+          <div class="form-section-title">Encabezado de la sección</div>
+          <p class="form-section-desc">Lo que se lee arriba de esta sección en la página pública. Si borras un campo, ese elemento deja de mostrarse.</p>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="f-geo-tag">Etiqueta</label>
+              <input type="text" id="f-geo-tag" maxlength="40" placeholder="Geometrías Aplicables">
+              <span class="hint">El texto pequeño en mayúsculas con la línea al costado.</span>
+            </div>
+            <div class="field">
+              <label for="f-geo-titulo">Título</label>
+              <input type="text" id="f-geo-titulo" maxlength="60" placeholder="Ej. Aplicable en distintas configuraciones">
+              <span class="hint">El titular grande de la sección.</span>
+            </div>
+          </div>
+
           <div class="field">
-            <label for="f-geo-desc">Descripción</label>
-            <textarea id="f-geo-desc" name="geo-desc" placeholder="El sistema se adapta a múltiples configuraciones."></textarea>
+            <label for="f-geo-desc">Bajada</label>
+            <textarea id="f-geo-desc" name="geo-desc" maxlength="360" placeholder="El sistema se adapta a múltiples configuraciones."></textarea>
           </div>
         </div>
 
@@ -240,12 +295,35 @@
       <div class="tab-pane" data-pane="galeria">
 
         <div class="form-section">
+          <div class="form-section-title">Encabezado de la sección</div>
+          <p class="form-section-desc">Lo que se lee arriba de esta sección en la página pública. Si borras un campo, ese elemento deja de mostrarse.</p>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="f-gal-tag">Etiqueta</label>
+              <input type="text" id="f-gal-tag" maxlength="40" placeholder="Aplicaciones">
+              <span class="hint">El texto pequeño en mayúsculas con la línea al costado.</span>
+            </div>
+            <div class="field">
+              <label for="f-gal-titulo">Título</label>
+              <input type="text" id="f-gal-titulo" maxlength="60" placeholder="Casos en terreno">
+              <span class="hint">El titular grande de la sección.</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="f-gal-desc">Bajada</label>
+            <textarea id="f-gal-desc" maxlength="360" placeholder="Breve descripción de las aplicaciones reales que muestra la galería."></textarea>
+          </div>
+        </div>
+
+        <div class="form-section">
           <div class="repeater-head">
             <label>Imágenes de galería</label>
-            <span class="hint">5 imágenes funcionan bien con el bento grid.</span>
+            <span class="hint">Hasta <strong>12 fotos</strong>. En la página pública avanzan de a <strong>3 por página</strong> con flechas, así que 3, 6, 9 o 12 llenan todas las páginas sin dejar huecos.</span>
           </div>
           <div class="repeater" id="repeaterGaleria"></div>
-          <button type="button" class="repeater-add" data-add="galeria">+ Agregar imagen</button>
+          <button type="button" class="repeater-add" data-add="galeria" data-max="12">+ Agregar imagen</button>
         </div>
 
       </div>

@@ -24,6 +24,7 @@ function fromDb(row) {
     geometrias: row.geometrias || {},
     certificacion: row.certificacion || {},
     galeria: row.galeria || [],
+    secciones: row.secciones || {},
     cta: row.cta || {},
     fechaCreacion: row.fecha_creacion,
     fechaEdicion: row.fecha_edicion,
@@ -44,6 +45,7 @@ function toDb(s) {
     geometrias: s.geometrias ?? {},
     certificacion: s.certificacion ?? {},
     galeria: s.galeria ?? [],
+    secciones: s.secciones ?? {},
     cta: s.cta ?? {},
   };
 }

@@ -68,6 +68,61 @@ function escapeHtml(s) {
     ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
+// ── SECTION HEADINGS ─────────────────────────────────────────────
+// The eyebrow, title and lead above each section are editable per
+// service and travel in the `secciones` column. The wording every
+// service showed before they became editable still lives in the markup,
+// which keeps it as the single source of the defaults:
+//
+//   key absent          → the markup stands (service predates this)
+//   key present, text   → the text replaces it
+//   key present, empty  → the element is hidden on purpose
+//
+// A title sits inside a .line-wrap that the reveal animation measures,
+// so hiding targets that wrapper rather than the heading itself.
+function applyHeading(slot, value) {
+  document.querySelectorAll(`[data-slot="${slot}"]`).forEach(el => {
+    const box = el.closest('.line-wrap') || el;
+    const text = value === undefined || value === null
+      ? el.textContent.trim()
+      : String(value).trim();
+    if (!text) {
+      box.hidden = true;
+      return;
+    }
+    el.textContent = text;
+    box.hidden = false;
+  });
+}
+
+// The descriptions of Consideraciones and Geometrías used to live in
+// solucion.descripcion / geometrias.descripcion. Records saved before
+// the move still carry them there, so those paths are read as a
+// fallback — same pattern as hero.imagen and solucion.metricaClave.
+function resolveSecciones(s) {
+  const stored = s.secciones || {};
+  const legacy = {
+    solucion: { descripcion: s.solucion?.descripcion },
+    geometrias: { descripcion: s.geometrias?.descripcion },
+  };
+  const get = (name, key) => {
+    const entry = stored[name];
+    if (entry && Object.prototype.hasOwnProperty.call(entry, key)) return entry[key];
+    return legacy[name]?.[key];
+  };
+  const section = name => ({
+    tag: get(name, 'tag'),
+    titulo: get(name, 'titulo'),
+    descripcion: get(name, 'descripcion'),
+  });
+  return {
+    certificacion: section('certificacion'),
+    solucion: section('solucion'),
+    geometrias: section('geometrias'),
+    galeria: section('galeria'),
+  };
+}
+
 function getSlug() {
   // Clean URL form: /servicios/<slug>
   const path = location.pathname.replace(/\/+$/, '');
@@ -327,12 +382,17 @@ function initHeroCarousel(count) {
   start();
 }
 
-function renderSolucion(s) {
+function renderSolucion(s, secciones) {
   const sol = s.solucion || {};
+  const head = secciones.solucion;
   const beneficios = Array.isArray(sol.beneficios) ? sol.beneficios : [];
-  if (!sol.descripcion && beneficios.length === 0) return showSection('solucion', false);
+  if (!String(head.descripcion || '').trim() && beneficios.length === 0) {
+    return showSection('solucion', false);
+  }
 
-  setText('solucion-descripcion', sol.descripcion || '');
+  applyHeading('sol-tag', head.tag);
+  applyHeading('sol-titulo', head.titulo);
+  applyHeading('solucion-descripcion', head.descripcion);
 
   // KPIs: prefer new `kpis` array (up to 3). Fall back to legacy
   // `metricaClave` single object for older records.
@@ -412,12 +472,15 @@ function initConsidCarousel(track, pageCount) {
   update();
 }
 
-function renderGeometrias(s) {
+function renderGeometrias(s, secciones) {
   const geo = s.geometrias || {};
+  const head = secciones.geometrias;
   const items = Array.isArray(geo.items) ? geo.items : [];
   if (items.length === 0) return showSection('geometrias', false);
 
-  setText('geo-descripcion', geo.descripcion || '');
+  applyHeading('geo-tag', head.tag);
+  applyHeading('geo-titulo', head.titulo);
+  applyHeading('geo-descripcion', head.descripcion);
 
   // Chunk into pages of 6 items (rendered as a 3-col grid; visually 2x3).
   const PAGE_SIZE = 6;
@@ -500,10 +563,15 @@ function normalizeCertificacion(cert) {
   return badges;
 }
 
-function renderCertificacion(s) {
+function renderCertificacion(s, secciones) {
   const cert = s.certificacion || {};
+  const head = secciones.certificacion;
   const badges = normalizeCertificacion(cert);
   if (badges.length === 0) return showSection('certificacion', false);
+
+  applyHeading('cert-tag', head.tag);
+  applyHeading('cert-titulo', head.titulo);
+  applyHeading('cert-descripcion', head.descripcion);
 
   const ARROW = '<svg class="cert-stack-norm-arrow" width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
@@ -534,9 +602,14 @@ function renderCertificacion(s) {
   showSection('certificacion', true);
 }
 
-function renderGaleria(s) {
+function renderGaleria(s, secciones) {
   const items = Array.isArray(s.galeria) ? s.galeria : [];
   if (items.length === 0) return showSection('galeria', false);
+
+  const head = secciones.galeria;
+  applyHeading('gal-tag', head.tag);
+  applyHeading('gal-titulo', head.titulo);
+  applyHeading('gal-descripcion', head.descripcion);
 
   // Chunk into pages of 3 (1 row x 3 cols).
   const PAGE_SIZE = 3;
@@ -612,11 +685,12 @@ async function init() {
     return;
   }
 
+  const secciones = resolveSecciones(service);
   renderHero(service);
-  renderSolucion(service);
-  renderGeometrias(service);
-  renderCertificacion(service);
-  renderGaleria(service);
+  renderSolucion(service, secciones);
+  renderGeometrias(service, secciones);
+  renderCertificacion(service, secciones);
+  renderGaleria(service, secciones);
 
   showState('ok');
   if (stateLoading) stateLoading.hidden = true;

@@ -446,9 +446,31 @@ table.admin-table { width: 100%; border-collapse: collapse; }
 .form-section-title { font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--platino); margin-bottom: 4px; }
 .form-section-desc { font-size: 13px; color: var(--plomo); margin-bottom: 20px; }
 
-.field { margin-bottom: 16px; }
+.field { margin-bottom: 16px; position: relative; }
 .field:last-child { margin-bottom: 0; }
-.field label { display: block; font-size: 12px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--platino); margin-bottom: 6px; }
+.field label { display: block; font-size: 12px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--platino); margin-bottom: 6px; padding-right: 56px; }
+
+/* ── CHARACTER COUNTER ─────────────────────────────
+   Injected by admin-ui.js into any .field whose control carries a
+   maxlength. Sits on the label's line so it never shifts the layout,
+   and stays invisible while there is room to spare — the form looks
+   untouched until the text actually approaches its limit. */
+.char-count {
+  position: absolute; top: 0; right: 0;
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+  color: var(--plomo);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition), color var(--transition);
+}
+.char-count.is-near  { opacity: 1; }
+.char-count.is-close { opacity: 1; color: var(--amber-text); }
+.char-count.is-over  { opacity: 1; color: #FCA5A5; }
+@media (prefers-reduced-motion: reduce) {
+  .char-count { transition: none; }
+}
 .field .hint { display: block; font-size: 12px; color: var(--plomo); margin-top: 4px; }
 .field input[type="text"],
 .field textarea,
