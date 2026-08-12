@@ -394,6 +394,16 @@ body:has(.breadcrumb-bar) .page-hero { padding-top: 0; }
 }
 .footer-links a:hover { color: #fff; transform: translateX(3px); }
 .footer-link-static { color: rgba(255,255,255,0.40); cursor: default; }
+/* "Ver todos los servicios" — closes the dynamic services list. */
+.footer-links-more { margin-top: 6px; }
+.footer-links-more a {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 13px; letter-spacing: 0.01em;
+  color: rgba(255,255,255,0.52);
+}
+.footer-links-more a:hover { color: #fff; }
+.footer-links-more svg { opacity: 0.65; transition: opacity 0.2s ease; }
+.footer-links-more a:hover svg { opacity: 1; }
 .footer-erres {
   display: flex; flex-direction: column; align-items: flex-end;
   justify-content: flex-start;

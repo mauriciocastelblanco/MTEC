@@ -1347,6 +1347,17 @@ img { max-width: 100%; display: block; }
   color: rgba(255,255,255,0.40);
   cursor: default;
 }
+/* "Ver todos los servicios" — closes the dynamic services list.
+   Mirrors assets/css/page-chrome.css (this page keeps its CSS inline). */
+.footer-links-more { margin-top: 6px; }
+.footer-links-more a {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 13px; letter-spacing: 0.01em;
+  color: rgba(255,255,255,0.52);
+}
+.footer-links-more a:hover { color: #fff; }
+.footer-links-more svg { opacity: 0.65; transition: opacity 0.2s ease; }
+.footer-links-more a:hover svg { opacity: 1; }
 
 /* — Erres link (integrated, column 4) — */
 .footer-erres {
@@ -1885,6 +1896,7 @@ if (btnAgenda && !isMobile) {
 <script src="assets/js/partials.js" defer></script>
 <script src="assets/js/nav.js" defer></script>
 <script type="module" src="assets/js/public-nav.js"></script>
+<script type="module" src="assets/js/public-footer.js"></script>
 <script type="module" src="assets/js/public-home-services.js"></script>
 <script defer>
   document.addEventListener('DOMContentLoaded', () => {

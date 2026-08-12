@@ -13,8 +13,10 @@
   [ ] Replace each <!-- SLOT: ... --> block with the real content
   [ ] Update <title> and <meta name="description"> (SLOT: meta)
   [ ] Verify image paths use ../brand_assets/... or full URLs
-  [ ] Add the new service to partials/nav.html → #ddServiciosEspecializados
-  [ ] Add the new service to partials/footer.html → Servicios column
+  NOTE: the navbar (public-nav.js) and the footer Servicios column
+  (public-footer.js) now read published services straight from Supabase.
+  Do NOT hand-add services to partials/nav.html or partials/footer.html —
+  the static markup there is only a fallback for a failed fetch.
   ═══════════════════════════════════════════════════════════════════
 -->
 <html lang="es">
